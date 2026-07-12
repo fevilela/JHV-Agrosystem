@@ -141,10 +141,14 @@ export async function gerarBoletoAction(
       cause?: { code?: string; description?: string }[];
     };
     const detail = mpError?.cause?.map((c) => c.description).filter(Boolean).join("; ");
-    const message =
+    const rawMessage =
       detail ||
       mpError?.message ||
       (err instanceof Error ? err.message : "Erro ao gerar boleto no Mercado Pago.");
+    const message =
+      rawMessage === "Invalid transaction_amount"
+        ? "O valor da conta é muito baixo para gerar boleto no Mercado Pago. Tente um valor maior (R$ 10 ou mais)."
+        : rawMessage;
     return { error: message };
   }
 
