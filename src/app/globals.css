@@ -10,6 +10,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* JHV AgroSystem brand palette (navy / steel blue, from logo) */
+  --color-brand-50: #eef2f6;
+  --color-brand-100: #dbe4ec;
+  --color-brand-200: #b8c9da;
+  --color-brand-300: #8ba3bb;
+  --color-brand-400: #5b7a99;
+  --color-brand-500: #3d5e7d;
+  --color-brand-600: #2d4d6a;
+  --color-brand-700: #21374f;
+  --color-brand-800: #16283f;
+  --color-brand-900: #0f1c2d;
 }
 
 @media (prefers-color-scheme: dark) {

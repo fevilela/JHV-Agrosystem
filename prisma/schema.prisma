@@ -1,0 +1,1291 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  GERENTE
+  FUNCIONARIO
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(FUNCIONARIO)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+// ---------- Cadastro: pessoas ----------
+
+model Owner {
+  id        String   @id @default(cuid())
+  name      String
+  cpfCnpj   String?  @unique
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  animals Animal[]
+
+  @@map("owners")
+}
+
+model Employee {
+  id            String    @id @default(cuid())
+  name          String
+  cpf           String?   @unique
+  role          String?
+  phone         String?
+  email         String?
+  address       String?
+  admissionDate DateTime?
+  salary        Decimal?  @db.Decimal(12, 2)
+  active        Boolean   @default(true)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  attendances    Attendance[]
+  schedules      Schedule[]
+  trainings      Training[]
+  epiIssuances   EpiIssuance[]
+
+  @@map("employees")
+}
+
+model Veterinarian {
+  id        String   @id @default(cuid())
+  name      String
+  cpf       String?  @unique
+  crmv      String?
+  phone     String?
+  email     String?
+  specialty String?
+  active    Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("veterinarians")
+}
+
+model Farrier {
+  id        String   @id @default(cuid())
+  name      String
+  cpf       String?  @unique
+  phone     String?
+  email     String?
+  active    Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("farriers")
+}
+
+model Instructor {
+  id        String   @id @default(cuid())
+  name      String
+  cpf       String?  @unique
+  phone     String?
+  email     String?
+  specialty String?
+  active    Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trainingSessions TrainingSession[]
+
+  @@map("instructors")
+}
+
+model Handler {
+  id        String   @id @default(cuid())
+  name      String
+  cpf       String?  @unique
+  phone     String?
+  email     String?
+  active    Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("handlers")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  cpfCnpj   String?  @unique
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  financialEntries FinancialEntry[]
+  financeEntries   FinanceEntry[]
+
+  @@map("clients")
+}
+
+model Supplier {
+  id                 String   @id @default(cuid())
+  name               String
+  cpfCnpj            String?  @unique
+  email              String?
+  phone              String?
+  address            String?
+  city               String?
+  state              String?
+  productsOrServices String?
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  quotations     Quotation[]
+  purchaseOrders PurchaseOrder[]
+  financeEntries FinanceEntry[]
+
+  @@map("suppliers")
+}
+
+// ---------- Cadastro: animais ----------
+
+enum AnimalSexo {
+  MACHO
+  FEMEA
+  CASTRADO
+}
+
+enum AnimalStatus {
+  ATIVO
+  VENDIDO
+  EMPRESTADO
+  OBITO
+  INATIVO
+}
+
+model Animal {
+  id             String       @id @default(cuid())
+  name           String
+  registro       String?      @unique
+  especie        String       @default("Equino")
+  raca           String?
+  sexo           AnimalSexo?
+  pelagem        String?
+  dataNascimento DateTime?
+  microchip      String?      @unique
+  peso           Decimal?     @db.Decimal(8, 2)
+  altura         Decimal?     @db.Decimal(5, 2)
+  status         AnimalStatus @default(ATIVO)
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  ownerId String?
+  owner   Owner?  @relation(fields: [ownerId], references: [id])
+
+  paiId         String?
+  pai           Animal?  @relation("AnimalPai", fields: [paiId], references: [id])
+  filhosComoPai Animal[] @relation("AnimalPai")
+
+  maeId         String?
+  mae           Animal?  @relation("AnimalMae", fields: [maeId], references: [id])
+  filhosComoMae Animal[] @relation("AnimalMae")
+
+  photos    AnimalPhoto[]
+  documents AnimalDocument[]
+
+  trainingSessions  TrainingSession[]
+  diets             AnimalDiet[]
+  stallEvents       StallEvent[]
+  currentStall      Stall?             @relation("StallOccupant")
+  agendaEvents      AgendaEvent[]
+  competitions      Competition[]
+  transportLinks    TransportAnimal[]
+  financialEntries  FinancialEntry[]
+  transactions      AnimalTransaction[]
+
+  @@map("animals")
+}
+
+model AnimalPhoto {
+  id        String   @id @default(cuid())
+  animalId  String
+  animal    Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  url       String
+  caption   String?
+  createdAt DateTime @default(now())
+
+  @@map("animal_photos")
+}
+
+model AnimalDocument {
+  id        String   @id @default(cuid())
+  animalId  String
+  animal    Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  name      String
+  url       String
+  type      String?
+  createdAt DateTime @default(now())
+
+  @@map("animal_documents")
+}
+
+// ---------- Hípica ----------
+
+enum ExerciseType {
+  EXERCICIO_GERAL
+  SALTO
+  TAMBOR
+  MARCHA
+  CORRIDA
+  ADESTRAMENTO
+  OUTRO
+}
+
+enum Intensity {
+  LEVE
+  MODERADA
+  INTENSA
+}
+
+model TrainingSession {
+  id           String       @id @default(cuid())
+  animalId     String
+  animal       Animal       @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  instructorId String?
+  instructor   Instructor?  @relation(fields: [instructorId], references: [id])
+  date         DateTime
+  exerciseType ExerciseType @default(EXERCICIO_GERAL)
+  durationMin  Int?
+  intensity    Intensity?
+  evolution    String?
+  notes        String?
+  createdAt    DateTime     @default(now())
+
+  @@map("training_sessions")
+}
+
+model AnimalDiet {
+  id             String   @id @default(cuid())
+  animalId       String
+  animal         Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  startDate      DateTime @default(now())
+  concentradoKg  Decimal? @db.Decimal(6, 2)
+  fenoKg         Decimal? @db.Decimal(6, 2)
+  silagemKg      Decimal? @db.Decimal(6, 2)
+  suplementos    String?
+  quantidadeDiariaKg Decimal? @db.Decimal(6, 2)
+  custoDiario    Decimal? @db.Decimal(10, 2)
+  active         Boolean  @default(true)
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  @@map("animal_diets")
+}
+
+enum StallStatus {
+  LIVRE
+  OCUPADA
+  LIMPEZA
+  MANUTENCAO
+}
+
+model Stall {
+  id              String       @id @default(cuid())
+  code            String       @unique
+  location        String?
+  capacity        Int          @default(1)
+  status          StallStatus  @default(LIVRE)
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  currentAnimalId String?      @unique
+  currentAnimal   Animal?      @relation("StallOccupant", fields: [currentAnimalId], references: [id])
+
+  events          StallEvent[]
+
+  @@map("stalls")
+}
+
+enum StallEventType {
+  OCUPACAO
+  DESOCUPACAO
+  LIMPEZA
+  MANUTENCAO
+  TROCA
+}
+
+model StallEvent {
+  id        String         @id @default(cuid())
+  stallId   String
+  stall     Stall          @relation(fields: [stallId], references: [id], onDelete: Cascade)
+  type      StallEventType
+  date      DateTime       @default(now())
+  animalId  String?
+  animal    Animal?        @relation(fields: [animalId], references: [id])
+  notes     String?
+  createdAt DateTime       @default(now())
+
+  @@map("stall_events")
+}
+
+enum AgendaEventType {
+  FERRADOR
+  VETERINARIO
+  VACINA
+  COMPETICAO
+  TRANSPORTE
+  OUTRO
+}
+
+enum AgendaEventStatus {
+  AGENDADO
+  CONCLUIDO
+  CANCELADO
+}
+
+model AgendaEvent {
+  id        String            @id @default(cuid())
+  title     String
+  type      AgendaEventType   @default(OUTRO)
+  date      DateTime
+  animalId  String?
+  animal    Animal?           @relation(fields: [animalId], references: [id])
+  status    AgendaEventStatus @default(AGENDADO)
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@map("agenda_events")
+}
+
+model Competition {
+  id        String   @id @default(cuid())
+  animalId  String
+  animal    Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  name      String
+  date      DateTime
+  location  String?
+  category  String?
+  result    String?
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@map("competitions")
+}
+
+model Transport {
+  id          String            @id @default(cuid())
+  date        DateTime
+  origin      String?
+  destination String?
+  driver      String?
+  vehicle     String?
+  notes       String?
+  createdAt   DateTime          @default(now())
+
+  animals     TransportAnimal[]
+
+  @@map("transports")
+}
+
+model TransportAnimal {
+  id          String    @id @default(cuid())
+  transportId String
+  transport   Transport @relation(fields: [transportId], references: [id], onDelete: Cascade)
+  animalId    String
+  animal      Animal    @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@unique([transportId, animalId])
+  @@map("transport_animals")
+}
+
+enum FinancialEntryType {
+  MENSALIDADE
+  HOSPEDAGEM
+  TREINAMENTO
+  VETERINARIO
+  MEDICAMENTO
+  OUTRO
+}
+
+enum FinancialEntryStatus {
+  PENDENTE
+  PAGO
+  ATRASADO
+  CANCELADO
+}
+
+model FinancialEntry {
+  id          String                @id @default(cuid())
+  type        FinancialEntryType    @default(OUTRO)
+  description String
+  amount      Decimal               @db.Decimal(12, 2)
+  dueDate     DateTime?
+  paidDate    DateTime?
+  status      FinancialEntryStatus  @default(PENDENTE)
+  animalId    String?
+  animal      Animal?               @relation(fields: [animalId], references: [id])
+  clientId    String?
+  client      Client?               @relation(fields: [clientId], references: [id])
+  notes       String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@map("financial_entries")
+}
+
+enum AnimalTransactionType {
+  COMPRA
+  VENDA
+  LEILAO
+}
+
+model AnimalTransaction {
+  id               String                 @id @default(cuid())
+  animalId         String
+  animal           Animal                 @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  type             AnimalTransactionType
+  date             DateTime
+  value            Decimal                @db.Decimal(12, 2)
+  commission       Decimal?               @db.Decimal(12, 2)
+  counterpartyName String?
+  notes            String?
+  createdAt        DateTime               @default(now())
+
+  @@map("animal_transactions")
+}
+
+// ---------- Pecuária ----------
+
+enum LivestockCategory {
+  CORTE
+  LEITE
+  CONFINAMENTO
+  CRIA
+  RECRIA
+  ENGORDA
+  REPRODUTOR
+  OUTRO
+}
+
+enum LivestockStatus {
+  ATIVO
+  VENDIDO
+  ABATIDO
+  OBITO
+  INATIVO
+}
+
+model Lote {
+  id          String             @id @default(cuid())
+  code        String             @unique
+  name        String?
+  category    LivestockCategory?
+  description String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  animals   LivestockAnimal[]
+  feedings  LivestockFeeding[]
+  movements ManagementMovement[]
+
+  @@map("lotes")
+}
+
+enum PastureRotationStatus {
+  EM_USO
+  DESCANSO
+}
+
+model Pasture {
+  id              String                 @id @default(cuid())
+  code            String                 @unique
+  name            String?
+  areaHectares    Decimal?               @db.Decimal(10, 2)
+  capacityHead    Int?
+  rotationStatus  PastureRotationStatus  @default(EM_USO)
+  grassHeightCm   Decimal?               @db.Decimal(5, 2)
+  notes           String?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  animals LivestockAnimal[]
+
+  @@map("pastures")
+}
+
+model LivestockAnimal {
+  id             String            @id @default(cuid())
+  brinco         String            @unique
+  rfid           String?           @unique
+  name           String?
+  sexo           AnimalSexo?
+  raca           String?
+  category       LivestockCategory @default(OUTRO)
+  dataNascimento DateTime?
+  pesoAtual      Decimal?          @db.Decimal(8, 2)
+  status         LivestockStatus   @default(ATIVO)
+  notes          String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  loteId String?
+  lote   Lote?   @relation(fields: [loteId], references: [id])
+
+  pastureId String?
+  pasture   Pasture? @relation(fields: [pastureId], references: [id])
+
+  weighings          WeightRecord[]
+  healthRecords      HealthRecord[]
+  reproductions      Reproduction[]
+  milkProductions    MilkProduction[]
+  movements          ManagementMovement[]
+
+  @@map("livestock_animals")
+}
+
+enum ReproductionMethod {
+  IA
+  MONTA_NATURAL
+}
+
+enum DiagnosisResult {
+  PRENHE
+  VAZIA
+  INDEFINIDO
+}
+
+model Reproduction {
+  id                String               @id @default(cuid())
+  animalId          String
+  animal            LivestockAnimal      @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  method            ReproductionMethod
+  date              DateTime
+  diagnosisDate     DateTime?
+  diagnosisResult   DiagnosisResult?
+  expectedBirthDate DateTime?
+  birthDate         DateTime?
+  weaningDate       DateTime?
+  notes             String?
+  createdAt         DateTime             @default(now())
+
+  @@map("reproductions")
+}
+
+enum HealthRecordType {
+  VACINA_BRUCELOSE
+  VACINA_AFTOSA
+  CARRAPATICIDA
+  VERMIFUGO
+  TRATAMENTO
+  OUTRO
+}
+
+model HealthRecord {
+  id            String           @id @default(cuid())
+  animalId      String
+  animal        LivestockAnimal  @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  type          HealthRecordType
+  date          DateTime
+  product       String?
+  nextDoseDate  DateTime?
+  notes         String?
+  createdAt     DateTime         @default(now())
+
+  @@map("health_records")
+}
+
+model WeightRecord {
+  id        String          @id @default(cuid())
+  animalId  String
+  animal    LivestockAnimal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  date      DateTime
+  weightKg  Decimal         @db.Decimal(8, 2)
+  notes     String?
+  createdAt DateTime        @default(now())
+
+  @@map("weight_records")
+}
+
+enum MilkShift {
+  MANHA
+  TARDE
+}
+
+model MilkProduction {
+  id        String          @id @default(cuid())
+  animalId  String
+  animal    LivestockAnimal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  date      DateTime
+  shift     MilkShift?
+  liters    Decimal         @db.Decimal(6, 2)
+  ccs       Decimal?        @db.Decimal(10, 2)
+  cbt       Decimal?        @db.Decimal(10, 2)
+  notes     String?
+  createdAt DateTime        @default(now())
+
+  @@map("milk_productions")
+}
+
+enum FeedingType {
+  PASTO
+  CONFINAMENTO
+  SEMI_CONFINAMENTO
+}
+
+model LivestockFeeding {
+  id                String      @id @default(cuid())
+  loteId            String
+  lote              Lote        @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  date              DateTime
+  type              FeedingType @default(PASTO)
+  silagemKg         Decimal?    @db.Decimal(8, 2)
+  suplementacaoKg   Decimal?    @db.Decimal(8, 2)
+  consumoKg         Decimal?    @db.Decimal(8, 2)
+  custoDiario       Decimal?    @db.Decimal(10, 2)
+  notes             String?
+  createdAt         DateTime    @default(now())
+
+  @@map("livestock_feedings")
+}
+
+enum ManagementMovementType {
+  MOVIMENTACAO
+  EMBARQUE
+  COMPRA
+  VENDA
+}
+
+model ManagementMovement {
+  id               String                  @id @default(cuid())
+  animalId         String?
+  animal           LivestockAnimal?        @relation(fields: [animalId], references: [id])
+  loteId           String?
+  lote             Lote?                   @relation(fields: [loteId], references: [id])
+  type             ManagementMovementType
+  date             DateTime
+  origin           String?
+  destination      String?
+  value            Decimal?                @db.Decimal(12, 2)
+  counterpartyName String?
+  notes            String?
+  createdAt        DateTime                @default(now())
+
+  @@map("management_movements")
+}
+
+// ---------- Agricultura ----------
+
+model Talhao {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  name         String?
+  areaHectares Decimal? @db.Decimal(10, 2)
+  soilType     String?
+  coordinates  String?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  safras      Safra[]
+  fertilities Fertility[]
+  irrigations Irrigation[]
+  usageLogs   UsageLog[]
+
+  @@map("talhoes")
+}
+
+enum SafraStatus {
+  PLANEJADA
+  EM_ANDAMENTO
+  COLHIDA
+  CANCELADA
+}
+
+model Safra {
+  id             String      @id @default(cuid())
+  talhaoId       String
+  talhao         Talhao      @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
+  name           String
+  cultura        String
+  variedade      String?
+  dataInicio     DateTime?
+  dataFimPrevista DateTime?
+  custoPrevisto  Decimal?    @db.Decimal(12, 2)
+  status         SafraStatus @default(PLANEJADA)
+  notes          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  plantios       Plantio[]
+  tratos         TratoCultural[]
+  colheitas      Harvest[]
+  storageMovements StorageMovement[]
+
+  @@map("safras")
+}
+
+model Plantio {
+  id                 String   @id @default(cuid())
+  safraId            String
+  safra              Safra    @relation(fields: [safraId], references: [id], onDelete: Cascade)
+  date               DateTime
+  sementes           String?
+  populacaoPlantasHa Decimal? @db.Decimal(10, 2)
+  maquina            String?
+  operador           String?
+  tempoHoras         Decimal? @db.Decimal(6, 2)
+  notes              String?
+  createdAt          DateTime @default(now())
+
+  @@map("plantios")
+}
+
+enum TratoCulturalType {
+  ADUBACAO
+  PULVERIZACAO
+  HERBICIDA
+  INSETICIDA
+  FUNGICIDA
+  OUTRO
+}
+
+model TratoCultural {
+  id        String            @id @default(cuid())
+  safraId   String
+  safra     Safra             @relation(fields: [safraId], references: [id], onDelete: Cascade)
+  type      TratoCulturalType
+  date      DateTime
+  product   String?
+  dose      String?
+  operador  String?
+  notes     String?
+  createdAt DateTime          @default(now())
+
+  @@map("tratos_culturais")
+}
+
+enum FertilityType {
+  ANALISE_SOLO
+  CALAGEM
+  GESSAGEM
+  CORRECAO
+  OUTRO
+}
+
+model Fertility {
+  id            String        @id @default(cuid())
+  talhaoId      String
+  talhao        Talhao        @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
+  type          FertilityType
+  date          DateTime
+  ph            Decimal?      @db.Decimal(4, 2)
+  results       String?
+  recommendation String?
+  notes         String?
+  createdAt     DateTime      @default(now())
+
+  @@map("fertilities")
+}
+
+model Irrigation {
+  id          String   @id @default(cuid())
+  talhaoId    String
+  talhao      Talhao   @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
+  date        DateTime
+  consumoM3   Decimal? @db.Decimal(10, 2)
+  horasBomba  Decimal? @db.Decimal(6, 2)
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@map("irrigations")
+}
+
+model Harvest {
+  id          String   @id @default(cuid())
+  safraId     String
+  safra       Safra    @relation(fields: [safraId], references: [id], onDelete: Cascade)
+  date        DateTime
+  producaoKg  Decimal? @db.Decimal(12, 2)
+  umidade     Decimal? @db.Decimal(5, 2)
+  qualidade   String?
+  maquina     String?
+  operador    String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@map("harvests")
+}
+
+enum StorageType {
+  SILO
+  ARMAZEM
+}
+
+model Storage {
+  id           String      @id @default(cuid())
+  code         String      @unique
+  name         String?
+  type         StorageType @default(SILO)
+  capacityTon  Decimal?    @db.Decimal(10, 2)
+  notes        String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  movements StorageMovement[]
+
+  @@map("storages")
+}
+
+enum StorageMovementType {
+  ENTRADA
+  SAIDA
+  QUEBRA
+}
+
+model StorageMovement {
+  id           String              @id @default(cuid())
+  storageId    String
+  storage      Storage             @relation(fields: [storageId], references: [id], onDelete: Cascade)
+  safraId      String?
+  safra        Safra?              @relation(fields: [safraId], references: [id])
+  type         StorageMovementType
+  date         DateTime
+  quantityTon  Decimal             @db.Decimal(10, 2)
+  umidade      Decimal?            @db.Decimal(5, 2)
+  notes        String?
+  createdAt    DateTime            @default(now())
+
+  @@map("storage_movements")
+}
+
+// ---------- Máquinas e Equipamentos ----------
+
+enum MachineType {
+  TRATOR
+  COLHEITADEIRA
+  PULVERIZADOR
+  CAMINHAO
+  IMPLEMENTO
+  CARRETA
+  OUTRO
+}
+
+enum MachineStatus {
+  ATIVO
+  MANUTENCAO
+  INATIVO
+  VENDIDO
+}
+
+model Machine {
+  id              String        @id @default(cuid())
+  type            MachineType   @default(OUTRO)
+  brand           String?
+  model           String?
+  plateOrSerial   String?       @unique
+  year            Int?
+  acquisitionDate DateTime?
+  status          MachineStatus @default(ATIVO)
+  horimetroAtual  Decimal?      @db.Decimal(10, 1)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  usageLogs     UsageLog[]
+  maintenances  Maintenance[]
+  serviceOrders ServiceOrder[]
+
+  @@map("machines")
+}
+
+model UsageLog {
+  id                 String   @id @default(cuid())
+  machineId          String
+  machine            Machine  @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  date               DateTime
+  horimetro          Decimal  @db.Decimal(10, 1)
+  combustivelLitros  Decimal? @db.Decimal(8, 2)
+  operador           String?
+  talhaoId           String?
+  talhao             Talhao?  @relation(fields: [talhaoId], references: [id])
+  notes              String?
+  createdAt          DateTime @default(now())
+
+  @@map("usage_logs")
+}
+
+enum MaintenanceType {
+  PREVENTIVA
+  CORRETIVA
+  TROCA_OLEO
+  TROCA_PNEU
+  LUBRIFICACAO
+  OUTRO
+}
+
+model Maintenance {
+  id                String          @id @default(cuid())
+  machineId         String
+  machine           Machine         @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  type              MaintenanceType
+  date              DateTime
+  description       String?
+  cost              Decimal?        @db.Decimal(12, 2)
+  horimetro         Decimal?        @db.Decimal(10, 1)
+  nextDueDate       DateTime?
+  nextDueHorimetro  Decimal?        @db.Decimal(10, 1)
+  notes             String?
+  createdAt         DateTime        @default(now())
+
+  @@map("maintenances")
+}
+
+// ---------- Estoque ----------
+
+enum StockCategory {
+  MEDICAMENTO
+  INSUMO
+  RACAO
+  FERRAMENTA
+  PECA
+  COMBUSTIVEL
+  EPI
+  MATERIAL
+  OUTRO
+}
+
+model StockItem {
+  id              String        @id @default(cuid())
+  code            String        @unique
+  name            String
+  category        StockCategory @default(OUTRO)
+  unit            String?
+  minQuantity     Decimal?      @db.Decimal(10, 2)
+  currentQuantity Decimal       @default(0) @db.Decimal(10, 2)
+  barcode         String?       @unique
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  batches           StockBatch[]
+  purchaseRequests  PurchaseRequest[]
+  serviceOrderParts ServiceOrderPart[]
+
+  @@map("stock_items")
+}
+
+enum StockBatchStatus {
+  DISPONIVEL
+  CONSUMIDO
+}
+
+model StockBatch {
+  id             String           @id @default(cuid())
+  stockItemId    String
+  stockItem      StockItem        @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  batchNumber    String?
+  quantity       Decimal          @db.Decimal(10, 2)
+  expiryDate     DateTime?
+  entryDate      DateTime         @default(now())
+  supplierName   String?
+  status         StockBatchStatus @default(DISPONIVEL)
+  notes          String?
+  createdAt      DateTime         @default(now())
+
+  @@map("stock_batches")
+}
+
+// ---------- Compras ----------
+
+enum PurchaseRequestStatus {
+  PENDENTE
+  APROVADA
+  REJEITADA
+  ATENDIDA
+}
+
+model PurchaseRequest {
+  id            String                @id @default(cuid())
+  description   String
+  quantity      Decimal               @db.Decimal(10, 2)
+  unit          String?
+  requestedBy   String?
+  date          DateTime
+  justification String?
+  status        PurchaseRequestStatus @default(PENDENTE)
+  stockItemId   String?
+  stockItem     StockItem?            @relation(fields: [stockItemId], references: [id])
+  notes         String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  quotations Quotation[]
+
+  @@map("purchase_requests")
+}
+
+enum QuotationStatus {
+  PENDENTE
+  APROVADA
+  RECUSADA
+}
+
+model Quotation {
+  id                String          @id @default(cuid())
+  purchaseRequestId String?
+  purchaseRequest   PurchaseRequest? @relation(fields: [purchaseRequestId], references: [id])
+  supplierId        String
+  supplier          Supplier        @relation(fields: [supplierId], references: [id])
+  description       String?
+  unitPrice         Decimal?        @db.Decimal(12, 2)
+  quantity          Decimal?        @db.Decimal(10, 2)
+  totalValue        Decimal?        @db.Decimal(12, 2)
+  validUntil        DateTime?
+  status            QuotationStatus @default(PENDENTE)
+  notes             String?
+  createdAt         DateTime        @default(now())
+
+  purchaseOrders PurchaseOrder[]
+
+  @@map("quotations")
+}
+
+enum PurchaseOrderStatus {
+  PENDENTE
+  ENVIADO
+  ENTREGUE
+  CANCELADO
+}
+
+model PurchaseOrder {
+  id                   String              @id @default(cuid())
+  supplierId           String
+  supplier             Supplier            @relation(fields: [supplierId], references: [id])
+  quotationId          String?
+  quotation            Quotation?          @relation(fields: [quotationId], references: [id])
+  orderDate            DateTime
+  expectedDeliveryDate DateTime?
+  actualDeliveryDate   DateTime?
+  invoiceNumber        String?
+  totalValue           Decimal?            @db.Decimal(12, 2)
+  status               PurchaseOrderStatus @default(PENDENTE)
+  notes                String?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  @@map("purchase_orders")
+}
+
+// ---------- Financeiro ----------
+
+model CostCenter {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entries FinanceEntry[]
+
+  @@map("cost_centers")
+}
+
+enum FinanceEntryType {
+  PAGAR
+  RECEBER
+}
+
+enum FinanceEntryStatus {
+  PENDENTE
+  PAGO
+  ATRASADO
+  CANCELADO
+}
+
+enum PaymentMethod {
+  PIX
+  BOLETO
+  CARTAO
+  CHEQUE
+  DINHEIRO
+  TRANSFERENCIA
+  OUTRO
+}
+
+model FinanceEntry {
+  id            String              @id @default(cuid())
+  type          FinanceEntryType
+  description   String
+  amount        Decimal             @db.Decimal(12, 2)
+  dueDate       DateTime
+  paymentDate   DateTime?
+  status        FinanceEntryStatus  @default(PENDENTE)
+  paymentMethod PaymentMethod?
+  costCenterId  String?
+  costCenter    CostCenter?         @relation(fields: [costCenterId], references: [id])
+  supplierId    String?
+  supplier      Supplier?           @relation(fields: [supplierId], references: [id])
+  clientId      String?
+  client        Client?             @relation(fields: [clientId], references: [id])
+  notes         String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@map("finance_entries")
+}
+
+// ---------- Recursos Humanos ----------
+
+enum AttendanceStatus {
+  PRESENTE
+  FALTA
+  ATESTADO
+  FERIAS
+  FOLGA
+}
+
+model Attendance {
+  id          String           @id @default(cuid())
+  employeeId  String
+  employee    Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  date        DateTime
+  status      AttendanceStatus @default(PRESENTE)
+  hoursWorked Decimal?         @db.Decimal(5, 2)
+  notes       String?
+  createdAt   DateTime         @default(now())
+
+  @@map("attendances")
+}
+
+enum ScheduleShift {
+  MANHA
+  TARDE
+  NOITE
+  INTEGRAL
+  FOLGA
+}
+
+model Schedule {
+  id         String        @id @default(cuid())
+  employeeId String
+  employee   Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  startDate  DateTime
+  endDate    DateTime?
+  shift      ScheduleShift @default(INTEGRAL)
+  notes      String?
+  createdAt  DateTime      @default(now())
+
+  @@map("schedules")
+}
+
+model Training {
+  id         String    @id @default(cuid())
+  employeeId String
+  employee   Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  name       String
+  date       DateTime
+  provider   String?
+  validUntil DateTime?
+  notes      String?
+  createdAt  DateTime  @default(now())
+
+  @@map("trainings")
+}
+
+model EpiIssuance {
+  id         String    @id @default(cuid())
+  employeeId String
+  employee   Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  itemName   String
+  issueDate  DateTime
+  validUntil DateTime?
+  notes      String?
+  createdAt  DateTime  @default(now())
+
+  @@map("epi_issuances")
+}
+
+// ---------- Oficina ----------
+
+model Mechanic {
+  id        String   @id @default(cuid())
+  name      String
+  cpf       String?  @unique
+  phone     String?
+  specialty String?
+  active    Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  serviceOrders ServiceOrder[]
+
+  @@map("mechanics")
+}
+
+enum ServiceOrderStatus {
+  ABERTA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+model ServiceOrder {
+  id          String             @id @default(cuid())
+  machineId   String
+  machine     Machine            @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  mechanicId  String?
+  mechanic    Mechanic?          @relation(fields: [mechanicId], references: [id])
+  description String
+  openDate    DateTime
+  closeDate   DateTime?
+  status      ServiceOrderStatus @default(ABERTA)
+  laborCost   Decimal?           @db.Decimal(12, 2)
+  notes       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  parts ServiceOrderPart[]
+
+  @@map("service_orders")
+}
+
+model ServiceOrderPart {
+  id             String       @id @default(cuid())
+  serviceOrderId String
+  serviceOrder   ServiceOrder @relation(fields: [serviceOrderId], references: [id], onDelete: Cascade)
+  stockItemId    String
+  stockItem      StockItem    @relation(fields: [stockItemId], references: [id])
+  quantity       Decimal      @db.Decimal(10, 2)
+  unitCost       Decimal?     @db.Decimal(12, 2)
+  createdAt      DateTime     @default(now())
+
+  @@map("service_order_parts")
+}
