@@ -60,10 +60,10 @@ model Employee {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  attendances    Attendance[]
-  schedules      Schedule[]
-  trainings      Training[]
-  epiIssuances   EpiIssuance[]
+  attendances  Attendance[]
+  schedules    Schedule[]
+  trainings    Training[]
+  epiIssuances EpiIssuance[]
 
   @@map("employees")
 }
@@ -130,17 +130,20 @@ model Handler {
 }
 
 model Client {
-  id        String   @id @default(cuid())
-  name      String
-  cpfCnpj   String?  @unique
-  email     String?
-  phone     String?
-  address   String?
-  city      String?
-  state     String?
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String
+  cpfCnpj      String?  @unique
+  email        String?
+  phone        String?
+  address      String?
+  zipCode      String?
+  streetNumber String?
+  neighborhood String?
+  city         String?
+  state        String?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   financialEntries FinancialEntry[]
   financeEntries   FinanceEntry[]
@@ -216,15 +219,15 @@ model Animal {
   photos    AnimalPhoto[]
   documents AnimalDocument[]
 
-  trainingSessions  TrainingSession[]
-  diets             AnimalDiet[]
-  stallEvents       StallEvent[]
-  currentStall      Stall?             @relation("StallOccupant")
-  agendaEvents      AgendaEvent[]
-  competitions      Competition[]
-  transportLinks    TransportAnimal[]
-  financialEntries  FinancialEntry[]
-  transactions      AnimalTransaction[]
+  trainingSessions TrainingSession[]
+  diets            AnimalDiet[]
+  stallEvents      StallEvent[]
+  currentStall     Stall?              @relation("StallOccupant")
+  agendaEvents     AgendaEvent[]
+  competitions     Competition[]
+  transportLinks   TransportAnimal[]
+  financialEntries FinancialEntry[]
+  transactions     AnimalTransaction[]
 
   @@map("animals")
 }
@@ -288,19 +291,19 @@ model TrainingSession {
 }
 
 model AnimalDiet {
-  id             String   @id @default(cuid())
-  animalId       String
-  animal         Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
-  startDate      DateTime @default(now())
-  concentradoKg  Decimal? @db.Decimal(6, 2)
-  fenoKg         Decimal? @db.Decimal(6, 2)
-  silagemKg      Decimal? @db.Decimal(6, 2)
-  suplementos    String?
+  id                 String   @id @default(cuid())
+  animalId           String
+  animal             Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  startDate          DateTime @default(now())
+  concentradoKg      Decimal? @db.Decimal(6, 2)
+  fenoKg             Decimal? @db.Decimal(6, 2)
+  silagemKg          Decimal? @db.Decimal(6, 2)
+  suplementos        String?
   quantidadeDiariaKg Decimal? @db.Decimal(6, 2)
-  custoDiario    Decimal? @db.Decimal(10, 2)
-  active         Boolean  @default(true)
-  notes          String?
-  createdAt      DateTime @default(now())
+  custoDiario        Decimal? @db.Decimal(10, 2)
+  active             Boolean  @default(true)
+  notes              String?
+  createdAt          DateTime @default(now())
 
   @@map("animal_diets")
 }
@@ -313,19 +316,19 @@ enum StallStatus {
 }
 
 model Stall {
-  id              String       @id @default(cuid())
-  code            String       @unique
-  location        String?
-  capacity        Int          @default(1)
-  status          StallStatus  @default(LIVRE)
-  notes           String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id        String      @id @default(cuid())
+  code      String      @unique
+  location  String?
+  capacity  Int         @default(1)
+  status    StallStatus @default(LIVRE)
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
-  currentAnimalId String?      @unique
-  currentAnimal   Animal?      @relation("StallOccupant", fields: [currentAnimalId], references: [id])
+  currentAnimalId String? @unique
+  currentAnimal   Animal? @relation("StallOccupant", fields: [currentAnimalId], references: [id])
 
-  events          StallEvent[]
+  events StallEvent[]
 
   @@map("stalls")
 }
@@ -398,16 +401,16 @@ model Competition {
 }
 
 model Transport {
-  id          String            @id @default(cuid())
+  id          String   @id @default(cuid())
   date        DateTime
   origin      String?
   destination String?
   driver      String?
   vehicle     String?
   notes       String?
-  createdAt   DateTime          @default(now())
+  createdAt   DateTime @default(now())
 
-  animals     TransportAnimal[]
+  animals TransportAnimal[]
 
   @@map("transports")
 }
@@ -440,20 +443,20 @@ enum FinancialEntryStatus {
 }
 
 model FinancialEntry {
-  id          String                @id @default(cuid())
-  type        FinancialEntryType    @default(OUTRO)
+  id          String               @id @default(cuid())
+  type        FinancialEntryType   @default(OUTRO)
   description String
-  amount      Decimal               @db.Decimal(12, 2)
+  amount      Decimal              @db.Decimal(12, 2)
   dueDate     DateTime?
   paidDate    DateTime?
-  status      FinancialEntryStatus  @default(PENDENTE)
+  status      FinancialEntryStatus @default(PENDENTE)
   animalId    String?
-  animal      Animal?               @relation(fields: [animalId], references: [id])
+  animal      Animal?              @relation(fields: [animalId], references: [id])
   clientId    String?
-  client      Client?               @relation(fields: [clientId], references: [id])
+  client      Client?              @relation(fields: [clientId], references: [id])
   notes       String?
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 
   @@map("financial_entries")
 }
@@ -465,16 +468,16 @@ enum AnimalTransactionType {
 }
 
 model AnimalTransaction {
-  id               String                 @id @default(cuid())
+  id               String                @id @default(cuid())
   animalId         String
-  animal           Animal                 @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  animal           Animal                @relation(fields: [animalId], references: [id], onDelete: Cascade)
   type             AnimalTransactionType
   date             DateTime
-  value            Decimal                @db.Decimal(12, 2)
-  commission       Decimal?               @db.Decimal(12, 2)
+  value            Decimal               @db.Decimal(12, 2)
+  commission       Decimal?              @db.Decimal(12, 2)
   counterpartyName String?
   notes            String?
-  createdAt        DateTime               @default(now())
+  createdAt        DateTime              @default(now())
 
   @@map("animal_transactions")
 }
@@ -522,16 +525,16 @@ enum PastureRotationStatus {
 }
 
 model Pasture {
-  id              String                 @id @default(cuid())
-  code            String                 @unique
-  name            String?
-  areaHectares    Decimal?               @db.Decimal(10, 2)
-  capacityHead    Int?
-  rotationStatus  PastureRotationStatus  @default(EM_USO)
-  grassHeightCm   Decimal?               @db.Decimal(5, 2)
-  notes           String?
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
+  id             String                @id @default(cuid())
+  code           String                @unique
+  name           String?
+  areaHectares   Decimal?              @db.Decimal(10, 2)
+  capacityHead   Int?
+  rotationStatus PastureRotationStatus @default(EM_USO)
+  grassHeightCm  Decimal?              @db.Decimal(5, 2)
+  notes          String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
 
   animals LivestockAnimal[]
 
@@ -559,11 +562,11 @@ model LivestockAnimal {
   pastureId String?
   pasture   Pasture? @relation(fields: [pastureId], references: [id])
 
-  weighings          WeightRecord[]
-  healthRecords      HealthRecord[]
-  reproductions      Reproduction[]
-  milkProductions    MilkProduction[]
-  movements          ManagementMovement[]
+  weighings       WeightRecord[]
+  healthRecords   HealthRecord[]
+  reproductions   Reproduction[]
+  milkProductions MilkProduction[]
+  movements       ManagementMovement[]
 
   @@map("livestock_animals")
 }
@@ -580,9 +583,9 @@ enum DiagnosisResult {
 }
 
 model Reproduction {
-  id                String               @id @default(cuid())
+  id                String             @id @default(cuid())
   animalId          String
-  animal            LivestockAnimal      @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  animal            LivestockAnimal    @relation(fields: [animalId], references: [id], onDelete: Cascade)
   method            ReproductionMethod
   date              DateTime
   diagnosisDate     DateTime?
@@ -591,7 +594,7 @@ model Reproduction {
   birthDate         DateTime?
   weaningDate       DateTime?
   notes             String?
-  createdAt         DateTime             @default(now())
+  createdAt         DateTime           @default(now())
 
   @@map("reproductions")
 }
@@ -606,15 +609,15 @@ enum HealthRecordType {
 }
 
 model HealthRecord {
-  id            String           @id @default(cuid())
-  animalId      String
-  animal        LivestockAnimal  @relation(fields: [animalId], references: [id], onDelete: Cascade)
-  type          HealthRecordType
-  date          DateTime
-  product       String?
-  nextDoseDate  DateTime?
-  notes         String?
-  createdAt     DateTime         @default(now())
+  id           String           @id @default(cuid())
+  animalId     String
+  animal       LivestockAnimal  @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  type         HealthRecordType
+  date         DateTime
+  product      String?
+  nextDoseDate DateTime?
+  notes        String?
+  createdAt    DateTime         @default(now())
 
   @@map("health_records")
 }
@@ -658,17 +661,17 @@ enum FeedingType {
 }
 
 model LivestockFeeding {
-  id                String      @id @default(cuid())
-  loteId            String
-  lote              Lote        @relation(fields: [loteId], references: [id], onDelete: Cascade)
-  date              DateTime
-  type              FeedingType @default(PASTO)
-  silagemKg         Decimal?    @db.Decimal(8, 2)
-  suplementacaoKg   Decimal?    @db.Decimal(8, 2)
-  consumoKg         Decimal?    @db.Decimal(8, 2)
-  custoDiario       Decimal?    @db.Decimal(10, 2)
-  notes             String?
-  createdAt         DateTime    @default(now())
+  id              String      @id @default(cuid())
+  loteId          String
+  lote            Lote        @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  date            DateTime
+  type            FeedingType @default(PASTO)
+  silagemKg       Decimal?    @db.Decimal(8, 2)
+  suplementacaoKg Decimal?    @db.Decimal(8, 2)
+  consumoKg       Decimal?    @db.Decimal(8, 2)
+  custoDiario     Decimal?    @db.Decimal(10, 2)
+  notes           String?
+  createdAt       DateTime    @default(now())
 
   @@map("livestock_feedings")
 }
@@ -681,19 +684,19 @@ enum ManagementMovementType {
 }
 
 model ManagementMovement {
-  id               String                  @id @default(cuid())
+  id               String                 @id @default(cuid())
   animalId         String?
-  animal           LivestockAnimal?        @relation(fields: [animalId], references: [id])
+  animal           LivestockAnimal?       @relation(fields: [animalId], references: [id])
   loteId           String?
-  lote             Lote?                   @relation(fields: [loteId], references: [id])
+  lote             Lote?                  @relation(fields: [loteId], references: [id])
   type             ManagementMovementType
   date             DateTime
   origin           String?
   destination      String?
-  value            Decimal?                @db.Decimal(12, 2)
+  value            Decimal?               @db.Decimal(12, 2)
   counterpartyName String?
   notes            String?
-  createdAt        DateTime                @default(now())
+  createdAt        DateTime               @default(now())
 
   @@map("management_movements")
 }
@@ -727,23 +730,23 @@ enum SafraStatus {
 }
 
 model Safra {
-  id             String      @id @default(cuid())
-  talhaoId       String
-  talhao         Talhao      @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
-  name           String
-  cultura        String
-  variedade      String?
-  dataInicio     DateTime?
+  id              String      @id @default(cuid())
+  talhaoId        String
+  talhao          Talhao      @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
+  name            String
+  cultura         String
+  variedade       String?
+  dataInicio      DateTime?
   dataFimPrevista DateTime?
-  custoPrevisto  Decimal?    @db.Decimal(12, 2)
-  status         SafraStatus @default(PLANEJADA)
-  notes          String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  custoPrevisto   Decimal?    @db.Decimal(12, 2)
+  status          SafraStatus @default(PLANEJADA)
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
-  plantios       Plantio[]
-  tratos         TratoCultural[]
-  colheitas      Harvest[]
+  plantios         Plantio[]
+  tratos           TratoCultural[]
+  colheitas        Harvest[]
   storageMovements StorageMovement[]
 
   @@map("safras")
@@ -798,45 +801,45 @@ enum FertilityType {
 }
 
 model Fertility {
-  id            String        @id @default(cuid())
-  talhaoId      String
-  talhao        Talhao        @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
-  type          FertilityType
-  date          DateTime
-  ph            Decimal?      @db.Decimal(4, 2)
-  results       String?
+  id             String        @id @default(cuid())
+  talhaoId       String
+  talhao         Talhao        @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
+  type           FertilityType
+  date           DateTime
+  ph             Decimal?      @db.Decimal(4, 2)
+  results        String?
   recommendation String?
-  notes         String?
-  createdAt     DateTime      @default(now())
+  notes          String?
+  createdAt      DateTime      @default(now())
 
   @@map("fertilities")
 }
 
 model Irrigation {
-  id          String   @id @default(cuid())
-  talhaoId    String
-  talhao      Talhao   @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
-  date        DateTime
-  consumoM3   Decimal? @db.Decimal(10, 2)
-  horasBomba  Decimal? @db.Decimal(6, 2)
-  notes       String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  talhaoId   String
+  talhao     Talhao   @relation(fields: [talhaoId], references: [id], onDelete: Cascade)
+  date       DateTime
+  consumoM3  Decimal? @db.Decimal(10, 2)
+  horasBomba Decimal? @db.Decimal(6, 2)
+  notes      String?
+  createdAt  DateTime @default(now())
 
   @@map("irrigations")
 }
 
 model Harvest {
-  id          String   @id @default(cuid())
-  safraId     String
-  safra       Safra    @relation(fields: [safraId], references: [id], onDelete: Cascade)
-  date        DateTime
-  producaoKg  Decimal? @db.Decimal(12, 2)
-  umidade     Decimal? @db.Decimal(5, 2)
-  qualidade   String?
-  maquina     String?
-  operador    String?
-  notes       String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  safraId    String
+  safra      Safra    @relation(fields: [safraId], references: [id], onDelete: Cascade)
+  date       DateTime
+  producaoKg Decimal? @db.Decimal(12, 2)
+  umidade    Decimal? @db.Decimal(5, 2)
+  qualidade  String?
+  maquina    String?
+  operador   String?
+  notes      String?
+  createdAt  DateTime @default(now())
 
   @@map("harvests")
 }
@@ -847,14 +850,14 @@ enum StorageType {
 }
 
 model Storage {
-  id           String      @id @default(cuid())
-  code         String      @unique
-  name         String?
-  type         StorageType @default(SILO)
-  capacityTon  Decimal?    @db.Decimal(10, 2)
-  notes        String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id          String      @id @default(cuid())
+  code        String      @unique
+  name        String?
+  type        StorageType @default(SILO)
+  capacityTon Decimal?    @db.Decimal(10, 2)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   movements StorageMovement[]
 
@@ -868,17 +871,17 @@ enum StorageMovementType {
 }
 
 model StorageMovement {
-  id           String              @id @default(cuid())
-  storageId    String
-  storage      Storage             @relation(fields: [storageId], references: [id], onDelete: Cascade)
-  safraId      String?
-  safra        Safra?              @relation(fields: [safraId], references: [id])
-  type         StorageMovementType
-  date         DateTime
-  quantityTon  Decimal             @db.Decimal(10, 2)
-  umidade      Decimal?            @db.Decimal(5, 2)
-  notes        String?
-  createdAt    DateTime            @default(now())
+  id          String              @id @default(cuid())
+  storageId   String
+  storage     Storage             @relation(fields: [storageId], references: [id], onDelete: Cascade)
+  safraId     String?
+  safra       Safra?              @relation(fields: [safraId], references: [id])
+  type        StorageMovementType
+  date        DateTime
+  quantityTon Decimal             @db.Decimal(10, 2)
+  umidade     Decimal?            @db.Decimal(5, 2)
+  notes       String?
+  createdAt   DateTime            @default(now())
 
   @@map("storage_movements")
 }
@@ -924,17 +927,17 @@ model Machine {
 }
 
 model UsageLog {
-  id                 String   @id @default(cuid())
-  machineId          String
-  machine            Machine  @relation(fields: [machineId], references: [id], onDelete: Cascade)
-  date               DateTime
-  horimetro          Decimal  @db.Decimal(10, 1)
-  combustivelLitros  Decimal? @db.Decimal(8, 2)
-  operador           String?
-  talhaoId           String?
-  talhao             Talhao?  @relation(fields: [talhaoId], references: [id])
-  notes              String?
-  createdAt          DateTime @default(now())
+  id                String   @id @default(cuid())
+  machineId         String
+  machine           Machine  @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  date              DateTime
+  horimetro         Decimal  @db.Decimal(10, 1)
+  combustivelLitros Decimal? @db.Decimal(8, 2)
+  operador          String?
+  talhaoId          String?
+  talhao            Talhao?  @relation(fields: [talhaoId], references: [id])
+  notes             String?
+  createdAt         DateTime @default(now())
 
   @@map("usage_logs")
 }
@@ -949,18 +952,18 @@ enum MaintenanceType {
 }
 
 model Maintenance {
-  id                String          @id @default(cuid())
-  machineId         String
-  machine           Machine         @relation(fields: [machineId], references: [id], onDelete: Cascade)
-  type              MaintenanceType
-  date              DateTime
-  description       String?
-  cost              Decimal?        @db.Decimal(12, 2)
-  horimetro         Decimal?        @db.Decimal(10, 1)
-  nextDueDate       DateTime?
-  nextDueHorimetro  Decimal?        @db.Decimal(10, 1)
-  notes             String?
-  createdAt         DateTime        @default(now())
+  id               String          @id @default(cuid())
+  machineId        String
+  machine          Machine         @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  type             MaintenanceType
+  date             DateTime
+  description      String?
+  cost             Decimal?        @db.Decimal(12, 2)
+  horimetro        Decimal?        @db.Decimal(10, 1)
+  nextDueDate      DateTime?
+  nextDueHorimetro Decimal?        @db.Decimal(10, 1)
+  notes            String?
+  createdAt        DateTime        @default(now())
 
   @@map("maintenances")
 }
@@ -1005,17 +1008,17 @@ enum StockBatchStatus {
 }
 
 model StockBatch {
-  id             String           @id @default(cuid())
-  stockItemId    String
-  stockItem      StockItem        @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
-  batchNumber    String?
-  quantity       Decimal          @db.Decimal(10, 2)
-  expiryDate     DateTime?
-  entryDate      DateTime         @default(now())
-  supplierName   String?
-  status         StockBatchStatus @default(DISPONIVEL)
-  notes          String?
-  createdAt      DateTime         @default(now())
+  id           String           @id @default(cuid())
+  stockItemId  String
+  stockItem    StockItem        @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  batchNumber  String?
+  quantity     Decimal          @db.Decimal(10, 2)
+  expiryDate   DateTime?
+  entryDate    DateTime         @default(now())
+  supplierName String?
+  status       StockBatchStatus @default(DISPONIVEL)
+  notes        String?
+  createdAt    DateTime         @default(now())
 
   @@map("stock_batches")
 }
@@ -1056,19 +1059,19 @@ enum QuotationStatus {
 }
 
 model Quotation {
-  id                String          @id @default(cuid())
+  id                String           @id @default(cuid())
   purchaseRequestId String?
   purchaseRequest   PurchaseRequest? @relation(fields: [purchaseRequestId], references: [id])
   supplierId        String
-  supplier          Supplier        @relation(fields: [supplierId], references: [id])
+  supplier          Supplier         @relation(fields: [supplierId], references: [id])
   description       String?
-  unitPrice         Decimal?        @db.Decimal(12, 2)
-  quantity          Decimal?        @db.Decimal(10, 2)
-  totalValue        Decimal?        @db.Decimal(12, 2)
+  unitPrice         Decimal?         @db.Decimal(12, 2)
+  quantity          Decimal?         @db.Decimal(10, 2)
+  totalValue        Decimal?         @db.Decimal(12, 2)
   validUntil        DateTime?
-  status            QuotationStatus @default(PENDENTE)
+  status            QuotationStatus  @default(PENDENTE)
   notes             String?
-  createdAt         DateTime        @default(now())
+  createdAt         DateTime         @default(now())
 
   purchaseOrders PurchaseOrder[]
 
@@ -1140,23 +1143,26 @@ enum PaymentMethod {
 }
 
 model FinanceEntry {
-  id            String              @id @default(cuid())
+  id            String             @id @default(cuid())
   type          FinanceEntryType
   description   String
-  amount        Decimal             @db.Decimal(12, 2)
+  amount        Decimal            @db.Decimal(12, 2)
   dueDate       DateTime
   paymentDate   DateTime?
-  status        FinanceEntryStatus  @default(PENDENTE)
+  status        FinanceEntryStatus @default(PENDENTE)
   paymentMethod PaymentMethod?
   costCenterId  String?
-  costCenter    CostCenter?         @relation(fields: [costCenterId], references: [id])
+  costCenter    CostCenter?        @relation(fields: [costCenterId], references: [id])
   supplierId    String?
-  supplier      Supplier?           @relation(fields: [supplierId], references: [id])
+  supplier      Supplier?          @relation(fields: [supplierId], references: [id])
   clientId      String?
-  client        Client?             @relation(fields: [clientId], references: [id])
+  client        Client?            @relation(fields: [clientId], references: [id])
   notes         String?
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  mpPaymentId   String?            @unique
+  boletoUrl     String?
+  boletoBarcode String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
 
   @@map("finance_entries")
 }

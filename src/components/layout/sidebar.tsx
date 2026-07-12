@@ -16,16 +16,8 @@ export function Sidebar() {
 
   return (
     <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-neutral-200 bg-white">
-      <div className="flex items-center gap-2 border-b border-neutral-200 px-4 py-4">
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center">
-          <Image src="/logo-mark.svg" alt="JHV Agrosystem" width={36} height={36} />
-        </div>
-        <div>
-          <p className="text-sm font-semibold leading-none text-neutral-900">
-            JHV Agrosystem
-          </p>
-          <p className="mt-0.5 text-xs text-neutral-500">Gestão Agropecuária</p>
-        </div>
+      <div className="flex items-center justify-center border-b border-neutral-200 px-4 py-4">
+        <Image src="/JHV_icon.png" alt="JHV Agrosystem" width={44} height={44} unoptimized priority />
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">

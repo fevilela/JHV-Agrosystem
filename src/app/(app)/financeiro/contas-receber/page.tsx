@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, FileCheck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { financeEntryStatusLabels, formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { GerarBoletoButton } from "./gerar-boleto-button";
 import { deleteReceivableAction, markReceivableReceivedAction } from "./actions";
 
 const statusColor: Record<string, string> = {
@@ -80,6 +81,23 @@ export default async function ReceivableListPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
+                      {e.paymentMethod === "BOLETO" &&
+                        e.status !== "PAGO" &&
+                        e.status !== "CANCELADO" &&
+                        (e.boletoUrl ? (
+                          <a
+                            href={e.boletoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={e.boletoBarcode || undefined}
+                            className="flex items-center gap-1 rounded-md border border-neutral-200 px-2 py-1 text-xs text-brand-700 hover:bg-brand-50"
+                          >
+                            <FileCheck size={13} />
+                            Ver boleto
+                          </a>
+                        ) : (
+                          <GerarBoletoButton entryId={e.id} />
+                        ))}
                       {e.status !== "PAGO" && e.status !== "CANCELADO" && (
                         <form action={markReceivableReceivedAction.bind(null, e.id)}>
                           <button
