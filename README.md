@@ -64,6 +64,19 @@ Para funcionar em produção, configure:
 - No Render (variáveis de ambiente do serviço): `CRON_SECRET` (mesmo valor usado no GitHub).
 - No GitHub (Settings → Secrets and variables → Actions do repositório): secret `CRON_SECRET` e variable `APP_URL` (ex: `https://jhv-agrosystem.onrender.com`).
 
+### Envio automático do boleto por WhatsApp
+
+Toda vez que um boleto é gerado ou reemitido (manual, recorrente ou por atraso), `src/lib/whatsapp.ts` tenta enviar o link para o cliente via WhatsApp Business Platform (API oficial da Meta), usando o telefone cadastrado no cliente. É best-effort: se falhar (token ausente, telefone inválido, modelo não aprovado etc.), só loga o erro e não impede a geração do boleto.
+
+Exige no `.env`:
+```
+WHATSAPP_ACCESS_TOKEN="..."          # token permanente de Usuário do Sistema no Meta Business
+WHATSAPP_PHONE_NUMBER_ID="..."       # Phone Number ID do número comercial no WhatsApp Business Platform
+WHATSAPP_TEMPLATE_NAME="notificacao_boleto"
+```
+
+O modelo de mensagem (`notificacao_boleto`, categoria Utilidade) precisa estar aprovado no Meta Business Manager com 5 variáveis de corpo, nesta ordem: nome do cliente, descrição da conta, valor formatado, vencimento formatado, link do boleto. Sem `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID` configurados, o envio fica silenciosamente desativado.
+
 ## Status dos módulos
 
 - **Cadastro** — completo: Proprietários, Animais/Cavalos (com genealogia, fotos e documentos), Funcionários, Veterinários, Ferradores, Instrutores, Tratadores, Clientes, Fornecedores.

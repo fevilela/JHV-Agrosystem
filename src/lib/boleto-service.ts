@@ -2,6 +2,8 @@ import { randomUUID } from "crypto";
 import { differenceInCalendarDays, addDays, endOfDay } from "date-fns";
 import { prisma } from "@/lib/prisma";
 import { getPaymentClient, identificationFromCpfCnpj, splitName } from "@/lib/mercadopago";
+import { enviarBoletoWhatsapp } from "@/lib/whatsapp";
+import { formatCurrency, formatDate } from "@/lib/labels";
 
 const MULTA_PCT = 0.02;
 const JUROS_MENSAL_PCT = 0.01;
@@ -91,20 +93,38 @@ export async function gerarBoletoParaConta(
       requestOptions: { idempotencyKey: randomUUID() },
     });
 
+    const boletoUrl =
+      payment.transaction_details?.external_resource_url ||
+      payment.point_of_interaction?.transaction_data?.ticket_url ||
+      null;
+
     await prisma.financeEntry.update({
       where: { id: entryId },
       data: {
         mpPaymentId: String(payment.id),
-        boletoUrl:
-          payment.transaction_details?.external_resource_url ||
-          payment.point_of_interaction?.transaction_data?.ticket_url ||
-          null,
+        boletoUrl,
         boletoBarcode: payment.transaction_details?.barcode?.content || null,
         paymentMethod: "BOLETO",
         amount: valor,
         originalAmount: entry.originalAmount ?? entry.amount,
       },
     });
+
+    if (boletoUrl && client.phone) {
+      try {
+        const resultado = await enviarBoletoWhatsapp({
+          telefone: client.phone,
+          nomeCliente: client.name,
+          descricao: entry.description,
+          valorFormatado: formatCurrency(valor),
+          vencimentoFormatado: formatDate(entry.dueDate),
+          boletoUrl,
+        });
+        if (resultado.error) console.error("Erro ao enviar boleto via WhatsApp:", resultado.error);
+      } catch (err) {
+        console.error("Erro ao enviar boleto via WhatsApp:", err);
+      }
+    }
   } catch (err) {
     return { error: extrairMensagemErro(err) };
   }
