@@ -75,7 +75,25 @@ WHATSAPP_PHONE_NUMBER_ID="..."       # Phone Number ID do número comercial no W
 WHATSAPP_TEMPLATE_NAME="notificacao_boleto"
 ```
 
-O modelo de mensagem (`notificacao_boleto`, categoria Utilidade) precisa estar aprovado no Meta Business Manager com 5 variáveis de corpo, nesta ordem: nome do cliente, descrição da conta, valor formatado, vencimento formatado, link do boleto. Sem `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID` configurados, o envio fica silenciosamente desativado.
+O modelo de mensagem (`notificacao_boleto`, categoria Utilidade) precisa estar aprovado no Meta Business Manager com 5 variáveis de corpo, nesta ordem: nome do cliente, descrição da conta, valor formatado, vencimento formatado, link do boleto. Sem credenciais configuradas (nem via `.env`, nem via a conexão abaixo), o envio fica silenciosamente desativado.
+
+### Conectar WhatsApp pessoal via Coexistência (Financeiro → Conectar WhatsApp)
+
+Em vez de configurar `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID` manualmente, dá para conectar um número que já está no **app WhatsApp Business** do celular usando o fluxo "Coexistência" da Meta — a tela `/financeiro/whatsapp` faz isso pelo navegador (Embedded Signup), escaneando um QR code no celular, e salva o token resultante direto no banco (tabela `WhatsappConnection`), sem precisar editar `.env`/redeploy. `src/lib/whatsapp.ts` sempre prioriza essa conexão do banco antes de cair para as variáveis de ambiente.
+
+Pré-requisitos que só podem ser feitos manualmente no painel da Meta (`developers.facebook.com`), antes do botão "Conectar WhatsApp" funcionar:
+1. O número precisa estar no **app WhatsApp Business** (não o WhatsApp comum) e ter atividade recente — números novos/sem uso são rejeitados pela Meta.
+2. No App do Meta for Developers, adicionar o produto **"Login do Facebook para Empresas"** e criar uma **Configuração (Configuration)** para Embedded Signup — isso gera um **Configuration ID**.
+3. Em "Configurações do App" → "Básico", anotar o **App ID** e o **App Secret**, e adicionar o domínio de produção (ex: `jhv-agrosystem.onrender.com`) em "Domínios do app".
+
+Variáveis necessárias no `.env`:
+```
+NEXT_PUBLIC_META_APP_ID="..."
+META_APP_SECRET="..."
+NEXT_PUBLIC_META_WHATSAPP_CONFIG_ID="..."
+```
+
+Esse fluxo (Embedded Signup + Coexistência) é uma API relativamente nova da Meta e os nomes de parâmetros/eventos podem mudar — se o botão "Conectar WhatsApp" der erro, verifique o console do navegador e a mensagem retornada antes de mais nada.
 
 ## Status dos módulos
 

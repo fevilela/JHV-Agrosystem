@@ -1,3 +1,5 @@
+import { prisma } from "@/lib/prisma";
+
 const GRAPH_API_VERSION = "v21.0";
 
 export function normalizarTelefoneWhatsapp(telefone: string): string | null {
@@ -5,6 +7,19 @@ export function normalizarTelefoneWhatsapp(telefone: string): string | null {
   if (/^55\d{10,11}$/.test(digits)) return digits;
   if (/^\d{10,11}$/.test(digits)) return `55${digits}`;
   return null;
+}
+
+async function getWhatsappCredentials() {
+  const connection = await prisma.whatsappConnection.findUnique({
+    where: { id: "singleton" },
+  });
+  if (connection) {
+    return { accessToken: connection.accessToken, phoneNumberId: connection.phoneNumberId };
+  }
+  return {
+    accessToken: process.env.WHATSAPP_ACCESS_TOKEN,
+    phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
+  };
 }
 
 export async function enviarBoletoWhatsapp(params: {
@@ -15,8 +30,7 @@ export async function enviarBoletoWhatsapp(params: {
   vencimentoFormatado: string;
   boletoUrl: string;
 }): Promise<{ success?: true; skipped?: true; error?: string }> {
-  const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const { accessToken, phoneNumberId } = await getWhatsappCredentials();
   const templateName = process.env.WHATSAPP_TEMPLATE_NAME || "notificacao_boleto";
 
   if (!accessToken || !phoneNumberId) return { skipped: true };
