@@ -29,6 +29,7 @@ export const navGroups: NavGroup[] = [
     items: [
       { label: "Controle Diário / Treinamento", href: "/hipica/treinamento" },
       { label: "Nutrição", href: "/hipica/nutricao" },
+      { label: "Sanidade", href: "/hipica/sanidade" },
       { label: "Baia", href: "/hipica/baia" },
       { label: "Agenda", href: "/hipica/agenda" },
       { label: "Competições", href: "/hipica/competicoes" },

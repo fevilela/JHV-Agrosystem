@@ -5,9 +5,19 @@ import { AnimalForm } from "../animal-form";
 import { updateAnimalAction, deleteAnimalAction } from "../actions";
 import { PhotosSection } from "./photos-section";
 import { DocumentsSection } from "./documents-section";
+import { SaudeSection } from "./saude-section";
+import { HistoricoSection, type TimelineEntry } from "./historico-section";
 import { Tabs } from "@/components/tabs";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { ModulePlaceholder } from "@/components/placeholder";
+import {
+  equineHealthRecordTypeLabels,
+  exerciseTypeLabels,
+  stallEventTypeLabels,
+  agendaEventTypeLabels,
+  animalTransactionTypeLabels,
+  formatCurrency,
+} from "@/lib/labels";
 
 export default async function AnimalDetailPage({
   params,
@@ -16,7 +26,18 @@ export default async function AnimalDetailPage({
 }) {
   const { id } = await params;
 
-  const [animal, owners, animals] = await Promise.all([
+  const [
+    animal,
+    owners,
+    animals,
+    healthRecords,
+    trainingSessions,
+    diets,
+    stallEvents,
+    agendaEvents,
+    competitions,
+    transactions,
+  ] = await Promise.all([
     prisma.animal.findUnique({
       where: { id },
       include: {
@@ -31,12 +52,64 @@ export default async function AnimalDetailPage({
     }),
     prisma.owner.findMany({ orderBy: { name: "asc" } }),
     prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.equineHealthRecord.findMany({ where: { animalId: id }, orderBy: { date: "desc" } }),
+    prisma.trainingSession.findMany({ where: { animalId: id } }),
+    prisma.animalDiet.findMany({ where: { animalId: id } }),
+    prisma.stallEvent.findMany({ where: { animalId: id }, include: { stall: true } }),
+    prisma.agendaEvent.findMany({ where: { animalId: id } }),
+    prisma.competition.findMany({ where: { animalId: id } }),
+    prisma.animalTransaction.findMany({ where: { animalId: id } }),
   ]);
 
   if (!animal) notFound();
 
   const filhos = [...animal.filhosComoPai, ...animal.filhosComoMae];
   const genealogyOptions = animals.filter((a) => a.id !== id);
+
+  const timeline: TimelineEntry[] = [
+    ...healthRecords.map((r) => ({
+      date: r.date,
+      category: "Saúde",
+      title: equineHealthRecordTypeLabels[r.type],
+      detail: [r.product, r.notes].filter(Boolean).join(" — ") || null,
+    })),
+    ...trainingSessions.map((t) => ({
+      date: t.date,
+      category: "Treino",
+      title: exerciseTypeLabels[t.exerciseType],
+      detail: [t.evolution, t.notes].filter(Boolean).join(" — ") || null,
+    })),
+    ...diets.map((d) => ({
+      date: d.startDate,
+      category: "Dieta",
+      title: "Nova dieta iniciada",
+      detail: [d.suplementos, d.notes].filter(Boolean).join(" — ") || null,
+    })),
+    ...stallEvents.map((s) => ({
+      date: s.date,
+      category: "Baia",
+      title: `${stallEventTypeLabels[s.type]} — Baia ${s.stall.code}`,
+      detail: s.notes,
+    })),
+    ...agendaEvents.map((a) => ({
+      date: a.date,
+      category: "Agenda",
+      title: `${a.title} (${agendaEventTypeLabels[a.type]})`,
+      detail: a.notes,
+    })),
+    ...competitions.map((c) => ({
+      date: c.date,
+      category: "Competição",
+      title: c.name,
+      detail: [c.result, c.location].filter(Boolean).join(" — ") || null,
+    })),
+    ...transactions.map((tr) => ({
+      date: tr.date,
+      category: "Transação",
+      title: `${animalTransactionTypeLabels[tr.type]} — ${formatCurrency(tr.value)}`,
+      detail: tr.counterpartyName,
+    })),
+  ].sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
     <div>
@@ -147,13 +220,13 @@ export default async function AnimalDetailPage({
           },
           {
             id: "saude",
-            label: "Saúde / Histórico",
-            content: (
-              <ModulePlaceholder
-                title="Saúde e Histórico Veterinário"
-                description="Vacinas, vermifugação, exames, cirurgias, medicamentos e histórico completo entram no módulo Hípica, em uma próxima etapa."
-              />
-            ),
+            label: "Saúde",
+            content: <SaudeSection records={healthRecords} />,
+          },
+          {
+            id: "historico",
+            label: "Histórico",
+            content: <HistoricoSection entries={timeline} />,
           },
           {
             id: "treinamento",

@@ -116,6 +116,16 @@ export const healthRecordTypeLabels: Record<string, string> = {
   OUTRO: "Outro",
 };
 
+export const equineHealthRecordTypeLabels: Record<string, string> = {
+  MEDICAMENTO: "Medicamento",
+  VACINA: "Vacina",
+  SORO: "Soro",
+  VERMIFUGO: "Vermífugo",
+  FERRADURA: "Troca de Ferradura",
+  CASQUEAMENTO: "Casqueamento",
+  OUTRO: "Outro",
+};
+
 export const milkShiftLabels: Record<string, string> = {
   MANHA: "Manhã",
   TARDE: "Tarde",

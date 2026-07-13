@@ -222,12 +222,13 @@ model Animal {
   trainingSessions TrainingSession[]
   diets            AnimalDiet[]
   stallEvents      StallEvent[]
-  currentStall     Stall?              @relation("StallOccupant")
+  currentStall     Stall?               @relation("StallOccupant")
   agendaEvents     AgendaEvent[]
   competitions     Competition[]
   transportLinks   TransportAnimal[]
   financialEntries FinancialEntry[]
   transactions     AnimalTransaction[]
+  healthRecords    EquineHealthRecord[]
 
   @@map("animals")
 }
@@ -306,6 +307,30 @@ model AnimalDiet {
   createdAt          DateTime @default(now())
 
   @@map("animal_diets")
+}
+
+enum EquineHealthRecordType {
+  MEDICAMENTO
+  VACINA
+  SORO
+  VERMIFUGO
+  FERRADURA
+  CASQUEAMENTO
+  OUTRO
+}
+
+model EquineHealthRecord {
+  id           String                 @id @default(cuid())
+  animalId     String
+  animal       Animal                 @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  type         EquineHealthRecordType
+  date         DateTime
+  product      String?
+  nextDoseDate DateTime?
+  notes        String?
+  createdAt    DateTime               @default(now())
+
+  @@map("equine_health_records")
 }
 
 enum StallStatus {
