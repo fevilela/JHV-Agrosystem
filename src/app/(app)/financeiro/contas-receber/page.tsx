@@ -73,7 +73,15 @@ export default async function ReceivableListPage() {
                   <td className="px-4 py-3 text-neutral-700">{e.description}</td>
                   <td className="px-4 py-3 text-neutral-700">{e.client?.name || "—"}</td>
                   <td className="px-4 py-3 text-neutral-700">{e.costCenter?.name || "—"}</td>
-                  <td className="px-4 py-3 text-neutral-700">{formatCurrency(e.amount)}</td>
+                  <td className="px-4 py-3 text-neutral-700">
+                    {formatCurrency(e.amount)}
+                    {e.originalAmount != null &&
+                      Number(e.originalAmount) !== Number(e.amount) && (
+                        <span className="ml-1 text-xs text-red-600">
+                          (original {formatCurrency(e.originalAmount)} + juros)
+                        </span>
+                      )}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[displayStatus]}`}>
                       {financeEntryStatusLabels[displayStatus]}

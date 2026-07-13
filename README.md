@@ -10,7 +10,7 @@ Next.js (App Router) + TypeScript + Tailwind CSS + Prisma + PostgreSQL (Supabase
 
 Paleta navy/azul-aço definida em `src/app/globals.css` (`--color-brand-50` a `--color-brand-900`) e usada em botões, links, foco de formulário, abas e menu ativo — badges de status (ativo/pago/aprovado etc.) permanecem verdes intencionalmente, como cor semântica de "sucesso".
 
-Logo oficial em `public/JHV_logo.jpg` (completa, usada na tela de login), `public/JHV_icon.png` (só o ícone hexagonal, recortado da logo original para a sidebar) e `src/app/icon.png` (favicon). Os componentes `<Image>` usam a prop `unoptimized` para servir os arquivos direto, sem passar pelo otimizador de imagens do Next.js.
+Logo oficial em `public/JHV_logo.png` (completa, usada na tela de login), `public/JHV_icon.png` (só o ícone hexagonal, recortado da logo original para a sidebar) e `src/app/icon.png` (favicon). Os componentes `<Image>` usam a prop `unoptimized` para servir os arquivos direto, sem passar pelo otimizador de imagens do Next.js.
 
 **Causa raiz de um bug de logo "quebrada" já corrigido:** o `matcher` de `src/middleware.ts` cobria qualquer rota, inclusive arquivos estáticos como `/JHV_logo.jpg`. Como a tela de login é vista por usuários **não autenticados**, o próprio pedido da imagem da logo era redirecionado para `/login` pelo middleware (virando HTML em vez de imagem) — por isso a logo aparecia quebrada. O matcher agora exclui extensões de imagem (`png|jpg|jpeg|gif|webp|svg|ico`) explicitamente.
 
@@ -54,6 +54,16 @@ O cliente precisa ter CPF/CNPJ, e-mail e endereço completo (CEP, rua, número, 
 
 A baixa automática (marcar como pago quando o boleto é compensado) acontece via webhook em `src/app/api/webhooks/mercadopago`. O Mercado Pago só consegue notificar uma URL pública, então **isso não funciona em `localhost`** — só depois do deploy, com `NEXTAUTH_URL` apontando para o domínio real. Em desenvolvimento, use "Marcar recebido" manualmente.
 
+### Cobranças recorrentes e juros por atraso
+
+Em Financeiro → Cobranças Recorrentes, um template (cliente, descrição, valor, dia do mês) faz o sistema criar automaticamente a conta a receber e gerar o boleto todo mês. Isso é disparado por um job diário em `.github/workflows/faturamento-diario.yml`, que chama `POST /api/cron/faturamento` (protegido pelo header `x-cron-secret`, comparado à variável `CRON_SECRET`).
+
+A mesma rotina reemite automaticamente o boleto de contas em atraso com o valor corrigido (2% de multa + 1% ao mês de juros, proporcional aos dias de atraso) — a API de Pagamentos do Mercado Pago não permite embutir juros/multa no boleto original (isso só existe na ferramenta manual "Começar a cobrar" do app do Mercado Pago), então a forma de refletir o valor atualizado é cancelar o boleto anterior e emitir um novo. Por isso, durante o atraso, sempre use o link mais recente em "Ver boleto".
+
+Para funcionar em produção, configure:
+- No Render (variáveis de ambiente do serviço): `CRON_SECRET` (mesmo valor usado no GitHub).
+- No GitHub (Settings → Secrets and variables → Actions do repositório): secret `CRON_SECRET` e variable `APP_URL` (ex: `https://jhv-agrosystem.onrender.com`).
+
 ## Status dos módulos
 
 - **Cadastro** — completo: Proprietários, Animais/Cavalos (com genealogia, fotos e documentos), Funcionários, Veterinários, Ferradores, Instrutores, Tratadores, Clientes, Fornecedores.
@@ -63,7 +73,7 @@ A baixa automática (marcar como pago quando o boleto é compensado) acontece vi
 - **Máquinas e Equipamentos** — completo: Cadastro (tratores, colheitadeiras, pulverizadores, caminhões, implementos, carretas), Controle de Uso (horímetro sincronizado automaticamente, combustível, operador, talhão), Manutenções (preventiva/corretiva/troca de óleo/pneu/lubrificação, com alerta visual de manutenção próxima/atrasada).
 - **Estoque** — completo: Materiais e Insumos (medicamentos/insumos/rações/ferramentas/peças/combustível/EPI, com código de barras e alerta de estoque mínimo), Lotes e Validade (entrada e consumo de lotes sincronizam o estoque automaticamente, com alerta visual de validade próxima/vencida).
 - **Compras** — completo: Solicitações (com aprovação/rejeição rápida), Cotações (por fornecedor, vinculáveis a uma solicitação), Pedidos (nota fiscal, entrega prevista/real, marcação rápida de entregue) — fluxo completo solicitação → cotação → pedido testado ponta a ponta.
-- **Financeiro** — completo: Centro de Custos, Contas a Pagar e Contas a Receber (com forma de pagamento PIX/boleto/cartão/cheque, marcação rápida de pago/recebido, status "atrasado" calculado automaticamente, emissão de boleto real via Mercado Pago com baixa automática por webhook), Fluxo de Caixa (saldo atual, saldo projetado, e saldo acumulado por movimentação realizada).
+- **Financeiro** — completo: Centro de Custos, Contas a Pagar e Contas a Receber (com forma de pagamento PIX/boleto/cartão/cheque, marcação rápida de pago/recebido, status "atrasado" calculado automaticamente, emissão de boleto real via Mercado Pago com baixa automática por webhook), Cobranças Recorrentes (mensalidades automáticas com reemissão de boleto e juros por atraso), Fluxo de Caixa (saldo atual, saldo projetado, e saldo acumulado por movimentação realizada).
 - **Recursos Humanos** — completo: Funcionários (redireciona para o cadastro em Cadastro), Ponto e Escalas (presença/falta/atestado/férias + escalas por turno), Treinamentos e EPIs (com alerta visual de validade próxima/vencida).
 - **Oficina** — completo: Ordens de Serviço (vinculadas a máquina e mecânico, com peças que decrementam o estoque automaticamente e custo total calculado), Peças e Mecânicos (CRUD de mecânicos + visão de peças reaproveitando o Estoque).
 

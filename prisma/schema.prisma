@@ -145,8 +145,9 @@ model Client {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  financialEntries FinancialEntry[]
-  financeEntries   FinanceEntry[]
+  financialEntries  FinancialEntry[]
+  financeEntries    FinanceEntry[]
+  recurringBillings RecurringBilling[]
 
   @@map("clients")
 }
@@ -1168,28 +1169,48 @@ enum PaymentMethod {
 }
 
 model FinanceEntry {
-  id            String             @id @default(cuid())
-  type          FinanceEntryType
-  description   String
-  amount        Decimal            @db.Decimal(12, 2)
-  dueDate       DateTime
-  paymentDate   DateTime?
-  status        FinanceEntryStatus @default(PENDENTE)
-  paymentMethod PaymentMethod?
-  costCenterId  String?
-  costCenter    CostCenter?        @relation(fields: [costCenterId], references: [id])
-  supplierId    String?
-  supplier      Supplier?          @relation(fields: [supplierId], references: [id])
-  clientId      String?
-  client        Client?            @relation(fields: [clientId], references: [id])
-  notes         String?
-  mpPaymentId   String?            @unique
-  boletoUrl     String?
-  boletoBarcode String?
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id                 String             @id @default(cuid())
+  type               FinanceEntryType
+  description        String
+  amount             Decimal            @db.Decimal(12, 2)
+  dueDate            DateTime
+  paymentDate        DateTime?
+  status             FinanceEntryStatus @default(PENDENTE)
+  paymentMethod      PaymentMethod?
+  costCenterId       String?
+  costCenter         CostCenter?        @relation(fields: [costCenterId], references: [id])
+  supplierId         String?
+  supplier           Supplier?          @relation(fields: [supplierId], references: [id])
+  clientId           String?
+  client             Client?            @relation(fields: [clientId], references: [id])
+  notes              String?
+  mpPaymentId        String?            @unique
+  boletoUrl          String?
+  boletoBarcode      String?
+  originalAmount     Decimal?           @db.Decimal(12, 2)
+  recurringBillingId String?
+  recurringBilling   RecurringBilling?  @relation(fields: [recurringBillingId], references: [id])
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 
   @@map("finance_entries")
+}
+
+model RecurringBilling {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id])
+  description String
+  amount      Decimal  @db.Decimal(12, 2)
+  dayOfMonth  Int
+  active      Boolean  @default(true)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entries FinanceEntry[]
+
+  @@map("recurring_billings")
 }
 
 // ---------- Recursos Humanos ----------
