@@ -57,11 +57,11 @@ export async function enviarBoletoWhatsapp(params: {
             {
               type: "body",
               parameters: [
-                { type: "text", text: params.nomeCliente },
-                { type: "text", text: params.descricao },
-                { type: "text", text: params.valorFormatado },
-                { type: "text", text: params.vencimentoFormatado },
-                { type: "text", text: params.boletoUrl },
+                { type: "text", parameter_name: "nome_cliente", text: params.nomeCliente },
+                { type: "text", parameter_name: "descricao", text: params.descricao },
+                { type: "text", parameter_name: "valor", text: params.valorFormatado },
+                { type: "text", parameter_name: "vencimento", text: params.vencimentoFormatado },
+                { type: "text", parameter_name: "link_boleto", text: params.boletoUrl },
               ],
             },
           ],
