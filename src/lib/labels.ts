@@ -282,6 +282,25 @@ export const serviceOrderStatusLabels: Record<string, string> = {
   CANCELADA: "Cancelada",
 };
 
+export const chartAccountTypeLabels: Record<string, string> = {
+  ATIVO: "Ativo",
+  PASSIVO: "Passivo",
+  PATRIMONIO_LIQUIDO: "Patrimônio Líquido",
+  RECEITA: "Receita",
+  CUSTO: "Custo",
+  DESPESA: "Despesa",
+};
+
+export const chartAccountNatureLabels: Record<string, string> = {
+  DEVEDORA: "Devedora",
+  CREDORA: "Credora",
+};
+
+export const journalEntryLineTypeLabels: Record<string, string> = {
+  DEBITO: "Débito",
+  CREDITO: "Crédito",
+};
+
 export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }

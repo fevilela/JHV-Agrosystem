@@ -1356,3 +1356,74 @@ model WhatsappConnection {
 
   @@map("whatsapp_connections")
 }
+
+// ---------- Contabilidade ----------
+
+enum ChartAccountType {
+  ATIVO
+  PASSIVO
+  PATRIMONIO_LIQUIDO
+  RECEITA
+  CUSTO
+  DESPESA
+}
+
+enum ChartAccountNature {
+  DEVEDORA
+  CREDORA
+}
+
+model ChartAccount {
+  id       String             @id @default(cuid())
+  code     String             @unique
+  name     String
+  type     ChartAccountType
+  nature   ChartAccountNature
+  analytic Boolean            @default(true)
+  active   Boolean            @default(true)
+  notes    String?
+
+  parentId String?
+  parent   ChartAccount?  @relation("ChartAccountHierarchy", fields: [parentId], references: [id])
+  children ChartAccount[] @relation("ChartAccountHierarchy")
+
+  lines JournalEntryLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("chart_accounts")
+}
+
+model JournalEntry {
+  id          String   @id @default(cuid())
+  number      Int      @unique @default(autoincrement())
+  date        DateTime
+  description String
+
+  lines JournalEntryLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("journal_entries")
+}
+
+enum JournalEntryLineType {
+  DEBITO
+  CREDITO
+}
+
+model JournalEntryLine {
+  id             String               @id @default(cuid())
+  journalEntryId String
+  journalEntry   JournalEntry         @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  accountId      String
+  account        ChartAccount         @relation(fields: [accountId], references: [id])
+  type           JournalEntryLineType
+  amount         Decimal              @db.Decimal(14, 2)
+  notes          String?
+  createdAt      DateTime             @default(now())
+
+  @@map("journal_entry_lines")
+}

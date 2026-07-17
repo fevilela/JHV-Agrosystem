@@ -99,6 +99,17 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Contabilidade",
+    items: [
+      { label: "Plano de Contas", href: "/contabilidade/plano-contas" },
+      { label: "Lançamentos Contábeis", href: "/contabilidade/lancamentos" },
+      { label: "Livro Razão", href: "/contabilidade/razao" },
+      { label: "Balancete de Verificação", href: "/contabilidade/balancete" },
+      { label: "Balanço Patrimonial", href: "/contabilidade/balanco" },
+      { label: "DRE", href: "/contabilidade/dre" },
+    ],
+  },
+  {
     label: "Recursos Humanos",
     items: [
       { label: "Funcionários", href: "/rh/funcionarios" },

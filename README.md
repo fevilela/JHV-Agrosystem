@@ -95,6 +95,12 @@ NEXT_PUBLIC_META_WHATSAPP_CONFIG_ID="..."
 
 Esse fluxo (Embedded Signup + Coexistência) é uma API relativamente nova da Meta e os nomes de parâmetros/eventos podem mudar — se o botão "Conectar WhatsApp" der erro, verifique o console do navegador e a mensagem retornada antes de mais nada.
 
+## Contabilidade (partida dobrada)
+
+Módulo de contabilidade formal em `/contabilidade`: Plano de Contas (hierárquico, com um plano padrão já semeado via `npm run db:seed` — Ativo/Passivo/PL/Receitas/Custos/Despesas adaptado ao agro), Lançamentos Contábeis (partidas de débito/crédito que precisam fechar — validado no cliente e no servidor), Livro Razão, Balancete de Verificação, Balanço Patrimonial e DRE.
+
+**Importante:** isso é a infraestrutura de escrituração (os números certos, calculados certo), não substitui um contador. A legislação brasileira exige que o fechamento oficial (balanço, SPED/ECD/ECF, obrigações fiscais) seja assinado por um contador registrado no CRC. O Balanço Patrimonial deste sistema mostra só Ativo/Passivo/PL — pra ele fechar exatamente com o Ativo, o resultado apurado na DRE do período precisa ser lançado manualmente em "Lucros/Prejuízos Acumulados" no encerramento do exercício (trabalho tipicamente feito com o contador).
+
 ## Status dos módulos
 
 - **Cadastro** — completo: Proprietários, Animais/Cavalos (com genealogia, fotos e documentos), Funcionários, Veterinários, Ferradores, Instrutores, Tratadores, Clientes, Fornecedores.
