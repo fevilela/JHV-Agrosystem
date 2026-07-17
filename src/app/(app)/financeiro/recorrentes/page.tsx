@@ -30,15 +30,16 @@ export default async function RecurringBillingListPage() {
       </div>
 
       <p className="mb-4 text-sm text-neutral-500">
-        Todo dia do mês configurado abaixo, o sistema cria automaticamente a conta a receber e
-        gera o boleto para o cliente.
+        Todo dia de geração configurado abaixo, o sistema cria automaticamente a conta a receber
+        (com o vencimento no dia definido) e gera o boleto para o cliente.
       </p>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
-              <th className="px-4 py-3">Dia</th>
+              <th className="px-4 py-3">Geração</th>
+              <th className="px-4 py-3">Vencimento</th>
               <th className="px-4 py-3">Cliente</th>
               <th className="px-4 py-3">Descrição</th>
               <th className="px-4 py-3">Valor</th>
@@ -49,7 +50,7 @@ export default async function RecurringBillingListPage() {
           <tbody>
             {templates.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-sm text-neutral-400">
+                <td colSpan={7} className="px-4 py-10 text-center text-sm text-neutral-400">
                   Nenhuma cobrança recorrente cadastrada ainda.
                 </td>
               </tr>
@@ -57,6 +58,7 @@ export default async function RecurringBillingListPage() {
             {templates.map((t) => (
               <tr key={t.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
                 <td className="px-4 py-3 text-neutral-700">Dia {t.dayOfMonth}</td>
+                <td className="px-4 py-3 text-neutral-700">Dia {t.dueDay ?? t.dayOfMonth}</td>
                 <td className="px-4 py-3 text-neutral-700">{t.client.name}</td>
                 <td className="px-4 py-3 text-neutral-700">{t.description}</td>
                 <td className="px-4 py-3 text-neutral-700">{formatCurrency(t.amount)}</td>

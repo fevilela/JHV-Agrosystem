@@ -142,13 +142,16 @@ export async function processarRecorrencias(hoje = new Date()) {
   });
 
   const resultado = { criadas: 0, erros: [] as string[] };
-  const dueDate = new Date(Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()));
 
   for (const t of templates) {
     const jaExiste = await prisma.financeEntry.findFirst({
       where: { recurringBillingId: t.id, createdAt: { gte: inicioMes } },
     });
     if (jaExiste) continue;
+
+    const vencimentoDia = t.dueDay ?? dia;
+    const mesVencimento = vencimentoDia < dia ? hoje.getMonth() + 1 : hoje.getMonth();
+    const dueDate = new Date(Date.UTC(hoje.getFullYear(), mesVencimento, vencimentoDia));
 
     const entry = await prisma.financeEntry.create({
       data: {

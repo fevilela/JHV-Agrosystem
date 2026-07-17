@@ -6,9 +6,14 @@ export const recurringBillingFields: RecordField[] = [
   { name: "amount", label: "Valor (R$)", type: "number", required: true },
   {
     name: "dayOfMonth",
-    label: "Dia do mês (1 a 28)",
+    label: "Dia de Geração do Boleto (1 a 28)",
     type: "number",
     required: true,
+  },
+  {
+    name: "dueDay",
+    label: "Dia de Vencimento (1 a 28, opcional — padrão: mesmo dia da geração)",
+    type: "number",
   },
   { name: "active", label: "Ativo", type: "checkbox" },
   { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },

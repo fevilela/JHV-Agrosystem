@@ -18,7 +18,10 @@ export async function createRecurringBillingAction(
   if (!data.description) return { error: "Informe a descrição." };
   if (!data.amount) return { error: "Informe o valor." };
   if (!data.dayOfMonth || Number(data.dayOfMonth) < 1 || Number(data.dayOfMonth) > 28) {
-    return { error: "Informe um dia do mês entre 1 e 28." };
+    return { error: "Informe um dia de geração entre 1 e 28." };
+  }
+  if (data.dueDay && (Number(data.dueDay) < 1 || Number(data.dueDay) > 28)) {
+    return { error: "Informe um dia de vencimento entre 1 e 28." };
   }
 
   await prisma.recurringBilling.create({
@@ -39,7 +42,10 @@ export async function updateRecurringBillingAction(
   if (!data.description) return { error: "Informe a descrição." };
   if (!data.amount) return { error: "Informe o valor." };
   if (!data.dayOfMonth || Number(data.dayOfMonth) < 1 || Number(data.dayOfMonth) > 28) {
-    return { error: "Informe um dia do mês entre 1 e 28." };
+    return { error: "Informe um dia de geração entre 1 e 28." };
+  }
+  if (data.dueDay && (Number(data.dueDay) < 1 || Number(data.dueDay) > 28)) {
+    return { error: "Informe um dia de vencimento entre 1 e 28." };
   }
 
   await prisma.recurringBilling.update({
