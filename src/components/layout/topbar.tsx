@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { auth, signOut } from "@/lib/auth";
 
 export async function Topbar() {
@@ -16,7 +17,8 @@ export async function Topbar() {
       <form
         action={async () => {
           "use server";
-          await signOut({ redirectTo: "/login" });
+          await signOut({ redirect: false });
+          redirect("/login");
         }}
       >
         <button
