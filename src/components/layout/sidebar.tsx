@@ -15,12 +15,12 @@ export function Sidebar() {
   );
 
   return (
-    <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-neutral-200 bg-white">
-      <div className="flex items-center justify-center border-b border-neutral-200 px-4 py-4">
-        <Image src="/JHV_icon.png" alt="JHV Agrosystem" width={44} height={44} unoptimized priority />
+    <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-neutral-200/80 bg-white">
+      <div className="flex items-center justify-center border-b border-neutral-100 px-4 py-5">
+        <Image src="/JHV_icon.png" alt="JHV Agrosystem" width={40} height={40} unoptimized priority />
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-3">
+      <nav className="flex-1 overflow-y-auto px-2.5 py-4">
         {navGroups.map((group) => {
           const isOpen = openGroup === group.label;
           const isGroupActive = group.items?.some((i) =>
@@ -28,39 +28,42 @@ export function Sidebar() {
           );
 
           return (
-            <div key={group.label} className="mb-1">
+            <div key={group.label} className="mb-0.5">
               <button
                 type="button"
                 onClick={() => setOpenGroup(isOpen ? null : group.label)}
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
+                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors duration-150 ${
                   isGroupActive
                     ? "text-brand-800"
-                    : "text-neutral-700 hover:bg-neutral-100"
+                    : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
                 }`}
               >
                 {group.label}
                 <ChevronDown
-                  size={16}
-                  className={`transition-transform ${
+                  size={15}
+                  className={`text-neutral-400 transition-transform duration-200 ${
                     isOpen ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
               {isOpen && group.items && (
-                <ul className="mt-1 space-y-0.5 border-l border-neutral-200 pl-3">
+                <ul className="mt-0.5 mb-1 space-y-0.5 border-l border-neutral-100 pl-3">
                   {group.items.map((item) => {
                     const active = pathname.startsWith(item.href);
                     return (
                       <li key={item.href}>
                         <Link
                           href={item.href}
-                          className={`block rounded-md px-3 py-1.5 text-sm transition ${
+                          className={`relative block rounded-lg px-3 py-1.5 text-sm transition-colors duration-150 ${
                             active
                               ? "bg-brand-50 font-medium text-brand-800"
-                              : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800"
                           }`}
                         >
+                          {active && (
+                            <span className="absolute -left-3 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-brand-600" />
+                          )}
                           {item.label}
                         </Link>
                       </li>

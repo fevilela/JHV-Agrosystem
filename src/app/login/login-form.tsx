@@ -9,14 +9,14 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
   return (
     <form
       action={formAction}
-      className="space-y-4 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm"
+      className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-7"
     >
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
       <div>
         <label
           htmlFor="email"
-          className="mb-1 block text-sm font-medium text-neutral-700"
+          className="mb-1.5 block text-sm font-medium text-neutral-600"
         >
           E-mail
         </label>
@@ -26,7 +26,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+          className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
           placeholder="seu@email.com"
         />
       </div>
@@ -34,7 +34,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
       <div>
         <label
           htmlFor="password"
-          className="mb-1 block text-sm font-medium text-neutral-700"
+          className="mb-1.5 block text-sm font-medium text-neutral-600"
         >
           Senha
         </label>
@@ -44,7 +44,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
           type="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+          className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
           placeholder="••••••••"
         />
       </div>

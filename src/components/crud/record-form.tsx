@@ -58,14 +58,14 @@ export function RecordForm({
   return (
     <form
       action={formAction}
-      className="space-y-6 rounded-2xl border border-neutral-200 bg-white p-6"
+      className="space-y-7 rounded-2xl border border-neutral-200 bg-white p-7"
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
         {fields.map((field) => {
           const value = initialValues?.[field.name];
           const wide = field.colSpan === 2 ? "sm:col-span-2" : "";
           const label = (
-            <label className="mb-1 block text-sm font-medium text-neutral-700">
+            <label className="mb-1.5 block text-sm font-medium text-neutral-600">
               {field.label}
               {field.required && <span className="text-red-500"> *</span>}
             </label>
@@ -75,13 +75,13 @@ export function RecordForm({
             return (
               <label
                 key={field.name}
-                className={`flex items-center gap-2 text-sm text-neutral-700 ${wide}`}
+                className={`flex items-center gap-2.5 text-sm text-neutral-700 ${wide}`}
               >
                 <input
                   type="checkbox"
                   name={field.name}
                   defaultChecked={Boolean(value)}
-                  className="h-4 w-4 rounded border-neutral-300 text-brand-700 focus:ring-brand-600"
+                  className="h-4 w-4 rounded-md border-neutral-300 text-brand-700 focus:ring-2 focus:ring-brand-100"
                 />
                 {field.label}
               </label>
@@ -96,7 +96,7 @@ export function RecordForm({
                   name={field.name}
                   rows={3}
                   defaultValue={toInputValue(value, field.type)}
-                  className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+                  className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
                 />
               </div>
             );
@@ -110,7 +110,7 @@ export function RecordForm({
                   name={field.name}
                   required={field.required}
                   defaultValue={toInputValue(value, field.type)}
-                  className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+                  className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
                 >
                   {!field.required && <option value="">—</option>}
                   {field.options?.map((opt) => (
@@ -132,7 +132,7 @@ export function RecordForm({
                   name={field.name}
                   required={field.required}
                   defaultValue={toInputValue(value, field.type)}
-                  className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+                  className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
                 >
                   <option value="">{field.required ? "Selecione" : "—"}</option>
                   {options.map((opt) => (
@@ -155,7 +155,7 @@ export function RecordForm({
                 step={field.type === "number" ? "0.01" : undefined}
                 placeholder={field.placeholder}
                 defaultValue={toInputValue(value, field.type)}
-                className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+                className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
               />
             </div>
           );
@@ -178,7 +178,7 @@ export function RecordForm({
         </button>
         <Link
           href={backHref}
-          className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+          className="rounded-lg border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50"
         >
           Cancelar
         </Link>
