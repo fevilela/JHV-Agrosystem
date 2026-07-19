@@ -54,10 +54,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session({ session, token }) {
       if (session.user) {
         const u = session.user as {
+          id?: string;
           role?: string;
           isSuperAdmin?: boolean;
           organizationId?: string | null;
         };
+        u.id = token.sub;
         u.role = token.role as string;
         u.isSuperAdmin = token.isSuperAdmin as boolean;
         u.organizationId = token.organizationId as string | null;

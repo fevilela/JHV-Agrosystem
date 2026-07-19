@@ -26,17 +26,31 @@ export async function requireOrg() {
   const ctx = await getTenantContext();
   if (!ctx.organizationId) redirect("/admin");
 
-  const org = await prisma.organization.findUnique({
-    where: { id: ctx.organizationId },
+  const user = await prisma.user.findUnique({
+    where: { id: ctx.userId },
+    include: { organization: true },
   });
-  if (!org || !org.active) redirect("/login");
+  if (!user?.organization || !user.organization.active) redirect("/login");
 
-  return { ...ctx, organizationId: ctx.organizationId, organization: org };
+  // Administradores sempre têm acesso a tudo que a organização libera;
+  // os demais só têm os módulos marcados pra eles, dentro do que a
+  // organização permite (nunca mais do que ela libera).
+  const effectiveModules =
+    user.role === "ADMIN"
+      ? user.organization.allowedModules
+      : user.allowedModules.filter((m) => user.organization!.allowedModules.includes(m));
+
+  return {
+    ...ctx,
+    organizationId: user.organization.id,
+    organization: user.organization,
+    effectiveModules,
+  };
 }
 
 export async function requireModule(moduleKey: string) {
   const ctx = await requireOrg();
-  if (!ctx.organization.allowedModules.includes(moduleKey)) redirect("/");
+  if (!ctx.effectiveModules.includes(moduleKey)) redirect("/");
   return ctx;
 }
 

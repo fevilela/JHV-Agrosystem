@@ -1,16 +1,22 @@
 import { notFound } from "next/navigation";
+import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { OrganizationForm } from "../organization-form";
 import { updateOrganizationAction, createOrgUserAction, deleteOrgUserAction } from "../actions";
 import { DeleteButton } from "@/components/crud/delete-button";
-import { AddUserForm } from "./add-user-form";
+import { UserForm } from "./add-user-form";
+import { navGroups, RETROFITTED_MODULES } from "@/lib/nav";
 
 const roleLabels: Record<string, string> = {
   ADMIN: "Administrador",
   GERENTE: "Gerente",
   FUNCIONARIO: "Funcionário",
 };
+
+const moduleLabels = new Map(
+  navGroups.filter((g) => RETROFITTED_MODULES.includes(g.key)).map((g) => [g.key, g.label])
+);
 
 export default async function OrganizationDetailPage({
   params,
@@ -103,8 +109,24 @@ export default async function OrganizationDetailPage({
                         {user.email} · {roleLabels[user.role] ?? user.role}
                         {user.isSuperAdmin ? " · super-admin" : ""}
                       </p>
+                      <p className="mt-0.5 text-xs text-neutral-400">
+                        {user.role === "ADMIN"
+                          ? "Acesso total (administrador)"
+                          : user.allowedModules.length > 0
+                            ? user.allowedModules.map((m) => moduleLabels.get(m) ?? m).join(", ")
+                            : "Nenhum módulo liberado"}
+                      </p>
                     </div>
-                    <DeleteButton onDelete={deleteOrgUserAction.bind(null, id, user.id)} />
+                    <div className="flex items-center gap-1">
+                      <Link
+                        href={`/admin/${id}/usuarios/${user.id}`}
+                        className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+                        title="Editar"
+                      >
+                        <Pencil size={16} />
+                      </Link>
+                      <DeleteButton onDelete={deleteOrgUserAction.bind(null, id, user.id)} />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -115,7 +137,11 @@ export default async function OrganizationDetailPage({
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
               Adicionar Usuário
             </h2>
-            <AddUserForm action={createOrgUserAction.bind(null, id)} />
+            <UserForm
+              action={createOrgUserAction.bind(null, id)}
+              passwordRequired
+              submitLabel="Adicionar Usuário"
+            />
           </div>
         </div>
       </div>

@@ -20,6 +20,7 @@ model User {
   passwordHash   String
   role           UserRole      @default(FUNCIONARIO)
   isSuperAdmin   Boolean       @default(false)
+  allowedModules String[]      @default([])
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
   createdAt      DateTime      @default(now())

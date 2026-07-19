@@ -130,7 +130,45 @@ export async function createOrgUserAction(
       email,
       passwordHash,
       role: role as "ADMIN" | "GERENTE" | "FUNCIONARIO",
+      allowedModules: readAllowedModules(formData),
       organizationId,
+    },
+  });
+
+  revalidatePath(`/admin/${organizationId}`);
+  redirect(`/admin/${organizationId}`);
+}
+
+export async function updateOrgUserAction(
+  organizationId: string,
+  userId: string,
+  _prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const name = str(formData, "name");
+  const email = str(formData, "email");
+  const password = str(formData, "password");
+  const role = str(formData, "role") || "FUNCIONARIO";
+
+  if (!name) return { error: "Informe o nome." };
+  if (!email) return { error: "Informe o e-mail." };
+  if (password && password.length < 6) {
+    return { error: "A senha precisa ter pelo menos 6 caracteres." };
+  }
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing && existing.id !== userId) {
+    return { error: "Já existe outra conta com esse e-mail." };
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      name,
+      email,
+      role: role as "ADMIN" | "GERENTE" | "FUNCIONARIO",
+      allowedModules: readAllowedModules(formData),
+      ...(password ? { passwordHash: await bcrypt.hash(password, 10) } : {}),
     },
   });
 

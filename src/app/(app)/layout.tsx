@@ -7,11 +7,11 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { organization, isSuperAdmin } = await requireOrg();
+  const { effectiveModules, isSuperAdmin } = await requireOrg();
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      <Sidebar allowedModules={organization.allowedModules} />
+      <Sidebar allowedModules={effectiveModules} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar isSuperAdmin={isSuperAdmin} />
         <main className="flex-1 overflow-y-auto bg-neutral-50 p-6">
