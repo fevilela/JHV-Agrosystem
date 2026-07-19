@@ -37,7 +37,21 @@ export default async function OrganizationDetailPage({
         <div className="max-w-3xl">
           <OrganizationForm
             action={updateOrganizationAction.bind(null, id)}
-            initialValues={organization}
+            initialValues={{
+              name: organization.name,
+              cpfCnpj: organization.cpfCnpj,
+              email: organization.email,
+              phone: organization.phone,
+              address: organization.address,
+              zipCode: organization.zipCode,
+              streetNumber: organization.streetNumber,
+              neighborhood: organization.neighborhood,
+              city: organization.city,
+              state: organization.state,
+              allowedModules: organization.allowedModules,
+              active: organization.active,
+              hasMpToken: Boolean(organization.mpAccessToken),
+            }}
             showActiveToggle
           />
         </div>

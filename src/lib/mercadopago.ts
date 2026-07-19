@@ -1,15 +1,8 @@
 import { MercadoPagoConfig, Payment } from "mercadopago";
 
-function getConfig() {
-  const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
-  if (!accessToken) {
-    throw new Error("MERCADOPAGO_ACCESS_TOKEN não configurado no .env");
-  }
-  return new MercadoPagoConfig({ accessToken, options: { timeout: 10000 } });
-}
-
-export function getPaymentClient() {
-  return new Payment(getConfig());
+export function getPaymentClient(accessToken: string) {
+  const config = new MercadoPagoConfig({ accessToken, options: { timeout: 10000 } });
+  return new Payment(config);
 }
 
 export function identificationFromCpfCnpj(cpfCnpj: string) {

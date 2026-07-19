@@ -64,6 +64,14 @@ export default async function AdminOrganizationsPage() {
                   ? org.allowedModules.map((m) => labelByKey.get(m) ?? m).join(", ")
                   : "nenhum"}
               </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                Mercado Pago:{" "}
+                {org.mpAccessToken ? (
+                  <span className="text-green-700">configurado</span>
+                ) : (
+                  <span className="text-amber-600">pendente</span>
+                )}
+              </p>
             </Link>
           ))}
         </div>

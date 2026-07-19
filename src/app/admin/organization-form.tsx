@@ -24,6 +24,7 @@ export type OrganizationValues = {
   state: string | null;
   allowedModules: string[];
   active: boolean;
+  hasMpToken?: boolean;
 };
 
 const moduleLabels = new Map(
@@ -102,6 +103,28 @@ export function OrganizationForm({
           <label className={labelClass}>UF</label>
           <input type="text" name="state" defaultValue={initialValues?.state ?? ""} className={inputClass} />
         </div>
+      </div>
+
+      <div>
+        <label className={labelClass}>
+          Token de Acesso do Mercado Pago (dessa organização)
+        </label>
+        <input
+          type="password"
+          name="mpAccessToken"
+          autoComplete="off"
+          placeholder={
+            initialValues?.hasMpToken
+              ? "•••••••••••••••• (preenchido — deixe em branco para manter)"
+              : "APP_USR-..."
+          }
+          className={inputClass}
+        />
+        <p className="mt-2 text-xs text-neutral-400">
+          Usado pra gerar e confirmar os boletos dessa organização na conta do Mercado Pago dela
+          (não a da JHV). Cada cliente precisa da própria conta configurada aqui antes de conseguir
+          gerar boletos.
+        </p>
       </div>
 
       <div>

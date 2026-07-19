@@ -36,6 +36,7 @@ export async function createOrganizationAction(
       neighborhood: str(formData, "neighborhood"),
       city: str(formData, "city"),
       state: str(formData, "state"),
+      mpAccessToken: str(formData, "mpAccessToken"),
       allowedModules: readAllowedModules(formData),
       active: true,
     },
@@ -53,6 +54,8 @@ export async function updateOrganizationAction(
   const name = str(formData, "name");
   if (!name) return { error: "Informe o nome/razão social." };
 
+  const novoToken = str(formData, "mpAccessToken");
+
   await prisma.organization.update({
     where: { id },
     data: {
@@ -66,6 +69,8 @@ export async function updateOrganizationAction(
       neighborhood: str(formData, "neighborhood"),
       city: str(formData, "city"),
       state: str(formData, "state"),
+      // campo em branco mantém o token já salvo (não exibimos o valor atual no formulário)
+      ...(novoToken ? { mpAccessToken: novoToken } : {}),
       allowedModules: readAllowedModules(formData),
       active: formData.get("active") === "on",
     },

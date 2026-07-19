@@ -44,6 +44,7 @@ model Organization {
   state          String?
   allowedModules String[] @default([])
   active         Boolean  @default(true)
+  mpAccessToken  String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

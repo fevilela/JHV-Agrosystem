@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getPaymentClient } from "@/lib/mercadopago";
+import { processarWebhookPagamento } from "@/lib/boleto-service";
 
 async function extractPaymentId(req: NextRequest): Promise<string | null> {
   const url = new URL(req.url);
@@ -15,29 +14,18 @@ async function extractPaymentId(req: NextRequest): Promise<string | null> {
   }
 }
 
+/**
+ * Rota legada (sem organização na URL), mantida só para boletos gerados
+ * antes da separação por cliente — usa o token global de ambiente.
+ * Boletos novos usam /api/webhooks/mercadopago/[organizationId].
+ */
 export async function POST(req: NextRequest) {
   const paymentId = await extractPaymentId(req);
-  if (!paymentId) return NextResponse.json({ received: true }, { status: 200 });
+  const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+  if (!paymentId || !accessToken) return NextResponse.json({ received: true }, { status: 200 });
 
   try {
-    const payment = await getPaymentClient().get({ id: paymentId });
-    const entryId = payment.external_reference;
-
-    const entry = entryId
-      ? await prisma.financeEntry.findUnique({ where: { id: entryId } })
-      : await prisma.financeEntry.findUnique({
-          where: { mpPaymentId: String(payment.id) },
-        });
-
-    if (entry && payment.status === "approved" && entry.status !== "PAGO") {
-      await prisma.financeEntry.update({
-        where: { id: entry.id },
-        data: {
-          status: "PAGO",
-          paymentDate: payment.date_approved ? new Date(payment.date_approved) : new Date(),
-        },
-      });
-    }
+    await processarWebhookPagamento(paymentId, accessToken);
   } catch (err) {
     console.error("Erro ao processar webhook do Mercado Pago:", err);
   }

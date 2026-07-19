@@ -8,6 +8,27 @@ import { formatCurrency, formatDate } from "@/lib/labels";
 export const MULTA_PCT = 0.02;
 export const JUROS_MENSAL_PCT = 0.01;
 
+export async function processarWebhookPagamento(paymentId: string, accessToken: string) {
+  const payment = await getPaymentClient(accessToken).get({ id: paymentId });
+  const entryId = payment.external_reference;
+
+  const entry = entryId
+    ? await prisma.financeEntry.findUnique({ where: { id: entryId } })
+    : await prisma.financeEntry.findUnique({
+        where: { mpPaymentId: String(payment.id) },
+      });
+
+  if (entry && payment.status === "approved" && entry.status !== "PAGO") {
+    await prisma.financeEntry.update({
+      where: { id: entry.id },
+      data: {
+        status: "PAGO",
+        paymentDate: payment.date_approved ? new Date(payment.date_approved) : new Date(),
+      },
+    });
+  }
+}
+
 export function calcularValorComJuros(valorOriginal: number, diasAtraso: number) {
   if (diasAtraso <= 0) return valorOriginal;
   const multa = valorOriginal * MULTA_PCT;
@@ -44,6 +65,18 @@ export async function gerarBoletoParaConta(
   if (!entry.client) return { error: "Selecione um cliente para gerar o boleto." };
 
   const client = entry.client;
+  if (!client.organizationId) return { error: "Cliente sem organização associada." };
+
+  const organization = await prisma.organization.findUnique({
+    where: { id: client.organizationId },
+  });
+  if (!organization?.mpAccessToken) {
+    return {
+      error:
+        "Configure o token de acesso do Mercado Pago desta organização (Painel JHV → editar organização) antes de gerar boletos.",
+    };
+  }
+
   if (!client.cpfCnpj) return { error: "Cadastre o CPF/CNPJ do cliente antes de gerar o boleto." };
   if (!client.email) return { error: "Cadastre o e-mail do cliente antes de gerar o boleto." };
   if (!client.address || !client.streetNumber || !client.neighborhood || !client.zipCode || !client.city || !client.state) {
@@ -61,7 +94,7 @@ export async function gerarBoletoParaConta(
     vencimentoOriginal > hoje ? endOfDay(vencimentoOriginal) : addDays(hoje, 5);
 
   try {
-    const payment = await getPaymentClient().create({
+    const payment = await getPaymentClient(organization.mpAccessToken).create({
       body: {
         transaction_amount: valor,
         description: entry.description,
@@ -70,7 +103,7 @@ export async function gerarBoletoParaConta(
         date_of_expiration: expiracao.toISOString(),
         notification_url:
           process.env.NEXTAUTH_URL && !/localhost|127\.0\.0\.1/.test(process.env.NEXTAUTH_URL)
-            ? `${process.env.NEXTAUTH_URL}/api/webhooks/mercadopago`
+            ? `${process.env.NEXTAUTH_URL}/api/webhooks/mercadopago/${organization.id}`
             : undefined,
         payer: {
           email: client.email,
@@ -184,6 +217,7 @@ export async function reemitirBoletosAtrasados(hoje = new Date()) {
       mpPaymentId: { not: null },
       dueDate: { lt: hoje },
     },
+    include: { client: true },
   });
 
   const resultado = { reemitidas: 0, erros: [] as string[] };
@@ -195,9 +229,14 @@ export async function reemitirBoletosAtrasados(hoje = new Date()) {
 
     if (Math.abs(novoValor - Number(e.amount)) < 0.01) continue;
 
-    if (e.mpPaymentId) {
+    if (e.mpPaymentId && e.client?.organizationId) {
       try {
-        await getPaymentClient().cancel({ id: e.mpPaymentId });
+        const organization = await prisma.organization.findUnique({
+          where: { id: e.client.organizationId },
+        });
+        if (organization?.mpAccessToken) {
+          await getPaymentClient(organization.mpAccessToken).cancel({ id: e.mpPaymentId });
+        }
       } catch {
         // o pagamento pode já não estar em um status cancelável; seguimos mesmo assim
       }
