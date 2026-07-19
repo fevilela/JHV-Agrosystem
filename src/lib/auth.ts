@@ -31,6 +31,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
+          isSuperAdmin: user.isSuperAdmin,
+          organizationId: user.organizationId,
         };
       },
     }),
@@ -38,13 +40,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role?: string }).role;
+        const u = user as {
+          role?: string;
+          isSuperAdmin?: boolean;
+          organizationId?: string | null;
+        };
+        token.role = u.role;
+        token.isSuperAdmin = u.isSuperAdmin;
+        token.organizationId = u.organizationId;
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
-        (session.user as { role?: string }).role = token.role as string;
+        const u = session.user as {
+          role?: string;
+          isSuperAdmin?: boolean;
+          organizationId?: string | null;
+        };
+        u.role = token.role as string;
+        u.isSuperAdmin = token.isSuperAdmin as boolean;
+        u.organizationId = token.organizationId as string | null;
       }
       return session;
     },

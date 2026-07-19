@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/upload";
+import { requireOrg } from "@/lib/tenant";
 import { AnimalSexo, AnimalStatus } from "@prisma/client";
 
 type FormState = { error?: string } | undefined;
@@ -40,16 +41,25 @@ function buildAnimalData(formData: FormData) {
   };
 }
 
+async function requireOwnedAnimal(animalId: string, organizationId: string) {
+  const animal = await prisma.animal.findFirst({
+    where: { id: animalId, organizationId },
+    select: { id: true },
+  });
+  if (!animal) throw new Error("Animal não encontrado.");
+}
+
 export async function createAnimalAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const data = buildAnimalData(formData);
   if (!data.name) return { error: "Informe o nome do animal." };
 
   let animal;
   try {
-    animal = await prisma.animal.create({ data });
+    animal = await prisma.animal.create({ data: { ...data, organizationId } });
   } catch {
     return {
       error:
@@ -66,6 +76,7 @@ export async function updateAnimalAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const data = buildAnimalData(formData);
   if (!data.name) return { error: "Informe o nome do animal." };
   if (data.paiId === id || data.maeId === id) {
@@ -73,7 +84,7 @@ export async function updateAnimalAction(
   }
 
   try {
-    await prisma.animal.update({ where: { id }, data });
+    await prisma.animal.updateMany({ where: { id, organizationId }, data });
   } catch {
     return {
       error:
@@ -87,7 +98,8 @@ export async function updateAnimalAction(
 }
 
 export async function deleteAnimalAction(id: string) {
-  await prisma.animal.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.animal.deleteMany({ where: { id, organizationId } });
   revalidatePath("/cadastro/animais");
   redirect("/cadastro/animais");
 }
@@ -96,6 +108,9 @@ export async function uploadAnimalPhotoAction(
   animalId: string,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
+  await requireOwnedAnimal(animalId, organizationId);
+
   const file = formData.get("file") as File | null;
   if (!file || file.size === 0) return;
 
@@ -113,6 +128,8 @@ export async function deleteAnimalPhotoAction(
   animalId: string,
   photoId: string
 ) {
+  const { organizationId } = await requireOrg();
+  await requireOwnedAnimal(animalId, organizationId);
   await prisma.animalPhoto.delete({ where: { id: photoId } });
   revalidatePath(`/cadastro/animais/${animalId}`);
 }
@@ -121,6 +138,9 @@ export async function uploadAnimalDocumentAction(
   animalId: string,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
+  await requireOwnedAnimal(animalId, organizationId);
+
   const file = formData.get("file") as File | null;
   if (!file || file.size === 0) return;
 
@@ -141,6 +161,8 @@ export async function deleteAnimalDocumentAction(
   animalId: string,
   documentId: string
 ) {
+  const { organizationId } = await requireOrg();
+  await requireOwnedAnimal(animalId, organizationId);
   await prisma.animalDocument.delete({ where: { id: documentId } });
   revalidatePath(`/cadastro/animais/${animalId}`);
 }

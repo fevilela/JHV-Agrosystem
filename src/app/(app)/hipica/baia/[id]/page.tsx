@@ -5,6 +5,7 @@ import { RecordForm } from "@/components/crud/record-form";
 import { stallFields } from "../fields";
 import { updateStallAction } from "../actions";
 import { stallEventTypeLabels, formatDate } from "@/lib/labels";
+import { requireModule } from "@/lib/tenant";
 
 export default async function StallDetailPage({
   params,
@@ -12,9 +13,10 @@ export default async function StallDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
-  const stall = await prisma.stall.findUnique({
-    where: { id },
+  const stall = await prisma.stall.findFirst({
+    where: { id, organizationId },
     include: {
       events: {
         orderBy: { date: "desc" },

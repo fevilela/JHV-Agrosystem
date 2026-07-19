@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
+import { requireModule } from "@/lib/tenant";
 import { stallFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
@@ -13,12 +14,13 @@ export async function createStallAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(stallFields, formData);
   if (!data.code) return { error: "Informe o código da baia." };
 
   try {
     await prisma.stall.create({
-      data: data as Prisma.StallUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.StallUncheckedCreateInput,
     });
   } catch {
     return { error: "Já existe uma baia com esse código." };
@@ -33,12 +35,13 @@ export async function updateStallAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(stallFields, formData);
   if (!data.code) return { error: "Informe o código da baia." };
 
   try {
-    await prisma.stall.update({
-      where: { id },
+    await prisma.stall.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.StallUncheckedUpdateInput,
     });
   } catch {
@@ -50,15 +53,17 @@ export async function updateStallAction(
 }
 
 export async function deleteStallAction(id: string) {
-  await prisma.stall.delete({ where: { id } });
+  const { organizationId } = await requireModule("hipica");
+  await prisma.stall.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/baia");
 }
 
 export async function occupyStallAction(stallId: string, formData: FormData) {
+  const { organizationId } = await requireModule("hipica");
   const animalId = formData.get("animalId") as string | null;
   if (!animalId) return;
 
-  const stall = await prisma.stall.findUnique({ where: { id: stallId } });
+  const stall = await prisma.stall.findFirst({ where: { id: stallId, organizationId } });
   if (!stall) return;
 
   await prisma.$transaction([
@@ -79,7 +84,8 @@ export async function occupyStallAction(stallId: string, formData: FormData) {
 }
 
 export async function vacateStallAction(stallId: string) {
-  const stall = await prisma.stall.findUnique({ where: { id: stallId } });
+  const { organizationId } = await requireModule("hipica");
+  const stall = await prisma.stall.findFirst({ where: { id: stallId, organizationId } });
   if (!stall) return;
 
   await prisma.$transaction([
@@ -103,6 +109,10 @@ export async function markStallStatusAction(
   stallId: string,
   status: "LIMPEZA" | "MANUTENCAO" | "LIVRE"
 ) {
+  const { organizationId } = await requireModule("hipica");
+  const stall = await prisma.stall.findFirst({ where: { id: stallId, organizationId } });
+  if (!stall) return;
+
   await prisma.$transaction([
     prisma.stall.update({ where: { id: stallId }, data: { status } }),
     prisma.stallEvent.create({

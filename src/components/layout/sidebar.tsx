@@ -5,12 +5,15 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { navGroups } from "@/lib/nav";
+import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
 
-export function Sidebar() {
+export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
   const pathname = usePathname();
+  const visibleGroups = navGroups.filter(
+    (g) => ALWAYS_ON_MODULES.includes(g.key) || allowedModules.includes(g.key)
+  );
   const [openGroup, setOpenGroup] = useState<string | null>(
-    navGroups.find((g) => g.items?.some((i) => pathname.startsWith(i.href)))
+    visibleGroups.find((g) => g.items?.some((i) => pathname.startsWith(i.href)))
       ?.label ?? "Cadastro"
   );
 
@@ -21,7 +24,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2.5 py-4">
-        {navGroups.map((group) => {
+        {visibleGroups.map((group) => {
           const isOpen = openGroup === group.label;
           const isGroupActive = group.items?.some((i) =>
             pathname.startsWith(i.href)

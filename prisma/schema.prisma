@@ -14,15 +14,64 @@ enum UserRole {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         UserRole @default(FUNCIONARIO)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String        @id @default(cuid())
+  name           String
+  email          String        @unique
+  passwordHash   String
+  role           UserRole      @default(FUNCIONARIO)
+  isSuperAdmin   Boolean       @default(false)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@map("users")
+}
+
+// ---------- Organizações (clientes da JHV) ----------
+
+model Organization {
+  id             String   @id @default(cuid())
+  name           String
+  cpfCnpj        String?
+  email          String?
+  phone          String?
+  address        String?
+  zipCode        String?
+  streetNumber   String?
+  neighborhood   String?
+  city           String?
+  state          String?
+  allowedModules String[] @default([])
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  users User[]
+
+  owners        Owner[]
+  employees     Employee[]
+  veterinarians Veterinarian[]
+  farriers      Farrier[]
+  instructors   Instructor[]
+  handlers      Handler[]
+  clients       Client[]
+  suppliers     Supplier[]
+  animals       Animal[]
+
+  trainingSessions    TrainingSession[]
+  animalDiets         AnimalDiet[]
+  equineHealthRecords EquineHealthRecord[]
+  stalls              Stall[]
+  agendaEvents        AgendaEvent[]
+  competitions        Competition[]
+  transports          Transport[]
+  financialEntries    FinancialEntry[]
+  animalTransactions  AnimalTransaction[]
+  piquetes            Piquete[]
+  contracts           Contract[]
+
+  @@map("organizations")
 }
 
 // ---------- Cadastro: pessoas ----------
@@ -39,6 +88,9 @@ model Owner {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   animals Animal[]
 
@@ -59,6 +111,9 @@ model Employee {
   notes         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   attendances  Attendance[]
   schedules    Schedule[]
@@ -81,6 +136,9 @@ model Veterinarian {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   @@map("veterinarians")
 }
 
@@ -94,6 +152,9 @@ model Farrier {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("farriers")
 }
@@ -110,6 +171,9 @@ model Instructor {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   trainingSessions TrainingSession[]
 
   @@map("instructors")
@@ -125,6 +189,9 @@ model Handler {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("handlers")
 }
@@ -144,6 +211,9 @@ model Client {
   notes        String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   financialEntries  FinancialEntry[]
   financeEntries    FinanceEntry[]
@@ -166,6 +236,9 @@ model Supplier {
   notes              String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   quotations     Quotation[]
   purchaseOrders PurchaseOrder[]
@@ -206,6 +279,9 @@ model Animal {
   notes          String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   ownerId String?
   owner   Owner?  @relation(fields: [ownerId], references: [id])
@@ -293,6 +369,9 @@ model TrainingSession {
   notes        String?
   createdAt    DateTime     @default(now())
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   @@map("training_sessions")
 }
 
@@ -310,6 +389,9 @@ model AnimalDiet {
   active             Boolean  @default(true)
   notes              String?
   createdAt          DateTime @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("animal_diets")
 }
@@ -335,6 +417,9 @@ model EquineHealthRecord {
   notes        String?
   createdAt    DateTime               @default(now())
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   @@map("equine_health_records")
 }
 
@@ -354,6 +439,9 @@ model Stall {
   notes     String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   currentAnimalId String? @unique
   currentAnimal   Animal? @relation("StallOccupant", fields: [currentAnimalId], references: [id])
@@ -413,6 +501,9 @@ model AgendaEvent {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   @@map("agenda_events")
 }
 
@@ -428,6 +519,9 @@ model Competition {
   notes     String?
   createdAt DateTime @default(now())
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   @@map("competitions")
 }
 
@@ -440,6 +534,9 @@ model Transport {
   vehicle     String?
   notes       String?
   createdAt   DateTime @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   animals TransportAnimal[]
 
@@ -489,6 +586,9 @@ model FinancialEntry {
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   @@map("financial_entries")
 }
 
@@ -509,6 +609,9 @@ model AnimalTransaction {
   counterpartyName String?
   notes            String?
   createdAt        DateTime              @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("animal_transactions")
 }
@@ -1433,26 +1536,6 @@ model JournalEntryLine {
   @@map("journal_entry_lines")
 }
 
-// ---------- Configurações ----------
-
-model CompanyProfile {
-  id           String   @id @default("singleton")
-  name         String
-  cpfCnpj      String?
-  address      String?
-  zipCode      String?
-  streetNumber String?
-  neighborhood String?
-  city         String?
-  state        String?
-  phone        String?
-  email        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@map("company_profiles")
-}
-
 // ---------- Hípica: Piquetes ----------
 
 enum PiqueteStatus {
@@ -1470,6 +1553,9 @@ model Piquete {
   notes     String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   currentAnimalId String? @unique
   currentAnimal   Animal? @relation("PiqueteOccupant", fields: [currentAnimalId], references: [id])
@@ -1526,6 +1612,9 @@ model Contract {
   notes        String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("contracts")
 }

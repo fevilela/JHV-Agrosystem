@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
+import { requireModule } from "@/lib/tenant";
 import { equineHealthRecordFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
@@ -13,12 +14,13 @@ export async function createEquineHealthRecordAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(equineHealthRecordFields, formData);
   if (!data.animalId) return { error: "Selecione o animal." };
   if (!data.date) return { error: "Informe a data." };
 
   await prisma.equineHealthRecord.create({
-    data: data as Prisma.EquineHealthRecordUncheckedCreateInput,
+    data: { ...data, organizationId } as Prisma.EquineHealthRecordUncheckedCreateInput,
   });
 
   revalidatePath("/hipica/sanidade");
@@ -30,12 +32,13 @@ export async function updateEquineHealthRecordAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(equineHealthRecordFields, formData);
   if (!data.animalId) return { error: "Selecione o animal." };
   if (!data.date) return { error: "Informe a data." };
 
-  await prisma.equineHealthRecord.update({
-    where: { id },
+  await prisma.equineHealthRecord.updateMany({
+    where: { id, organizationId },
     data: data as Prisma.EquineHealthRecordUncheckedUpdateInput,
   });
 
@@ -44,6 +47,7 @@ export async function updateEquineHealthRecordAction(
 }
 
 export async function deleteEquineHealthRecordAction(id: string) {
-  await prisma.equineHealthRecord.delete({ where: { id } });
+  const { organizationId } = await requireModule("hipica");
+  await prisma.equineHealthRecord.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/sanidade");
 }

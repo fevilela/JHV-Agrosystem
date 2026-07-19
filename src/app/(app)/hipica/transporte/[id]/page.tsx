@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { TransportForm } from "../transport-form";
 import { updateTransportAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditTransportPage({
   params,
@@ -9,13 +10,14 @@ export default async function EditTransportPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [transport, animals] = await Promise.all([
-    prisma.transport.findUnique({
-      where: { id },
+    prisma.transport.findFirst({
+      where: { id, organizationId },
       include: { animals: true },
     }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!transport) notFound();

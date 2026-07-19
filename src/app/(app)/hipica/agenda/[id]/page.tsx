@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { agendaFields } from "../fields";
 import { updateAgendaAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditAgendaPage({
   params,
@@ -10,10 +11,11 @@ export default async function EditAgendaPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [event, animals] = await Promise.all([
-    prisma.agendaEvent.findUnique({ where: { id } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.agendaEvent.findFirst({ where: { id, organizationId } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!event) notFound();

@@ -3,10 +3,13 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { exerciseTypeLabels, intensityLabels, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteTrainingAction } from "./actions";
 
 export default async function TreinamentoListPage() {
+  const { organizationId } = await requireModule("hipica");
   const sessions = await prisma.trainingSession.findMany({
+    where: { organizationId },
     orderBy: { date: "desc" },
     include: { animal: true, instructor: true },
   });

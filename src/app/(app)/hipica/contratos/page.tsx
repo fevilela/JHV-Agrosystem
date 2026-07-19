@@ -3,10 +3,13 @@ import { Plus, FileDown } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { contractTypeLabels, formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteContractAction } from "./actions";
 
 export default async function ContratosListPage() {
+  const { organizationId } = await requireModule("hipica");
   const contracts = await prisma.contract.findMany({
+    where: { organizationId },
     orderBy: { createdAt: "desc" },
     include: { client: true, animal: true },
   });

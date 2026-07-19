@@ -3,6 +3,7 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { animalTransactionTypeLabels, formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteTransactionAction } from "./actions";
 
 const typeColor: Record<string, string> = {
@@ -12,7 +13,9 @@ const typeColor: Record<string, string> = {
 };
 
 export default async function CompraVendaListPage() {
+  const { organizationId } = await requireModule("hipica");
   const transactions = await prisma.animalTransaction.findMany({
+    where: { organizationId },
     orderBy: { date: "desc" },
     include: { animal: true },
   });

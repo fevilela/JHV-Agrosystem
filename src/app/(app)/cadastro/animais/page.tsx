@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 
 const sexoLabel: Record<string, string> = {
   MACHO: "Macho",
@@ -25,7 +26,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function AnimaisListPage() {
+  const { organizationId } = await requireOrg();
   const animals = await prisma.animal.findMany({
+    where: { organizationId },
     orderBy: { name: "asc" },
     include: { owner: true },
   });

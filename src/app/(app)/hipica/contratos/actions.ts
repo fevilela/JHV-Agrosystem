@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { requireModule } from "@/lib/tenant";
 import type { ContractType } from "@prisma/client";
 
 type FormState = { error?: string } | undefined;
@@ -16,6 +17,8 @@ export async function createContractAction(
   _prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
+  const { organizationId } = await requireModule("hipica");
+
   const type = str(formData, "type") as ContractType | null;
   const clientId = str(formData, "clientId");
   const animalId = str(formData, "animalId");
@@ -44,6 +47,7 @@ export async function createContractAction(
       dueDay: dueDayRaw ? Number(dueDayRaw) : 10,
       startDate: new Date(startDateRaw),
       notes,
+      organizationId,
     },
   });
 
@@ -52,6 +56,7 @@ export async function createContractAction(
 }
 
 export async function deleteContractAction(id: string) {
-  await prisma.contract.delete({ where: { id } });
+  const { organizationId } = await requireModule("hipica");
+  await prisma.contract.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/contratos");
 }

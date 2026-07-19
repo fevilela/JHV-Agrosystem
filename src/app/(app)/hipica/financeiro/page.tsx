@@ -8,6 +8,7 @@ import {
   formatDate,
 } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteFinancialAction, markFinancialPaidAction } from "./actions";
 
 const statusColor: Record<string, string> = {
@@ -18,7 +19,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function FinanceiroListPage() {
+  const { organizationId } = await requireModule("hipica");
   const entries = await prisma.financialEntry.findMany({
+    where: { organizationId },
     orderBy: { dueDate: "asc" },
     include: { animal: true, client: true },
   });

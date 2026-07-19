@@ -3,6 +3,7 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { stallStatusLabels } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import {
   deleteStallAction,
   occupyStallAction,
@@ -18,12 +19,14 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function BaiaListPage() {
+  const { organizationId } = await requireModule("hipica");
   const [stalls, animals] = await Promise.all([
     prisma.stall.findMany({
+      where: { organizationId },
       orderBy: { code: "asc" },
       include: { currentAnimal: true },
     }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   return (

@@ -10,6 +10,7 @@ import { HistoricoSection, type TimelineEntry } from "./historico-section";
 import { Tabs } from "@/components/tabs";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { ModulePlaceholder } from "@/components/placeholder";
+import { requireOrg } from "@/lib/tenant";
 import {
   equineHealthRecordTypeLabels,
   exerciseTypeLabels,
@@ -25,6 +26,7 @@ export default async function AnimalDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [
     animal,
@@ -38,8 +40,8 @@ export default async function AnimalDetailPage({
     competitions,
     transactions,
   ] = await Promise.all([
-    prisma.animal.findUnique({
-      where: { id },
+    prisma.animal.findFirst({
+      where: { id, organizationId },
       include: {
         owner: true,
         pai: true,
@@ -50,8 +52,8 @@ export default async function AnimalDetailPage({
         filhosComoMae: true,
       },
     }),
-    prisma.owner.findMany({ orderBy: { name: "asc" } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.owner.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
     prisma.equineHealthRecord.findMany({ where: { animalId: id }, orderBy: { date: "desc" } }),
     prisma.trainingSession.findMany({ where: { animalId: id } }),
     prisma.animalDiet.findMany({ where: { animalId: id } }),

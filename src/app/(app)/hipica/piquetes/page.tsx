@@ -3,6 +3,7 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { piqueteStatusLabels } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import {
   deletePiqueteAction,
   occupyPiqueteAction,
@@ -17,12 +18,14 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function PiquetesListPage() {
+  const { organizationId } = await requireModule("hipica");
   const [piquetes, animals] = await Promise.all([
     prisma.piquete.findMany({
+      where: { organizationId },
       orderBy: { code: "asc" },
       include: { currentAnimal: true },
     }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   return (

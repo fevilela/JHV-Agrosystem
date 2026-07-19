@@ -4,13 +4,21 @@ export type NavItem = {
 };
 
 export type NavGroup = {
+  key: string;
   label: string;
   href?: string;
   items?: NavItem[];
 };
 
+/** Grupos que ficam sempre visíveis, independente de allowedModules (base usada pelos outros módulos). */
+export const ALWAYS_ON_MODULES = ["cadastro", "configuracoes"];
+
+/** Módulos que já têm isolamento de dados por organização e podem ser liberados no /admin. */
+export const RETROFITTED_MODULES = ["hipica"];
+
 export const navGroups: NavGroup[] = [
   {
+    key: "cadastro",
     label: "Cadastro",
     items: [
       { label: "Proprietários", href: "/cadastro/proprietarios" },
@@ -25,6 +33,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "hipica",
     label: "Hípica",
     items: [
       { label: "Controle Diário / Treinamento", href: "/hipica/treinamento" },
@@ -41,6 +50,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "pecuaria",
     label: "Pecuária",
     items: [
       { label: "Cadastro Animal", href: "/pecuaria/cadastro-animal" },
@@ -54,6 +64,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "agricultura",
     label: "Agricultura",
     items: [
       { label: "Talhões", href: "/agricultura/talhoes" },
@@ -67,6 +78,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "maquinas",
     label: "Máquinas e Equipamentos",
     items: [
       { label: "Cadastro", href: "/maquinas/cadastro" },
@@ -75,6 +87,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "estoque",
     label: "Estoque",
     items: [
       { label: "Materiais e Insumos", href: "/estoque/materiais" },
@@ -82,6 +95,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "compras",
     label: "Compras",
     items: [
       { label: "Solicitações", href: "/compras/solicitacoes" },
@@ -90,6 +104,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "financeiro",
     label: "Financeiro",
     items: [
       { label: "Fluxo de Caixa", href: "/financeiro/fluxo-caixa" },
@@ -101,6 +116,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "contabilidade",
     label: "Contabilidade",
     items: [
       { label: "Plano de Contas", href: "/contabilidade/plano-contas" },
@@ -112,6 +128,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "rh",
     label: "Recursos Humanos",
     items: [
       { label: "Funcionários", href: "/rh/funcionarios" },
@@ -120,6 +137,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "oficina",
     label: "Oficina",
     items: [
       { label: "Ordens de Serviço", href: "/oficina/ordens-servico" },
@@ -127,6 +145,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: "configuracoes",
     label: "Configurações",
     items: [{ label: "Dados da Empresa", href: "/configuracoes/empresa" }],
   },

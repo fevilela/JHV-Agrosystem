@@ -4,6 +4,7 @@ import { FileDown } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { contractTypeLabels, formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteContractAction } from "../actions";
 
 export default async function ContractDetailPage({
@@ -12,9 +13,10 @@ export default async function ContractDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
-  const contract = await prisma.contract.findUnique({
-    where: { id },
+  const contract = await prisma.contract.findFirst({
+    where: { id, organizationId },
     include: { client: true, animal: true, stall: true, piquete: true },
   });
 

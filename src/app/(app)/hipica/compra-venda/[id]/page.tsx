@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { transactionFields } from "../fields";
 import { updateTransactionAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditTransactionPage({
   params,
@@ -10,10 +11,11 @@ export default async function EditTransactionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [transaction, animals] = await Promise.all([
-    prisma.animalTransaction.findUnique({ where: { id } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.animalTransaction.findFirst({ where: { id, organizationId } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!transaction) notFound();

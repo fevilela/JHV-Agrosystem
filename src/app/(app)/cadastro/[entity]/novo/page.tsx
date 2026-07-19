@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getEntityConfig } from "@/lib/entities";
 import { EntityForm } from "@/components/crud/entity-form";
+import { requireOrg } from "@/lib/tenant";
 import { createEntityAction } from "../actions";
 
 export default async function NewEntityPage({
@@ -11,6 +12,8 @@ export default async function NewEntityPage({
   const { entity } = await params;
   const config = getEntityConfig(entity);
   if (!config) notFound();
+
+  await requireOrg();
 
   return (
     <div>

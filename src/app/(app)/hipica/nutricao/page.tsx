@@ -3,10 +3,13 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteDietAction } from "./actions";
 
 export default async function NutricaoListPage() {
+  const { organizationId } = await requireModule("hipica");
   const diets = await prisma.animalDiet.findMany({
+    where: { organizationId },
     orderBy: { startDate: "desc" },
     include: { animal: true },
   });

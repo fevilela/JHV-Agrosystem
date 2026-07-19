@@ -1,12 +1,10 @@
-import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { companyProfileFields } from "./fields";
 import { saveCompanyProfileAction } from "./actions";
 
 export default async function CompanyProfilePage() {
-  const profile = await prisma.companyProfile.findUnique({
-    where: { id: "singleton" },
-  });
+  const { organization } = await requireOrg();
 
   return (
     <div>
@@ -20,7 +18,7 @@ export default async function CompanyProfilePage() {
         <RecordForm
           fields={companyProfileFields}
           action={saveCompanyProfileAction}
-          initialValues={profile ?? undefined}
+          initialValues={organization}
           backHref="/"
         />
       </div>

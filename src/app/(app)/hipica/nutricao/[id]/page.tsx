@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { dietFields } from "../fields";
 import { updateDietAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditDietPage({
   params,
@@ -10,10 +11,11 @@ export default async function EditDietPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [diet, animals] = await Promise.all([
-    prisma.animalDiet.findUnique({ where: { id } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.animalDiet.findFirst({ where: { id, organizationId } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!diet) notFound();

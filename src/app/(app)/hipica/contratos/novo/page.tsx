@@ -1,13 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { ContractForm } from "../contract-form";
 import { createContractAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function NewContractPage() {
+  const { organizationId } = await requireModule("hipica");
   const [clients, animals, stalls, piquetes] = await Promise.all([
-    prisma.client.findMany({ orderBy: { name: "asc" } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
-    prisma.stall.findMany({ orderBy: { code: "asc" } }),
-    prisma.piquete.findMany({ orderBy: { code: "asc" } }),
+    prisma.client.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.stall.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
+    prisma.piquete.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
   ]);
 
   return (

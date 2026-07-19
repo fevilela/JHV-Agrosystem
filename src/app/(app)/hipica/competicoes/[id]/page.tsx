@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { competitionFields } from "../fields";
 import { updateCompetitionAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditCompetitionPage({
   params,
@@ -10,10 +11,11 @@ export default async function EditCompetitionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [competition, animals] = await Promise.all([
-    prisma.competition.findUnique({ where: { id } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.competition.findFirst({ where: { id, organizationId } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!competition) notFound();

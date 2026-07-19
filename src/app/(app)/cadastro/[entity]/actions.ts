@@ -8,6 +8,7 @@ import {
   updateEntityRecord,
   deleteEntityRecord,
 } from "@/lib/crud";
+import { requireOrg } from "@/lib/tenant";
 
 export async function createEntityAction(
   entitySlug: string,
@@ -17,8 +18,10 @@ export async function createEntityAction(
   const config = getEntityConfig(entitySlug);
   if (!config) return { error: "Cadastro inválido." };
 
+  const { organizationId } = await requireOrg();
+
   try {
-    await createEntityRecord(config, formData);
+    await createEntityRecord(config, formData, organizationId);
   } catch {
     return { error: "Não foi possível salvar. Verifique os dados informados." };
   }
@@ -36,8 +39,10 @@ export async function updateEntityAction(
   const config = getEntityConfig(entitySlug);
   if (!config) return { error: "Cadastro inválido." };
 
+  const { organizationId } = await requireOrg();
+
   try {
-    await updateEntityRecord(config, id, formData);
+    await updateEntityRecord(config, id, formData, organizationId);
   } catch {
     return { error: "Não foi possível salvar. Verifique os dados informados." };
   }
@@ -50,6 +55,8 @@ export async function deleteEntityAction(entitySlug: string, id: string) {
   const config = getEntityConfig(entitySlug);
   if (!config) return;
 
-  await deleteEntityRecord(config, id);
+  const { organizationId } = await requireOrg();
+
+  await deleteEntityRecord(config, id, organizationId);
   revalidatePath(`/cadastro/${entitySlug}`);
 }

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Plus, Pencil } from "lucide-react";
 import { getEntityConfig } from "@/lib/entities";
 import { listEntities } from "@/lib/crud";
+import { requireOrg } from "@/lib/tenant";
 import { deleteEntityAction } from "./actions";
 import { DeleteButton } from "@/components/crud/delete-button";
 
@@ -21,7 +22,8 @@ export default async function EntityListPage({
   const config = getEntityConfig(entity);
   if (!config) notFound();
 
-  const rows = await listEntities(config);
+  const { organizationId } = await requireOrg();
+  const rows = await listEntities(config, organizationId);
 
   return (
     <div>

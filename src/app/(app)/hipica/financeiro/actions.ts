@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
+import { requireModule } from "@/lib/tenant";
 import { financialFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
@@ -13,12 +14,13 @@ export async function createFinancialAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(financialFields, formData);
   if (!data.description) return { error: "Informe a descrição." };
   if (!data.amount) return { error: "Informe o valor." };
 
   await prisma.financialEntry.create({
-    data: data as Prisma.FinancialEntryUncheckedCreateInput,
+    data: { ...data, organizationId } as Prisma.FinancialEntryUncheckedCreateInput,
   });
 
   revalidatePath("/hipica/financeiro");
@@ -30,12 +32,13 @@ export async function updateFinancialAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(financialFields, formData);
   if (!data.description) return { error: "Informe a descrição." };
   if (!data.amount) return { error: "Informe o valor." };
 
-  await prisma.financialEntry.update({
-    where: { id },
+  await prisma.financialEntry.updateMany({
+    where: { id, organizationId },
     data: data as Prisma.FinancialEntryUncheckedUpdateInput,
   });
 
@@ -44,13 +47,15 @@ export async function updateFinancialAction(
 }
 
 export async function deleteFinancialAction(id: string) {
-  await prisma.financialEntry.delete({ where: { id } });
+  const { organizationId } = await requireModule("hipica");
+  await prisma.financialEntry.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/financeiro");
 }
 
 export async function markFinancialPaidAction(id: string) {
-  await prisma.financialEntry.update({
-    where: { id },
+  const { organizationId } = await requireModule("hipica");
+  await prisma.financialEntry.updateMany({
+    where: { id, organizationId },
     data: { status: "PAGO", paidDate: new Date() },
   });
   revalidatePath("/hipica/financeiro");

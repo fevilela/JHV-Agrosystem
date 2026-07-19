@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import Link from "next/link";
 import { AlertTriangle, Clock, TrendingDown, TrendingUp } from "lucide-react";
 import {
@@ -33,6 +34,7 @@ const categoryColor: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await auth();
+  const { organizationId } = await requireOrg();
   const now = new Date();
   const in7 = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
   const in30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -65,7 +67,7 @@ export default async function DashboardPage() {
     include: { employee: true },
   });
   const sanidadeHipica = await prisma.equineHealthRecord.findMany({
-    where: { nextDoseDate: { lte: in30 } },
+    where: { organizationId, nextDoseDate: { lte: in30 } },
     include: { animal: true },
   });
   const sanidadePecuaria = await prisma.healthRecord.findMany({

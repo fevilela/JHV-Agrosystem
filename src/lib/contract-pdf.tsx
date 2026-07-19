@@ -1,5 +1,5 @@
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
-import type { Contract, Client, Animal, Stall, Piquete, CompanyProfile } from "@prisma/client";
+import type { Contract, Client, Animal, Stall, Piquete, Organization } from "@prisma/client";
 import { MULTA_PCT, JUROS_MENSAL_PCT } from "./boleto-service";
 import { formatCurrency, formatDate, contractTypeLabels } from "./labels";
 
@@ -64,7 +64,7 @@ export function ContractDocument({
   company,
 }: {
   contract: ContractWithRelations;
-  company: CompanyProfile | null;
+  company: Organization | null;
 }) {
   const multaPct = Math.round(MULTA_PCT * 100);
   const jurosPct = Math.round(JUROS_MENSAL_PCT * 100);
@@ -161,7 +161,7 @@ export function ContractDocument({
 
 export async function renderContractPdf(
   contract: ContractWithRelations,
-  company: CompanyProfile | null
+  company: Organization | null
 ) {
   return renderToBuffer(<ContractDocument contract={contract} company={company} />);
 }

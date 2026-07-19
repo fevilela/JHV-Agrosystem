@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
+import { requireModule } from "@/lib/tenant";
 import { piqueteFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
@@ -13,12 +14,13 @@ export async function createPiqueteAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(piqueteFields, formData);
   if (!data.code) return { error: "Informe o código do piquete." };
 
   try {
     await prisma.piquete.create({
-      data: data as Prisma.PiqueteUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.PiqueteUncheckedCreateInput,
     });
   } catch {
     return { error: "Já existe um piquete com esse código." };
@@ -33,12 +35,13 @@ export async function updatePiqueteAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(piqueteFields, formData);
   if (!data.code) return { error: "Informe o código do piquete." };
 
   try {
-    await prisma.piquete.update({
-      where: { id },
+    await prisma.piquete.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.PiqueteUncheckedUpdateInput,
     });
   } catch {
@@ -50,15 +53,17 @@ export async function updatePiqueteAction(
 }
 
 export async function deletePiqueteAction(id: string) {
-  await prisma.piquete.delete({ where: { id } });
+  const { organizationId } = await requireModule("hipica");
+  await prisma.piquete.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/piquetes");
 }
 
 export async function occupyPiqueteAction(piqueteId: string, formData: FormData) {
+  const { organizationId } = await requireModule("hipica");
   const animalId = formData.get("animalId") as string | null;
   if (!animalId) return;
 
-  const piquete = await prisma.piquete.findUnique({ where: { id: piqueteId } });
+  const piquete = await prisma.piquete.findFirst({ where: { id: piqueteId, organizationId } });
   if (!piquete) return;
 
   await prisma.$transaction([
@@ -79,7 +84,8 @@ export async function occupyPiqueteAction(piqueteId: string, formData: FormData)
 }
 
 export async function vacatePiqueteAction(piqueteId: string) {
-  const piquete = await prisma.piquete.findUnique({ where: { id: piqueteId } });
+  const { organizationId } = await requireModule("hipica");
+  const piquete = await prisma.piquete.findFirst({ where: { id: piqueteId, organizationId } });
   if (!piquete) return;
 
   await prisma.$transaction([
@@ -103,6 +109,10 @@ export async function markPiqueteStatusAction(
   piqueteId: string,
   status: "MANUTENCAO" | "LIVRE"
 ) {
+  const { organizationId } = await requireModule("hipica");
+  const piquete = await prisma.piquete.findFirst({ where: { id: piqueteId, organizationId } });
+  if (!piquete) return;
+
   await prisma.$transaction([
     prisma.piquete.update({ where: { id: piqueteId }, data: { status } }),
     prisma.piqueteEvent.create({

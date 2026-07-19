@@ -2,11 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { trainingFields } from "../fields";
 import { createTrainingAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function NewTrainingPage() {
+  const { organizationId } = await requireModule("hipica");
   const [animals, instructors] = await Promise.all([
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
-    prisma.instructor.findMany({ orderBy: { name: "asc" } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.instructor.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   return (

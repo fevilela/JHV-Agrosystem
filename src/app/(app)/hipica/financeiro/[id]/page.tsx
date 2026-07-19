@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { financialFields } from "../fields";
 import { updateFinancialAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditFinancialPage({
   params,
@@ -10,11 +11,12 @@ export default async function EditFinancialPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [entry, animals, clients] = await Promise.all([
-    prisma.financialEntry.findUnique({ where: { id } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
-    prisma.client.findMany({ orderBy: { name: "asc" } }),
+    prisma.financialEntry.findFirst({ where: { id, organizationId } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.client.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!entry) notFound();

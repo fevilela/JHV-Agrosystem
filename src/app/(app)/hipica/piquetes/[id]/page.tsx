@@ -5,6 +5,7 @@ import { RecordForm } from "@/components/crud/record-form";
 import { piqueteFields } from "../fields";
 import { updatePiqueteAction } from "../actions";
 import { piqueteEventTypeLabels, formatDate } from "@/lib/labels";
+import { requireModule } from "@/lib/tenant";
 
 export default async function PiqueteDetailPage({
   params,
@@ -12,9 +13,10 @@ export default async function PiqueteDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
-  const piquete = await prisma.piquete.findUnique({
-    where: { id },
+  const piquete = await prisma.piquete.findFirst({
+    where: { id, organizationId },
     include: {
       events: {
         orderBy: { date: "desc" },

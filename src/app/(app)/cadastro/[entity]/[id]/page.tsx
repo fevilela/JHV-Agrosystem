@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getEntityConfig } from "@/lib/entities";
 import { getEntity } from "@/lib/crud";
 import { EntityForm } from "@/components/crud/entity-form";
+import { requireOrg } from "@/lib/tenant";
 import { updateEntityAction } from "../actions";
 
 export default async function EditEntityPage({
@@ -13,7 +14,8 @@ export default async function EditEntityPage({
   const config = getEntityConfig(entity);
   if (!config) notFound();
 
-  const record = await getEntity(config, id);
+  const { organizationId } = await requireOrg();
+  const record = await getEntity(config, id, organizationId);
   if (!record) notFound();
 
   return (

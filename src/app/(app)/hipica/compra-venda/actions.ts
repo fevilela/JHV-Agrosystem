@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
+import { requireModule } from "@/lib/tenant";
 import { transactionFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
@@ -13,13 +14,14 @@ export async function createTransactionAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(transactionFields, formData);
   if (!data.animalId) return { error: "Selecione o animal." };
   if (!data.date) return { error: "Informe a data." };
   if (!data.value) return { error: "Informe o valor." };
 
   await prisma.animalTransaction.create({
-    data: data as Prisma.AnimalTransactionUncheckedCreateInput,
+    data: { ...data, organizationId } as Prisma.AnimalTransactionUncheckedCreateInput,
   });
 
   revalidatePath("/hipica/compra-venda");
@@ -31,13 +33,14 @@ export async function updateTransactionAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildRecordData(transactionFields, formData);
   if (!data.animalId) return { error: "Selecione o animal." };
   if (!data.date) return { error: "Informe a data." };
   if (!data.value) return { error: "Informe o valor." };
 
-  await prisma.animalTransaction.update({
-    where: { id },
+  await prisma.animalTransaction.updateMany({
+    where: { id, organizationId },
     data: data as Prisma.AnimalTransactionUncheckedUpdateInput,
   });
 
@@ -46,6 +49,7 @@ export async function updateTransactionAction(
 }
 
 export async function deleteTransactionAction(id: string) {
-  await prisma.animalTransaction.delete({ where: { id } });
+  const { organizationId } = await requireModule("hipica");
+  await prisma.animalTransaction.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/compra-venda");
 }

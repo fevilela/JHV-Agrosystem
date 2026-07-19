@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { equineHealthRecordFields } from "../fields";
 import { updateEquineHealthRecordAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditEquineHealthRecordPage({
   params,
@@ -10,10 +11,11 @@ export default async function EditEquineHealthRecordPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [record, animals] = await Promise.all([
-    prisma.equineHealthRecord.findUnique({ where: { id } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
+    prisma.equineHealthRecord.findFirst({ where: { id, organizationId } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!record) notFound();

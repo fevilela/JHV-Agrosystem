@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { requireModule } from "@/lib/tenant";
 
 type FormState = { error?: string } | undefined;
 
@@ -28,6 +29,7 @@ export async function createTransportAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildTransportData(formData);
   if (!data.date) return { error: "Informe a data do transporte." };
 
@@ -41,6 +43,7 @@ export async function createTransportAction(
       driver: data.driver,
       vehicle: data.vehicle,
       notes: data.notes,
+      organizationId,
       animals: {
         create: animalIds.map((animalId) => ({ animalId })),
       },
@@ -56,10 +59,14 @@ export async function updateTransportAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireModule("hipica");
   const data = buildTransportData(formData);
   if (!data.date) return { error: "Informe a data do transporte." };
 
   const animalIds = formData.getAll("animalIds") as string[];
+
+  const transport = await prisma.transport.findFirst({ where: { id, organizationId } });
+  if (!transport) return { error: "Transporte não encontrado." };
 
   await prisma.$transaction([
     prisma.transportAnimal.deleteMany({ where: { transportId: id } }),
@@ -84,6 +91,7 @@ export async function updateTransportAction(
 }
 
 export async function deleteTransportAction(id: string) {
-  await prisma.transport.delete({ where: { id } });
+  const { organizationId } = await requireModule("hipica");
+  await prisma.transport.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/transporte");
 }

@@ -7,6 +7,7 @@ import {
   formatDate,
 } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteAgendaAction, setAgendaStatusAction } from "./actions";
 
 const statusColor: Record<string, string> = {
@@ -16,7 +17,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function AgendaListPage() {
+  const { organizationId } = await requireModule("hipica");
   const events = await prisma.agendaEvent.findMany({
+    where: { organizationId },
     orderBy: { date: "asc" },
     include: { animal: true },
   });

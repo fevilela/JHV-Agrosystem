@@ -7,24 +7,24 @@ import { EntityConfig, EntityField } from "@/lib/entities";
 // repeating near-identical CRUD code once per model.
 type Delegate = {
   findMany: (args?: unknown) => Promise<Record<string, unknown>[]>;
-  findUnique: (args: unknown) => Promise<Record<string, unknown> | null>;
+  findFirst: (args: unknown) => Promise<Record<string, unknown> | null>;
   create: (args: unknown) => Promise<Record<string, unknown>>;
-  update: (args: unknown) => Promise<Record<string, unknown>>;
-  delete: (args: unknown) => Promise<Record<string, unknown>>;
+  updateMany: (args: unknown) => Promise<{ count: number }>;
+  deleteMany: (args: unknown) => Promise<{ count: number }>;
 };
 
 function getDelegate(model: EntityConfig["model"]): Delegate {
   return (prisma as unknown as Record<string, Delegate>)[model];
 }
 
-export async function listEntities(config: EntityConfig) {
+export async function listEntities(config: EntityConfig, organizationId: string) {
   const delegate = getDelegate(config.model);
-  return delegate.findMany({ orderBy: { name: "asc" } });
+  return delegate.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
 }
 
-export async function getEntity(config: EntityConfig, id: string) {
+export async function getEntity(config: EntityConfig, id: string, organizationId: string) {
   const delegate = getDelegate(config.model);
-  return delegate.findUnique({ where: { id } });
+  return delegate.findFirst({ where: { id, organizationId } });
 }
 
 function parseFieldValue(field: EntityField, raw: FormDataEntryValue | null) {
@@ -48,24 +48,30 @@ export function buildData(config: EntityConfig, formData: FormData) {
 
 export async function createEntityRecord(
   config: EntityConfig,
-  formData: FormData
+  formData: FormData,
+  organizationId: string
 ) {
   const delegate = getDelegate(config.model);
   const data = buildData(config, formData);
-  await delegate.create({ data });
+  await delegate.create({ data: { ...data, organizationId } });
 }
 
 export async function updateEntityRecord(
   config: EntityConfig,
   id: string,
-  formData: FormData
+  formData: FormData,
+  organizationId: string
 ) {
   const delegate = getDelegate(config.model);
   const data = buildData(config, formData);
-  await delegate.update({ where: { id }, data });
+  await delegate.updateMany({ where: { id, organizationId }, data });
 }
 
-export async function deleteEntityRecord(config: EntityConfig, id: string) {
+export async function deleteEntityRecord(
+  config: EntityConfig,
+  id: string,
+  organizationId: string
+) {
   const delegate = getDelegate(config.model);
-  await delegate.delete({ where: { id } });
+  await delegate.deleteMany({ where: { id, organizationId } });
 }

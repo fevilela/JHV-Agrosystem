@@ -3,10 +3,13 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteTransportAction } from "./actions";
 
 export default async function TransporteListPage() {
+  const { organizationId } = await requireModule("hipica");
   const transports = await prisma.transport.findMany({
+    where: { organizationId },
     orderBy: { date: "desc" },
     include: { animals: { include: { animal: true } } },
   });

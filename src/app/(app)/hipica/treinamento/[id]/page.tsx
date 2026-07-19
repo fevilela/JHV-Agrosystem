@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { trainingFields } from "../fields";
 import { updateTrainingAction } from "../actions";
+import { requireModule } from "@/lib/tenant";
 
 export default async function EditTrainingPage({
   params,
@@ -10,11 +11,12 @@ export default async function EditTrainingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireModule("hipica");
 
   const [session, animals, instructors] = await Promise.all([
-    prisma.trainingSession.findUnique({ where: { id } }),
-    prisma.animal.findMany({ orderBy: { name: "asc" } }),
-    prisma.instructor.findMany({ orderBy: { name: "asc" } }),
+    prisma.trainingSession.findFirst({ where: { id, organizationId } }),
+    prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.instructor.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!session) notFound();

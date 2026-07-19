@@ -3,10 +3,13 @@ import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { equineHealthRecordTypeLabels, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { requireModule } from "@/lib/tenant";
 import { deleteEquineHealthRecordAction } from "./actions";
 
 export default async function EquineSanidadeListPage() {
+  const { organizationId } = await requireModule("hipica");
   const records = await prisma.equineHealthRecord.findMany({
+    where: { organizationId },
     orderBy: { date: "desc" },
     include: { animal: true },
   });
