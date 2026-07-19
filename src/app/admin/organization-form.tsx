@@ -122,6 +122,16 @@ export function OrganizationForm({
           }
           className={inputClass}
         />
+        {initialValues?.hasMpToken && (
+          <label className="mt-2 flex items-center gap-2 text-xs text-neutral-500">
+            <input
+              type="checkbox"
+              name="clearMpToken"
+              className="h-3.5 w-3.5 rounded border-neutral-300 text-red-600 focus:ring-2 focus:ring-red-100"
+            />
+            Remover o token atual (sem colocar outro)
+          </label>
+        )}
         <p className="mt-2 text-xs text-neutral-400">
           Usado pra gerar e confirmar os boletos dessa organização na conta do Mercado Pago dela
           (não a da JHV). Cada cliente precisa da própria conta configurada aqui antes de conseguir
@@ -143,6 +153,16 @@ export function OrganizationForm({
             }
             className={inputClass}
           />
+          {initialValues?.hasResendKey && (
+            <label className="mt-2 flex items-center gap-2 text-xs text-neutral-500">
+              <input
+                type="checkbox"
+                name="clearResendKey"
+                className="h-3.5 w-3.5 rounded border-neutral-300 text-red-600 focus:ring-2 focus:ring-red-100"
+              />
+              Remover a chave atual (sem colocar outra)
+            </label>
+          )}
         </div>
         <div>
           <label className={labelClass}>E-mail remetente</label>

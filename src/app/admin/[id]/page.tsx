@@ -21,7 +21,7 @@ export default async function OrganizationDetailPage({
 
   const organization = await prisma.organization.findUnique({
     where: { id },
-    include: { users: { orderBy: { createdAt: "asc" } } },
+    include: { users: { orderBy: { createdAt: "asc" } }, whatsappConnection: true },
   });
 
   if (!organization) notFound();
@@ -59,6 +59,31 @@ export default async function OrganizationDetailPage({
         </div>
 
         <div className="space-y-6">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+              WhatsApp
+            </h2>
+            {organization.whatsappConnection ? (
+              <div className="flex items-center gap-2 text-sm text-neutral-700">
+                <span className="h-2 w-2 rounded-full bg-green-500" />
+                Conectado
+                {organization.whatsappConnection.businessName
+                  ? ` — ${organization.whatsappConnection.businessName}`
+                  : ""}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-sm text-neutral-500">
+                <span className="h-2 w-2 rounded-full bg-neutral-300" />
+                Não conectado
+              </div>
+            )}
+            <p className="mt-2 text-xs text-neutral-400">
+              A conexão do WhatsApp não é feita por aqui — o Meta exige que o próprio dono do
+              número faça o login. Peça pra alguém da organização entrar no sistema e conectar em
+              Financeiro → Conectar WhatsApp.
+            </p>
+          </div>
+
           <div className="rounded-2xl border border-neutral-200 bg-white p-5">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
               Usuários

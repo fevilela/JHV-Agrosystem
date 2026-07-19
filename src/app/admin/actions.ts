@@ -58,6 +58,8 @@ export async function updateOrganizationAction(
 
   const novoMpToken = str(formData, "mpAccessToken");
   const novaResendKey = str(formData, "resendApiKey");
+  const limparMpToken = formData.get("clearMpToken") === "on";
+  const limparResendKey = formData.get("clearResendKey") === "on";
 
   await prisma.organization.update({
     where: { id },
@@ -72,9 +74,10 @@ export async function updateOrganizationAction(
       neighborhood: str(formData, "neighborhood"),
       city: str(formData, "city"),
       state: str(formData, "state"),
-      // campo em branco mantém o valor já salvo (não exibimos segredos de volta no formulário)
-      ...(novoMpToken ? { mpAccessToken: novoMpToken } : {}),
-      ...(novaResendKey ? { resendApiKey: novaResendKey } : {}),
+      // campo em branco mantém o valor já salvo (não exibimos segredos de volta no formulário);
+      // a caixa "remover" força limpar mesmo com o campo em branco
+      ...(limparMpToken ? { mpAccessToken: null } : novoMpToken ? { mpAccessToken: novoMpToken } : {}),
+      ...(limparResendKey ? { resendApiKey: null } : novaResendKey ? { resendApiKey: novaResendKey } : {}),
       resendFromEmail: str(formData, "resendFromEmail"),
       allowedModules: readAllowedModules(formData),
       active: formData.get("active") === "on",

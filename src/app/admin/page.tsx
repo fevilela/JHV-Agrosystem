@@ -6,7 +6,7 @@ import { navGroups } from "@/lib/nav";
 export default async function AdminOrganizationsPage() {
   const organizations = await prisma.organization.findMany({
     orderBy: { createdAt: "desc" },
-    include: { _count: { select: { users: true } } },
+    include: { _count: { select: { users: true } }, whatsappConnection: true },
   });
 
   const labelByKey = new Map(navGroups.map((g) => [g.key, g.label]));
@@ -67,6 +67,22 @@ export default async function AdminOrganizationsPage() {
               <p className="mt-1 text-xs text-neutral-500">
                 Mercado Pago:{" "}
                 {org.mpAccessToken ? (
+                  <span className="text-green-700">configurado</span>
+                ) : (
+                  <span className="text-amber-600">pendente</span>
+                )}
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                WhatsApp:{" "}
+                {org.whatsappConnection ? (
+                  <span className="text-green-700">conectado</span>
+                ) : (
+                  <span className="text-amber-600">não conectado</span>
+                )}
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                E-mail (Resend):{" "}
+                {org.resendApiKey ? (
                   <span className="text-green-700">configurado</span>
                 ) : (
                   <span className="text-amber-600">pendente</span>
