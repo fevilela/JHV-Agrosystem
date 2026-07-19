@@ -37,6 +37,8 @@ export async function createOrganizationAction(
       city: str(formData, "city"),
       state: str(formData, "state"),
       mpAccessToken: str(formData, "mpAccessToken"),
+      resendApiKey: str(formData, "resendApiKey"),
+      resendFromEmail: str(formData, "resendFromEmail"),
       allowedModules: readAllowedModules(formData),
       active: true,
     },
@@ -54,7 +56,8 @@ export async function updateOrganizationAction(
   const name = str(formData, "name");
   if (!name) return { error: "Informe o nome/razão social." };
 
-  const novoToken = str(formData, "mpAccessToken");
+  const novoMpToken = str(formData, "mpAccessToken");
+  const novaResendKey = str(formData, "resendApiKey");
 
   await prisma.organization.update({
     where: { id },
@@ -69,8 +72,10 @@ export async function updateOrganizationAction(
       neighborhood: str(formData, "neighborhood"),
       city: str(formData, "city"),
       state: str(formData, "state"),
-      // campo em branco mantém o token já salvo (não exibimos o valor atual no formulário)
-      ...(novoToken ? { mpAccessToken: novoToken } : {}),
+      // campo em branco mantém o valor já salvo (não exibimos segredos de volta no formulário)
+      ...(novoMpToken ? { mpAccessToken: novoMpToken } : {}),
+      ...(novaResendKey ? { resendApiKey: novaResendKey } : {}),
+      resendFromEmail: str(formData, "resendFromEmail"),
       allowedModules: readAllowedModules(formData),
       active: formData.get("active") === "on",
     },

@@ -31,24 +31,27 @@ model User {
 // ---------- Organizações (clientes da JHV) ----------
 
 model Organization {
-  id             String   @id @default(cuid())
-  name           String
-  cpfCnpj        String?
-  email          String?
-  phone          String?
-  address        String?
-  zipCode        String?
-  streetNumber   String?
-  neighborhood   String?
-  city           String?
-  state          String?
-  allowedModules String[] @default([])
-  active         Boolean  @default(true)
-  mpAccessToken  String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  cpfCnpj         String?
+  email           String?
+  phone           String?
+  address         String?
+  zipCode         String?
+  streetNumber    String?
+  neighborhood    String?
+  city            String?
+  state           String?
+  allowedModules  String[] @default([])
+  active          Boolean  @default(true)
+  mpAccessToken   String?
+  resendApiKey    String?
+  resendFromEmail String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  users User[]
+  users              User[]
+  whatsappConnection WhatsappConnection?
 
   owners        Owner[]
   employees     Employee[]
@@ -1455,13 +1458,15 @@ model ServiceOrderPart {
 // ---------- Integrações ----------
 
 model WhatsappConnection {
-  id            String   @id @default("singleton")
-  phoneNumberId String
-  wabaId        String?
-  accessToken   String
-  businessName  String?
-  connectedAt   DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id             String       @id @default(cuid())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  phoneNumberId  String
+  wabaId         String?
+  accessToken    String
+  businessName   String?
+  connectedAt    DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@map("whatsapp_connections")
 }

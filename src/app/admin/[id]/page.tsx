@@ -51,6 +51,8 @@ export default async function OrganizationDetailPage({
               allowedModules: organization.allowedModules,
               active: organization.active,
               hasMpToken: Boolean(organization.mpAccessToken),
+              hasResendKey: Boolean(organization.resendApiKey),
+              resendFromEmail: organization.resendFromEmail,
             }}
             showActiveToggle
           />

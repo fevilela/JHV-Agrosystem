@@ -29,7 +29,7 @@ declare global {
   }
 }
 
-export function ConnectWhatsappButton() {
+export function ConnectWhatsappButton({ organizationId }: { organizationId: string }) {
   const [status, setStatus] = useState<"idle" | "connecting" | "success" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
   const signupData = useRef<{ phoneNumberId?: string; wabaId?: string }>({});
@@ -85,7 +85,7 @@ export function ConnectWhatsappButton() {
           return;
         }
 
-        const resultado = await conectarWhatsappAction({
+        const resultado = await conectarWhatsappAction(organizationId, {
           code,
           phoneNumberId: signupData.current.phoneNumberId || "",
           wabaId: signupData.current.wabaId,

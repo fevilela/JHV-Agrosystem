@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { ConnectWhatsappButton } from "./connect-button";
 import { desconectarWhatsappAction } from "./actions";
 
 export default async function WhatsappSettingsPage() {
+  const { organizationId } = await requireOrg();
   const connection = await prisma.whatsappConnection.findUnique({
-    where: { id: "singleton" },
+    where: { organizationId },
   });
 
   return (
@@ -30,7 +32,7 @@ export default async function WhatsappSettingsPage() {
               <br />
               Conectado em: {connection.connectedAt.toLocaleString("pt-BR")}
             </p>
-            <form action={desconectarWhatsappAction}>
+            <form action={desconectarWhatsappAction.bind(null, organizationId)}>
               <button
                 type="submit"
                 className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
@@ -45,7 +47,7 @@ export default async function WhatsappSettingsPage() {
               <span className="h-2.5 w-2.5 rounded-full bg-neutral-300" />
               <p className="text-sm font-medium text-neutral-600">Nenhum WhatsApp conectado</p>
             </div>
-            <ConnectWhatsappButton />
+            <ConnectWhatsappButton organizationId={organizationId} />
           </div>
         )}
       </div>

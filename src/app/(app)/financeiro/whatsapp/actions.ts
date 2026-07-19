@@ -7,11 +7,14 @@ const GRAPH_API_VERSION = "v21.0";
 
 type ConectarState = { error?: string; success?: boolean } | undefined;
 
-export async function conectarWhatsappAction(params: {
-  code: string;
-  phoneNumberId: string;
-  wabaId?: string;
-}): Promise<ConectarState> {
+export async function conectarWhatsappAction(
+  organizationId: string,
+  params: {
+    code: string;
+    phoneNumberId: string;
+    wabaId?: string;
+  }
+): Promise<ConectarState> {
   const appId = process.env.NEXT_PUBLIC_META_APP_ID;
   const appSecret = process.env.META_APP_SECRET;
 
@@ -60,9 +63,9 @@ export async function conectarWhatsappAction(params: {
     }
 
     await prisma.whatsappConnection.upsert({
-      where: { id: "singleton" },
+      where: { organizationId },
       create: {
-        id: "singleton",
+        organizationId,
         phoneNumberId: params.phoneNumberId,
         wabaId: params.wabaId,
         accessToken,
@@ -83,7 +86,7 @@ export async function conectarWhatsappAction(params: {
   return { success: true };
 }
 
-export async function desconectarWhatsappAction() {
-  await prisma.whatsappConnection.deleteMany({ where: { id: "singleton" } });
+export async function desconectarWhatsappAction(organizationId: string) {
+  await prisma.whatsappConnection.deleteMany({ where: { organizationId } });
   revalidatePath("/financeiro/whatsapp");
 }

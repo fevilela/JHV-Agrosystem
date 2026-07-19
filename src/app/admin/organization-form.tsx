@@ -25,6 +25,8 @@ export type OrganizationValues = {
   allowedModules: string[];
   active: boolean;
   hasMpToken?: boolean;
+  hasResendKey?: boolean;
+  resendFromEmail?: string | null;
 };
 
 const moduleLabels = new Map(
@@ -124,6 +126,37 @@ export function OrganizationForm({
           Usado pra gerar e confirmar os boletos dessa organização na conta do Mercado Pago dela
           (não a da JHV). Cada cliente precisa da própria conta configurada aqui antes de conseguir
           gerar boletos.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
+        <div>
+          <label className={labelClass}>Chave de API da Resend (dessa organização)</label>
+          <input
+            type="password"
+            name="resendApiKey"
+            autoComplete="off"
+            placeholder={
+              initialValues?.hasResendKey
+                ? "•••••••••••••••• (preenchida — deixe em branco para manter)"
+                : "re_..."
+            }
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>E-mail remetente</label>
+          <input
+            type="text"
+            name="resendFromEmail"
+            placeholder="Hípica X <cobranca@hipicax.com>"
+            defaultValue={initialValues?.resendFromEmail ?? ""}
+            className={inputClass}
+          />
+        </div>
+        <p className="text-xs text-neutral-400 sm:col-span-2">
+          Usados pra enviar o boleto por e-mail ao cliente (além do WhatsApp). O e-mail remetente
+          precisa estar verificado na conta Resend dessa organização.
         </p>
       </div>
 

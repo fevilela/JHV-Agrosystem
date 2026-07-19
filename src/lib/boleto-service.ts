@@ -3,6 +3,7 @@ import { differenceInCalendarDays, addDays, endOfDay } from "date-fns";
 import { prisma } from "@/lib/prisma";
 import { getPaymentClient, identificationFromCpfCnpj, splitName } from "@/lib/mercadopago";
 import { enviarBoletoWhatsapp } from "@/lib/whatsapp";
+import { enviarBoletoEmail } from "@/lib/email";
 import { formatCurrency, formatDate } from "@/lib/labels";
 
 export const MULTA_PCT = 0.02;
@@ -146,6 +147,7 @@ export async function gerarBoletoParaConta(
     if (boletoUrl && client.phone) {
       try {
         const resultado = await enviarBoletoWhatsapp({
+          organizationId: organization.id,
           telefone: client.phone,
           nomeCliente: client.name,
           descricao: entry.description,
@@ -156,6 +158,23 @@ export async function gerarBoletoParaConta(
         if (resultado.error) console.error("Erro ao enviar boleto via WhatsApp:", resultado.error);
       } catch (err) {
         console.error("Erro ao enviar boleto via WhatsApp:", err);
+      }
+    }
+
+    if (boletoUrl && client.email) {
+      try {
+        const resultado = await enviarBoletoEmail({
+          organizationId: organization.id,
+          email: client.email,
+          nomeCliente: client.name,
+          descricao: entry.description,
+          valorFormatado: formatCurrency(valor),
+          vencimentoFormatado: formatDate(entry.dueDate),
+          boletoUrl,
+        });
+        if (resultado.error) console.error("Erro ao enviar boleto por e-mail:", resultado.error);
+      } catch (err) {
+        console.error("Erro ao enviar boleto por e-mail:", err);
       }
     }
   } catch (err) {
