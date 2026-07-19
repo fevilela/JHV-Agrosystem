@@ -31,11 +31,13 @@ export const navGroups: NavGroup[] = [
       { label: "Nutrição", href: "/hipica/nutricao" },
       { label: "Sanidade", href: "/hipica/sanidade" },
       { label: "Baia", href: "/hipica/baia" },
+      { label: "Piquetes", href: "/hipica/piquetes" },
       { label: "Agenda", href: "/hipica/agenda" },
       { label: "Competições", href: "/hipica/competicoes" },
       { label: "Transporte", href: "/hipica/transporte" },
       { label: "Financeiro da Hípica", href: "/hipica/financeiro" },
       { label: "Compra e Venda de Animais", href: "/hipica/compra-venda" },
+      { label: "Contratos", href: "/hipica/contratos" },
     ],
   },
   {
@@ -123,5 +125,9 @@ export const navGroups: NavGroup[] = [
       { label: "Ordens de Serviço", href: "/oficina/ordens-servico" },
       { label: "Peças e Mecânicos", href: "/oficina/pecas" },
     ],
+  },
+  {
+    label: "Configurações",
+    items: [{ label: "Dados da Empresa", href: "/configuracoes/empresa" }],
   },
 ];

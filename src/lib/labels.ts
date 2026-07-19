@@ -29,6 +29,25 @@ export const stallEventTypeLabels: Record<string, string> = {
   TROCA: "Troca de animal",
 };
 
+export const piqueteStatusLabels: Record<string, string> = {
+  LIVRE: "Livre",
+  OCUPADO: "Ocupado",
+  MANUTENCAO: "Manutenção",
+};
+
+export const piqueteEventTypeLabels: Record<string, string> = {
+  OCUPACAO: "Ocupação",
+  DESOCUPACAO: "Desocupação",
+  MANUTENCAO: "Manutenção",
+  TROCA: "Troca de animal",
+};
+
+export const contractTypeLabels: Record<string, string> = {
+  AULAS: "Aulas na Hípica",
+  PIQUETE: "Aluguel de Piquete",
+  BAIA: "Aluguel de Baia",
+};
+
 export const agendaEventTypeLabels: Record<string, string> = {
   FERRADOR: "Ferrador",
   VETERINARIO: "Veterinário",

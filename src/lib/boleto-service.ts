@@ -5,8 +5,8 @@ import { getPaymentClient, identificationFromCpfCnpj, splitName } from "@/lib/me
 import { enviarBoletoWhatsapp } from "@/lib/whatsapp";
 import { formatCurrency, formatDate } from "@/lib/labels";
 
-const MULTA_PCT = 0.02;
-const JUROS_MENSAL_PCT = 0.01;
+export const MULTA_PCT = 0.02;
+export const JUROS_MENSAL_PCT = 0.01;
 
 export function calcularValorComJuros(valorOriginal: number, diasAtraso: number) {
   if (diasAtraso <= 0) return valorOriginal;

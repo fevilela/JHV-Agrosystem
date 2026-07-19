@@ -148,6 +148,7 @@ model Client {
   financialEntries  FinancialEntry[]
   financeEntries    FinanceEntry[]
   recurringBillings RecurringBilling[]
+  contracts         Contract[]
 
   @@map("clients")
 }
@@ -224,12 +225,15 @@ model Animal {
   diets            AnimalDiet[]
   stallEvents      StallEvent[]
   currentStall     Stall?               @relation("StallOccupant")
+  piqueteEvents    PiqueteEvent[]
+  currentPiquete   Piquete?             @relation("PiqueteOccupant")
   agendaEvents     AgendaEvent[]
   competitions     Competition[]
   transportLinks   TransportAnimal[]
   financialEntries FinancialEntry[]
   transactions     AnimalTransaction[]
   healthRecords    EquineHealthRecord[]
+  contracts        Contract[]
 
   @@map("animals")
 }
@@ -354,7 +358,8 @@ model Stall {
   currentAnimalId String? @unique
   currentAnimal   Animal? @relation("StallOccupant", fields: [currentAnimalId], references: [id])
 
-  events StallEvent[]
+  events    StallEvent[]
+  contracts Contract[]
 
   @@map("stalls")
 }
@@ -1426,4 +1431,101 @@ model JournalEntryLine {
   createdAt      DateTime             @default(now())
 
   @@map("journal_entry_lines")
+}
+
+// ---------- Configurações ----------
+
+model CompanyProfile {
+  id           String   @id @default("singleton")
+  name         String
+  cpfCnpj      String?
+  address      String?
+  zipCode      String?
+  streetNumber String?
+  neighborhood String?
+  city         String?
+  state        String?
+  phone        String?
+  email        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("company_profiles")
+}
+
+// ---------- Hípica: Piquetes ----------
+
+enum PiqueteStatus {
+  LIVRE
+  OCUPADO
+  MANUTENCAO
+}
+
+model Piquete {
+  id        String        @id @default(cuid())
+  code      String        @unique
+  location  String?
+  capacity  Int           @default(1)
+  status    PiqueteStatus @default(LIVRE)
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  currentAnimalId String? @unique
+  currentAnimal   Animal? @relation("PiqueteOccupant", fields: [currentAnimalId], references: [id])
+
+  events    PiqueteEvent[]
+  contracts Contract[]
+
+  @@map("piquetes")
+}
+
+enum PiqueteEventType {
+  OCUPACAO
+  DESOCUPACAO
+  MANUTENCAO
+  TROCA
+}
+
+model PiqueteEvent {
+  id        String           @id @default(cuid())
+  piqueteId String
+  piquete   Piquete          @relation(fields: [piqueteId], references: [id], onDelete: Cascade)
+  type      PiqueteEventType
+  date      DateTime         @default(now())
+  animalId  String?
+  animal    Animal?          @relation(fields: [animalId], references: [id])
+  notes     String?
+  createdAt DateTime         @default(now())
+
+  @@map("piquete_events")
+}
+
+// ---------- Hípica: Contratos ----------
+
+enum ContractType {
+  AULAS
+  PIQUETE
+  BAIA
+}
+
+model Contract {
+  id           String       @id @default(cuid())
+  type         ContractType
+  clientId     String
+  client       Client       @relation(fields: [clientId], references: [id])
+  animalId     String?
+  animal       Animal?      @relation(fields: [animalId], references: [id])
+  stallId      String?
+  stall        Stall?       @relation(fields: [stallId], references: [id])
+  piqueteId    String?
+  piquete      Piquete?     @relation(fields: [piqueteId], references: [id])
+  monthlyValue Decimal      @db.Decimal(12, 2)
+  dueDay       Int          @default(10)
+  startDate    DateTime
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@map("contracts")
 }
