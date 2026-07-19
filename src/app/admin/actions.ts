@@ -61,6 +61,20 @@ export async function updateOrganizationAction(
   const limparMpToken = formData.get("clearMpToken") === "on";
   const limparResendKey = formData.get("clearResendKey") === "on";
 
+  // O formulário só mostra caixinha pros módulos já isolados por organização
+  // (RETROFITTED_MODULES). Qualquer módulo que a organização já tinha fora
+  // dessa lista (ex: liberado manualmente antes de existir a caixinha) precisa
+  // ser preservado — senão salvar o formulário apaga silenciosamente módulos
+  // que ele nem consegue exibir.
+  const current = await prisma.organization.findUnique({
+    where: { id },
+    select: { allowedModules: true },
+  });
+  const modulosForaDoFormulario = (current?.allowedModules ?? []).filter(
+    (m) => !RETROFITTED_MODULES.includes(m)
+  );
+  const allowedModules = [...modulosForaDoFormulario, ...readAllowedModules(formData)];
+
   await prisma.organization.update({
     where: { id },
     data: {
@@ -79,7 +93,7 @@ export async function updateOrganizationAction(
       ...(limparMpToken ? { mpAccessToken: null } : novoMpToken ? { mpAccessToken: novoMpToken } : {}),
       ...(limparResendKey ? { resendApiKey: null } : novaResendKey ? { resendApiKey: novaResendKey } : {}),
       resendFromEmail: str(formData, "resendFromEmail"),
-      allowedModules: readAllowedModules(formData),
+      allowedModules,
       active: formData.get("active") === "on",
     },
   });
