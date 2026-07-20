@@ -48,9 +48,13 @@ function extrairMensagemErro(err: unknown) {
     detail ||
     mpError?.message ||
     (err instanceof Error ? err.message : "Erro ao gerar boleto no Mercado Pago.");
-  return rawMessage === "Invalid transaction_amount"
-    ? "O valor da conta é muito baixo para gerar boleto no Mercado Pago. Tente um valor maior (R$ 10 ou mais)."
-    : rawMessage;
+  if (rawMessage === "Invalid transaction_amount") {
+    return "O valor da conta é muito baixo para gerar boleto no Mercado Pago. Tente um valor maior (R$ 10 ou mais).";
+  }
+  if (rawMessage.includes("expiration date can not be greater than 29 days")) {
+    return "O vencimento é muito distante pro Mercado Pago gerar o boleto agora (o limite dele é 29 dias). O boleto vai ser gerado automaticamente mais perto da data, ou você pode gerar de novo quando faltar menos de 29 dias.";
+  }
+  return rawMessage;
 }
 
 export async function gerarBoletoParaConta(
@@ -91,8 +95,18 @@ export async function gerarBoletoParaConta(
   const valor = valorOverride ?? Number(entry.amount);
   const hoje = new Date();
   const vencimentoOriginal = new Date(entry.dueDate);
+  // O Mercado Pago não aceita data de expiração de boleto além de 29 dias a partir de agora
+  // (contado com hora exata, não por dia de calendário). Se o vencimento real for mais distante,
+  // geramos com a expiração num limite de 28 dias — 1 dia de margem pra sobrar espaço em
+  // qualquer horário do dia em que essa função rodar. A reemissão automática de atrasados
+  // (reemitirBoletosAtrasados) cuida de gerar um novo boleto próximo do vencimento real depois.
+  const prazoMaximoMp = addDays(hoje, 28);
   const expiracao =
-    vencimentoOriginal > hoje ? endOfDay(vencimentoOriginal) : addDays(hoje, 5);
+    vencimentoOriginal > hoje
+      ? vencimentoOriginal > prazoMaximoMp
+        ? prazoMaximoMp
+        : endOfDay(vencimentoOriginal)
+      : addDays(hoje, 5);
 
   try {
     const payment = await getPaymentClient(organization.mpAccessToken).create({
