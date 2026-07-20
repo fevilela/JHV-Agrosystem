@@ -77,9 +77,9 @@ WHATSAPP_TEMPLATE_NAME="notificacao_boleto"
 
 O modelo de mensagem (`notificacao_boleto`, categoria Utilidade) precisa estar aprovado no Meta Business Manager com 5 variáveis de corpo, nesta ordem: nome do cliente, descrição da conta, valor formatado, vencimento formatado, link do boleto. Sem credenciais configuradas (nem via `.env`, nem via a conexão abaixo), o envio fica silenciosamente desativado.
 
-### Conectar WhatsApp pessoal via Coexistência (Financeiro → Conectar WhatsApp)
+### Conectar WhatsApp pessoal via Coexistência (Configurações → Conectar WhatsApp)
 
-Em vez de configurar `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID` manualmente, dá para conectar um número que já está no **app WhatsApp Business** do celular usando o fluxo "Coexistência" da Meta — a tela `/financeiro/whatsapp` faz isso pelo navegador (Embedded Signup), escaneando um QR code no celular, e salva o token resultante direto no banco (tabela `WhatsappConnection`), sem precisar editar `.env`/redeploy. `src/lib/whatsapp.ts` sempre prioriza essa conexão do banco antes de cair para as variáveis de ambiente.
+Em vez de configurar `WHATSAPP_ACCESS_TOKEN`/`WHATSAPP_PHONE_NUMBER_ID` manualmente, dá para conectar um número que já está no **app WhatsApp Business** do celular usando o fluxo "Coexistência" da Meta — a tela `/configuracoes/whatsapp` faz isso pelo navegador (Embedded Signup), escaneando um QR code no celular, e salva o token resultante direto no banco (tabela `WhatsappConnection`), sem precisar editar `.env`/redeploy. `src/lib/whatsapp.ts` sempre prioriza essa conexão do banco antes de cair para as variáveis de ambiente.
 
 Pré-requisitos que só podem ser feitos manualmente no painel da Meta (`developers.facebook.com`), antes do botão "Conectar WhatsApp" funcionar:
 1. O número precisa estar no **app WhatsApp Business** (não o WhatsApp comum) e ter atividade recente — números novos/sem uso são rejeitados pela Meta.

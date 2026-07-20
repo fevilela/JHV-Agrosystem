@@ -111,7 +111,6 @@ export const navGroups: NavGroup[] = [
       { label: "Contas a Pagar", href: "/financeiro/contas-pagar" },
       { label: "Contas a Receber", href: "/financeiro/contas-receber" },
       { label: "Cobranças Recorrentes", href: "/financeiro/recorrentes" },
-      { label: "Conectar WhatsApp", href: "/financeiro/whatsapp" },
       { label: "Centro de Custos", href: "/financeiro/centro-custos" },
     ],
   },
@@ -147,6 +146,9 @@ export const navGroups: NavGroup[] = [
   {
     key: "configuracoes",
     label: "Configurações",
-    items: [{ label: "Dados da Empresa", href: "/configuracoes/empresa" }],
+    items: [
+      { label: "Dados da Empresa", href: "/configuracoes/empresa" },
+      { label: "Conectar WhatsApp", href: "/configuracoes/whatsapp" },
+    ],
   },
 ];

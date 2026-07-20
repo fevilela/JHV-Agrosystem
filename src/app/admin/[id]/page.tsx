@@ -86,7 +86,7 @@ export default async function OrganizationDetailPage({
             <p className="mt-2 text-xs text-neutral-400">
               A conexão do WhatsApp não é feita por aqui — o Meta exige que o próprio dono do
               número faça o login. Peça pra alguém da organização entrar no sistema e conectar em
-              Financeiro → Conectar WhatsApp.
+              Configurações → Conectar WhatsApp.
             </p>
           </div>
 

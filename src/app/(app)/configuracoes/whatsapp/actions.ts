@@ -82,11 +82,11 @@ export async function conectarWhatsappAction(
     return { error: err instanceof Error ? err.message : "Erro ao conectar com o WhatsApp." };
   }
 
-  revalidatePath("/financeiro/whatsapp");
+  revalidatePath("/configuracoes/whatsapp");
   return { success: true };
 }
 
 export async function desconectarWhatsappAction(organizationId: string) {
   await prisma.whatsappConnection.deleteMany({ where: { organizationId } });
-  revalidatePath("/financeiro/whatsapp");
+  revalidatePath("/configuracoes/whatsapp");
 }
