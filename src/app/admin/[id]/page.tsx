@@ -6,7 +6,7 @@ import { OrganizationForm } from "../organization-form";
 import { updateOrganizationAction, createOrgUserAction, deleteOrgUserAction } from "../actions";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { UserForm } from "./add-user-form";
-import { navGroups, RETROFITTED_MODULES } from "@/lib/nav";
+import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
 
 const roleLabels: Record<string, string> = {
   ADMIN: "Administrador",
@@ -14,9 +14,7 @@ const roleLabels: Record<string, string> = {
   FUNCIONARIO: "Funcionário",
 };
 
-const moduleLabels = new Map(
-  navGroups.filter((g) => RETROFITTED_MODULES.includes(g.key)).map((g) => [g.key, g.label])
-);
+const moduleLabels = new Map(navGroups.map((g) => [g.key, g.label]));
 
 export default async function OrganizationDetailPage({
   params,
@@ -31,6 +29,10 @@ export default async function OrganizationDetailPage({
   });
 
   if (!organization) notFound();
+
+  const availableModules = organization.allowedModules.filter(
+    (m) => !ALWAYS_ON_MODULES.includes(m)
+  );
 
   return (
     <div>
@@ -141,6 +143,7 @@ export default async function OrganizationDetailPage({
               action={createOrgUserAction.bind(null, id)}
               passwordRequired
               submitLabel="Adicionar Usuário"
+              availableModules={availableModules}
             />
           </div>
         </div>

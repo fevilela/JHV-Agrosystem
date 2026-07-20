@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { navGroups, RETROFITTED_MODULES } from "@/lib/nav";
+import { navGroups } from "@/lib/nav";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (state: FormState, formData: FormData) => Promise<FormState>;
@@ -17,20 +17,20 @@ export type UserFormValues = {
   allowedModules: string[];
 };
 
-const moduleLabels = new Map(
-  navGroups.filter((g) => RETROFITTED_MODULES.includes(g.key)).map((g) => [g.key, g.label])
-);
+const moduleLabels = new Map(navGroups.map((g) => [g.key, g.label]));
 
 export function UserForm({
   action,
   initialValues,
   passwordRequired,
   submitLabel,
+  availableModules,
 }: {
   action: FormAction;
   initialValues?: UserFormValues;
   passwordRequired: boolean;
   submitLabel: string;
+  availableModules: string[];
 }) {
   const [state, formAction, isPending] = useActionState(action, undefined);
 
@@ -81,19 +81,26 @@ export function UserForm({
 
       <div>
         <label className={labelClass}>Módulos liberados pra esse usuário</label>
-        <div className="flex flex-wrap gap-4">
-          {RETROFITTED_MODULES.map((key) => (
-            <label key={key} className="flex items-center gap-2 text-sm text-neutral-700">
-              <input
-                type="checkbox"
-                name={`module_${key}`}
-                defaultChecked={initialValues?.allowedModules.includes(key) ?? false}
-                className="h-4 w-4 rounded-md border-neutral-300 text-brand-700 focus:ring-2 focus:ring-brand-100"
-              />
-              {moduleLabels.get(key) ?? key}
-            </label>
-          ))}
-        </div>
+        {availableModules.length === 0 ? (
+          <p className="text-xs text-neutral-400">
+            Essa organização ainda não tem nenhum módulo adicional liberado (além de Cadastro e
+            Configurações, que já ficam sempre visíveis).
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-4">
+            {availableModules.map((key) => (
+              <label key={key} className="flex items-center gap-2 text-sm text-neutral-700">
+                <input
+                  type="checkbox"
+                  name={`module_${key}`}
+                  defaultChecked={initialValues?.allowedModules.includes(key) ?? false}
+                  className="h-4 w-4 rounded-md border-neutral-300 text-brand-700 focus:ring-2 focus:ring-brand-100"
+                />
+                {moduleLabels.get(key) ?? key}
+              </label>
+            ))}
+          </div>
+        )}
         <p className="mt-2 text-xs text-neutral-400">
           Administradores sempre têm acesso a todos os módulos liberados pra organização,
           independente dessas caixinhas — elas só valem pra Gerente/Funcionário.

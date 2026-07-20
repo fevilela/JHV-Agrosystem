@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { RETROFITTED_MODULES } from "@/lib/nav";
+import { RETROFITTED_MODULES, navGroups } from "@/lib/nav";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,8 +13,18 @@ function str(formData: FormData, name: string) {
   return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
 }
 
+// Só módulos já isolados por organização podem ser habilitados pra uma organização
+// (senão o próprio admin poderia vazar dado entre clientes ligando um módulo ainda não retrofitado).
 function readAllowedModules(formData: FormData) {
   return RETROFITTED_MODULES.filter((key) => formData.get(`module_${key}`) === "on");
+}
+
+// Já pra um usuário dentro de uma organização, qualquer módulo que a própria organização já tenha
+// pode ser liberado — o formulário só mostra caixinha pros módulos que a organização já tem, e
+// requireOrg() sempre intersecta com organization.allowedModules na leitura, então não tem como
+// esse formulário conceder a um usuário mais acesso do que a organização já permite.
+function readUserAllowedModules(formData: FormData) {
+  return navGroups.map((g) => g.key).filter((key) => formData.get(`module_${key}`) === "on");
 }
 
 export async function createOrganizationAction(
@@ -130,7 +140,7 @@ export async function createOrgUserAction(
       email,
       passwordHash,
       role: role as "ADMIN" | "GERENTE" | "FUNCIONARIO",
-      allowedModules: readAllowedModules(formData),
+      allowedModules: readUserAllowedModules(formData),
       organizationId,
     },
   });
@@ -167,7 +177,7 @@ export async function updateOrgUserAction(
       name,
       email,
       role: role as "ADMIN" | "GERENTE" | "FUNCIONARIO",
-      allowedModules: readAllowedModules(formData),
+      allowedModules: readUserAllowedModules(formData),
       ...(password ? { passwordHash: await bcrypt.hash(password, 10) } : {}),
     },
   });

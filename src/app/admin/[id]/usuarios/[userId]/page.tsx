@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { UserForm } from "../../add-user-form";
 import { updateOrgUserAction } from "../../../actions";
+import { ALWAYS_ON_MODULES } from "@/lib/nav";
 
 export default async function EditOrgUserPage({
   params,
@@ -11,11 +12,16 @@ export default async function EditOrgUserPage({
 }) {
   const { id, userId } = await params;
 
-  const user = await prisma.user.findFirst({
-    where: { id: userId, organizationId: id },
-  });
+  const [user, organization] = await Promise.all([
+    prisma.user.findFirst({ where: { id: userId, organizationId: id } }),
+    prisma.organization.findUnique({ where: { id }, select: { allowedModules: true } }),
+  ]);
 
-  if (!user) notFound();
+  if (!user || !organization) notFound();
+
+  const availableModules = organization.allowedModules.filter(
+    (m) => !ALWAYS_ON_MODULES.includes(m)
+  );
 
   return (
     <div>
@@ -35,6 +41,7 @@ export default async function EditOrgUserPage({
           }}
           passwordRequired={false}
           submitLabel="Salvar"
+          availableModules={availableModules}
         />
       </div>
     </div>
