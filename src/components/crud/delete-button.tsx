@@ -1,15 +1,22 @@
 "use client";
 
-import { Trash2, Check, X } from "lucide-react";
+import { Trash2, Ban, Check, X } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
+
+const icons = { delete: Trash2, cancel: Ban };
 
 export function DeleteButton({
   onDelete,
   confirmLabel = "Confirmar exclusão",
+  variant = "delete",
+  title = "Excluir",
 }: {
   onDelete: () => Promise<void>;
   confirmLabel?: string;
+  variant?: "delete" | "cancel";
+  title?: string;
 }) {
+  const Icon = icons[variant];
   const [confirming, setConfirming] = useState(false);
   const [isPending, startTransition] = useTransition();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -60,9 +67,9 @@ export function DeleteButton({
         timeoutRef.current = setTimeout(() => setConfirming(false), 4000);
       }}
       className="rounded-md p-1.5 text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
-      title="Excluir"
+      title={title}
     >
-      <Trash2 size={16} />
+      <Icon size={16} />
     </button>
   );
 }

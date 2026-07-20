@@ -184,6 +184,39 @@ export async function gerarBoletoParaConta(
   return {};
 }
 
+export async function cancelarBoletoParaConta(entryId: string): Promise<{ error?: string }> {
+  const entry = await prisma.financeEntry.findUnique({
+    where: { id: entryId },
+    include: { client: true },
+  });
+  if (!entry) return { error: "Conta a receber não encontrada." };
+
+  if (entry.mpPaymentId && entry.client?.organizationId) {
+    try {
+      const organization = await prisma.organization.findUnique({
+        where: { id: entry.client.organizationId },
+      });
+      if (organization?.mpAccessToken) {
+        await getPaymentClient(organization.mpAccessToken).cancel({ id: entry.mpPaymentId });
+      }
+    } catch {
+      // o boleto pode já estar pago/expirado no Mercado Pago; seguimos e cancelamos por aqui mesmo assim
+    }
+  }
+
+  await prisma.financeEntry.update({
+    where: { id: entryId },
+    data: {
+      status: "CANCELADO",
+      mpPaymentId: null,
+      boletoUrl: null,
+      boletoBarcode: null,
+    },
+  });
+
+  return {};
+}
+
 export async function processarRecorrencias(hoje = new Date()) {
   const dia = hoje.getDate();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);

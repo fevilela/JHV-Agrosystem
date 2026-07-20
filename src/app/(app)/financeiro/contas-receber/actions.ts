@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { gerarBoletoParaConta } from "@/lib/boleto-service";
+import { gerarBoletoParaConta, cancelarBoletoParaConta } from "@/lib/boleto-service";
 import { receivableFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
@@ -74,4 +74,9 @@ export async function gerarBoletoAction(
 
   revalidatePath("/financeiro/contas-receber");
   return undefined;
+}
+
+export async function cancelarBoletoAction(id: string) {
+  await cancelarBoletoParaConta(id);
+  revalidatePath("/financeiro/contas-receber");
 }

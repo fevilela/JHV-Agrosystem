@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { financeEntryStatusLabels, formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { GerarBoletoButton } from "./gerar-boleto-button";
-import { deleteReceivableAction, markReceivableReceivedAction } from "./actions";
+import { deleteReceivableAction, markReceivableReceivedAction, cancelarBoletoAction } from "./actions";
 
 const statusColor: Record<string, string> = {
   PENDENTE: "bg-amber-50 text-amber-700",
@@ -93,16 +93,24 @@ export default async function ReceivableListPage() {
                         e.status !== "PAGO" &&
                         e.status !== "CANCELADO" &&
                         (e.boletoUrl ? (
-                          <a
-                            href={e.boletoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title={e.boletoBarcode || undefined}
-                            className="flex items-center gap-1 rounded-md border border-neutral-200 px-2 py-1 text-xs text-brand-700 hover:bg-brand-50"
-                          >
-                            <FileCheck size={13} />
-                            Ver boleto
-                          </a>
+                          <>
+                            <a
+                              href={e.boletoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={e.boletoBarcode || undefined}
+                              className="flex items-center gap-1 rounded-md border border-neutral-200 px-2 py-1 text-xs text-brand-700 hover:bg-brand-50"
+                            >
+                              <FileCheck size={13} />
+                              Ver boleto
+                            </a>
+                            <DeleteButton
+                              onDelete={cancelarBoletoAction.bind(null, e.id)}
+                              variant="cancel"
+                              title="Cancelar boleto"
+                              confirmLabel="Confirmar cancelamento do boleto"
+                            />
+                          </>
                         ) : (
                           <GerarBoletoButton entryId={e.id} />
                         ))}
