@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireModule } from "@/lib/tenant";
+import { renderContractPdf } from "@/lib/contract-pdf";
+import { enviarContratoEmail } from "@/lib/email";
+import { contractTypeLabels } from "@/lib/labels";
 import type { ContractType } from "@prisma/client";
 
 type FormState = { error?: string } | undefined;
@@ -59,4 +62,47 @@ export async function deleteContractAction(id: string) {
   const { organizationId } = await requireModule("hipica");
   await prisma.contract.deleteMany({ where: { id, organizationId } });
   revalidatePath("/hipica/contratos");
+}
+
+type EmailState = { error?: string; success?: true } | undefined;
+
+export async function enviarContratoEmailAction(
+  contractId: string,
+  _prevState: EmailState
+): Promise<EmailState> {
+  const { organizationId } = await requireModule("hipica");
+
+  const contract = await prisma.contract.findFirst({
+    where: { id: contractId, organizationId },
+    include: { client: true, animal: true, stall: true, piquete: true },
+  });
+  if (!contract) return { error: "Contrato não encontrado." };
+  if (!contract.client.email) {
+    return { error: "Cadastre o e-mail do cliente antes de enviar o contrato." };
+  }
+
+  const organization = await prisma.organization.findUnique({ where: { id: organizationId } });
+
+  const pdfBuffer = await renderContractPdf(contract, organization);
+  const pdfFilename = `contrato-${contract.client.name.replace(/\s+/g, "-").toLowerCase()}.pdf`;
+
+  const resultado = await enviarContratoEmail({
+    organizationId,
+    email: contract.client.email,
+    nomeCliente: contract.client.name,
+    descricaoContrato: `${contractTypeLabels[contract.type]} — ${contract.client.name}`,
+    pdfBuffer,
+    pdfFilename,
+  });
+
+  if (resultado.error) return { error: resultado.error };
+  if (resultado.skipped) {
+    return {
+      error:
+        "Configure a Resend desta organização (Painel JHV → editar organização) antes de enviar contratos por e-mail.",
+    };
+  }
+
+  revalidatePath(`/hipica/contratos/${contractId}`);
+  return { success: true };
 }

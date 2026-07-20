@@ -47,3 +47,39 @@ export async function enviarBoletoEmail(params: {
     return { error: err instanceof Error ? err.message : "Erro ao enviar e-mail." };
   }
 }
+
+export async function enviarContratoEmail(params: {
+  organizationId: string;
+  email: string;
+  nomeCliente: string;
+  descricaoContrato: string;
+  pdfBuffer: Buffer;
+  pdfFilename: string;
+}): Promise<{ success?: true; skipped?: true; error?: string }> {
+  const { apiKey, fromEmail } = await getEmailCredentials(params.organizationId);
+  if (!apiKey || !fromEmail) return { skipped: true };
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to: params.email,
+      subject: `Contrato: ${params.descricaoContrato}`,
+      html: `
+        <p>Olá, ${params.nomeCliente}!</p>
+        <p>Segue em anexo o contrato referente a <strong>${params.descricaoContrato}</strong>.</p>
+      `,
+      attachments: [
+        {
+          filename: params.pdfFilename,
+          content: params.pdfBuffer,
+        },
+      ],
+    });
+
+    if (error) return { error: error.message };
+    return { success: true };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Erro ao enviar e-mail." };
+  }
+}

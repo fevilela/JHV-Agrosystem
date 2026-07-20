@@ -6,6 +6,7 @@ import { contractTypeLabels, formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { requireModule } from "@/lib/tenant";
 import { deleteContractAction } from "../actions";
+import { SendContractEmailButton } from "./send-contract-email-button";
 
 export default async function ContractDetailPage({
   params,
@@ -59,6 +60,7 @@ export default async function ContractDetailPage({
             <FileDown size={16} />
             Baixar PDF
           </a>
+          <SendContractEmailButton contractId={contract.id} />
           <DeleteButton onDelete={deleteContractAction.bind(null, contract.id)} />
         </div>
       </div>
