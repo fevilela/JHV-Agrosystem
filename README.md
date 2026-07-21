@@ -79,21 +79,15 @@ O modelo de mensagem (`notificacao_boleto`, categoria Utilidade) precisa estar a
 
 ### Conectar WhatsApp dedicado ao sistema (Configurações → Conectar WhatsApp)
 
-A tela `/configuracoes/whatsapp` conecta um número de WhatsApp Business **novo, criado pela própria Meta durante o fluxo** (Cloud API via Embedded Signup) — diferente do fluxo de "Coexistência" (que reaproveitaria um número já ativo no app WhatsApp Business do celular), esse número passa a ser gerenciado 100% pelo sistema, não pelo celular do cliente. O token resultante é salvo direto no banco (tabela `WhatsappConnection`), sem precisar editar `.env`/redeploy. `src/lib/whatsapp.ts` sempre prioriza essa conexão do banco antes de cair para as variáveis de ambiente.
+A tela `/configuracoes/whatsapp` conecta um número de WhatsApp Business colando um **Token de Acesso Permanente de Usuário do Sistema** (System User) — não um fluxo de login em popup. Tentamos primeiro o Embedded Signup (login self-service via `FB.login()`), mas ele nunca completou a etapa de conectar o número de forma confiável (várias sessões de troubleshooting sem sucesso, mesmo com toda a configuração da Meta aparentemente correta); o token manual é o mesmo padrão já usado pro Mercado Pago e é bem mais previsível.
 
-Pré-requisitos que só podem ser feitos manualmente no painel da Meta (`developers.facebook.com`), antes do botão "Conectar WhatsApp" funcionar:
-1. No App do Meta for Developers, adicionar o produto **"Login do Facebook para Empresas"** e criar uma **Configuração (Configuration)** para Embedded Signup — isso gera um **Configuration ID**. Escolha "Token de acesso do usuário" e variação de login "General".
-2. Em "Configurações do App" → "Básico", anotar o **App ID** e o **App Secret**, adicionar o domínio de produção (ex: `jhv-agrosystem.onrender.com`) em "Domínios do app", e habilitar "Login com o SDK do JavaScript" nas configurações do produto Login do Facebook.
-3. O Portfólio Empresarial precisa estar verificado (Business Verification) no Gerenciador de Negócios da Meta.
+Passo a passo pra gerar o token (feito uma vez por organização, no Gerenciador de Negócios da própria organização dona do número):
+1. `business.facebook.com` → Configurações do Negócio → Usuários → Usuários do sistema → Adicionar (função Admin).
+2. Selecionar o usuário do sistema → Adicionar ativos → escolher a Conta do WhatsApp Business (WABA) → conceder controle total.
+3. Gerar novo token → selecionar o App usado pra essa integração → marcar `whatsapp_business_messaging` e `whatsapp_business_management` → gerar.
+4. Colar o token (só aparece uma vez) e o **Phone Number ID** (achado em WhatsApp Manager → Configuração da API → Números de telefone) na tela `/configuracoes/whatsapp`.
 
-Variáveis necessárias no `.env`:
-```
-NEXT_PUBLIC_META_APP_ID="..."
-META_APP_SECRET="..."
-NEXT_PUBLIC_META_WHATSAPP_CONFIG_ID="..."
-```
-
-Esse fluxo (Embedded Signup) é uma API relativamente nova da Meta e os nomes de parâmetros/eventos podem mudar — se o botão "Conectar WhatsApp" der erro, verifique o console do navegador e a mensagem retornada antes de mais nada.
+O formulário valida o token direto contra a API da Meta antes de salvar (`GET /{phone_number_id}?fields=verified_name`), então token/ID errados retornam erro na hora em vez de salvar algo quebrado. O resultado fica salvo na tabela `WhatsappConnection`; `src/lib/whatsapp.ts` sempre prioriza essa conexão do banco antes de cair para as variáveis de ambiente.
 
 ### Conversas do WhatsApp (Configurações → Conversas WhatsApp)
 
