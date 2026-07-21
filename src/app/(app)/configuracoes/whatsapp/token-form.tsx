@@ -24,8 +24,8 @@ export function WhatsappTokenForm({ organizationId }: { organizationId: string }
         <input type="password" name="accessToken" required className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>WABA ID (opcional)</label>
-        <input type="text" name="wabaId" className={inputClass} />
+        <label className={labelClass}>WABA ID (ID da Conta do WhatsApp Business)</label>
+        <input type="text" name="wabaId" required className={inputClass} />
       </div>
 
       {state?.error && (

@@ -31,6 +31,8 @@ export default async function WhatsappSettingsPage() {
               <p className="text-xs text-neutral-500">
                 Phone Number ID: {connection.phoneNumberId}
                 <br />
+                WABA ID: {connection.wabaId || "—"}
+                <br />
                 Conectado em: {connection.connectedAt.toLocaleString("pt-BR")}
               </p>
               <form action={desconectarWhatsappAction.bind(null, organizationId)}>
@@ -89,9 +91,11 @@ export default async function WhatsappSettingsPage() {
               ao lado.
             </li>
             <li>
-              O <span className="font-medium text-neutral-800">Phone Number ID</span> fica em
-              WhatsApp Manager → Configuração da API → Números de telefone (é um código, não o
-              número em si).
+              O <span className="font-medium text-neutral-800">Phone Number ID</span> e o{" "}
+              <span className="font-medium text-neutral-800">WABA ID</span> ficam em WhatsApp
+              Manager → Configuração da API (são códigos, não o número em si nem o nome da
+              conta). O WABA ID é obrigatório — é ele que liga a conta ao envio automático das
+              mensagens recebidas pro sistema.
             </li>
           </ol>
         </div>

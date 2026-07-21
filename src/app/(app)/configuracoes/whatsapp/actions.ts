@@ -19,10 +19,10 @@ export async function salvarWhatsappTokenAction(
 ): Promise<SalvarState> {
   const phoneNumberId = str(formData, "phoneNumberId");
   const accessToken = str(formData, "accessToken");
-  const wabaId = str(formData, "wabaId") || undefined;
+  const wabaId = str(formData, "wabaId");
 
-  if (!phoneNumberId || !accessToken) {
-    return { error: "Informe o Phone Number ID e o Token de Acesso." };
+  if (!phoneNumberId || !accessToken || !wabaId) {
+    return { error: "Informe o Phone Number ID, o WABA ID e o Token de Acesso." };
   }
 
   let businessName: string | undefined;
@@ -40,6 +40,28 @@ export async function salvarWhatsappTokenAction(
     businessName = data?.verified_name || data?.display_phone_number;
   } catch (err) {
     return { error: err instanceof Error ? err.message : "Erro ao validar com a Meta." };
+  }
+
+  // Sem isso, o número fica conectado mas a Meta nunca avisa nosso webhook quando
+  // chega mensagem — essa chamada liga a conta (WABA) ao app que vai receber os eventos.
+  try {
+    const subRes = await fetch(
+      `https://graph.facebook.com/${GRAPH_API_VERSION}/${wabaId}/subscribed_apps`,
+      { method: "POST", headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    const subData = await subRes.json();
+    if (!subRes.ok) {
+      return {
+        error: `Número validado, mas não foi possível inscrever pro recebimento de mensagens: ${subData?.error?.message || JSON.stringify(subData)}`,
+      };
+    }
+  } catch (err) {
+    return {
+      error:
+        err instanceof Error
+          ? `Número validado, mas houve erro ao inscrever pro recebimento de mensagens: ${err.message}`
+          : "Erro ao inscrever pro recebimento de mensagens.",
+    };
   }
 
   await prisma.whatsappConnection.upsert({
