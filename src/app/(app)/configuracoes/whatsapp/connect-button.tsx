@@ -42,6 +42,14 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
     ];
 
     function handleMessage(event: MessageEvent) {
+      // Log temporário pra diagnosticar o formato real das mensagens do Embedded Signup.
+      if (event.origin.includes("facebook.com")) {
+        console.log("[WhatsApp Embedded Signup] mensagem recebida", {
+          origin: event.origin,
+          data: event.data,
+        });
+      }
+
       if (!origensAceitas.includes(event.origin)) return;
       try {
         const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
