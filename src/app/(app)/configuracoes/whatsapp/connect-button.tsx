@@ -128,6 +128,8 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
         response_type: "code",
         override_default_response_type: true,
         extras: {
+          version: "v3",
+          setup: {},
           featureType: "whatsapp_business_app_onboarding",
           sessionInfoVersion: "3",
         },
