@@ -13,9 +13,10 @@ export default async function WhatsappSettingsPage() {
     <div>
       <h1 className="mb-2 text-xl font-semibold text-neutral-900">Conectar WhatsApp</h1>
       <p className="mb-6 text-sm text-neutral-500">
-        Conecte um número do WhatsApp Business (via Coexistência) para que o sistema envie
-        automaticamente o link do boleto para o cliente, sempre que um boleto for gerado ou
-        reemitido — manual ou recorrente.
+        Conecte um número de WhatsApp Business dedicado a este sistema — a Meta cria o número
+        pra você durante a conexão. O sistema passa a enviar automaticamente o link do boleto
+        pro cliente (sempre que um boleto for gerado ou reemitido) e também mostra as conversas
+        recebidas, com opção de responder por aqui.
       </p>
 
       <div className="rounded-2xl border border-neutral-200 bg-white p-6">

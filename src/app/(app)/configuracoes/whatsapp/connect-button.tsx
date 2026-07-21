@@ -42,16 +42,6 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
     ];
 
     function handleMessage(event: MessageEvent) {
-      // Log temporário pra diagnosticar o formato real das mensagens do Embedded Signup —
-      // a Meta muda esse contrato com frequência, então vale registrar tudo que chega
-      // (mesmo de origens que a gente ainda não trata) até confirmarmos o formato certo.
-      if (event.origin.includes("facebook.com")) {
-        console.log("[WhatsApp Embedded Signup] mensagem recebida", {
-          origin: event.origin,
-          data: event.data,
-        });
-      }
-
       if (!origensAceitas.includes(event.origin)) return;
       try {
         const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
@@ -127,8 +117,10 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
         config_id: configId,
         response_type: "code",
         override_default_response_type: true,
+        // Sem featureType: fluxo padrão da Meta (Cloud API), que cria um número novo
+        // direto — mais simples e mais confiável que o de Coexistência, que exige
+        // parear com o app WhatsApp Business já instalado no celular.
         extras: {
-          featureType: "whatsapp_business_app_onboarding",
           sessionInfoVersion: "3",
         },
       }

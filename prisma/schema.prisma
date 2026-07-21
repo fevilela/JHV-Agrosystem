@@ -53,6 +53,7 @@ model Organization {
 
   users              User[]
   whatsappConnection WhatsappConnection?
+  whatsappMessages   WhatsappMessage[]
 
   owners        Owner[]
   employees     Employee[]
@@ -224,6 +225,7 @@ model Client {
   financeEntries    FinanceEntry[]
   recurringBillings RecurringBilling[]
   contracts         Contract[]
+  whatsappMessages  WhatsappMessage[]
 
   @@map("clients")
 }
@@ -1470,6 +1472,36 @@ model WhatsappConnection {
   updatedAt      DateTime     @updatedAt
 
   @@map("whatsapp_connections")
+}
+
+enum WhatsappMessageDirection {
+  ENTRADA
+  SAIDA
+}
+
+enum WhatsappMessageStatus {
+  ENVIADO
+  ENTREGUE
+  LIDO
+  FALHOU
+}
+
+model WhatsappMessage {
+  id             String                   @id @default(cuid())
+  organizationId String
+  organization   Organization             @relation(fields: [organizationId], references: [id])
+  clientId       String?
+  client         Client?                  @relation(fields: [clientId], references: [id])
+  phone          String
+  direction      WhatsappMessageDirection
+  content        String                   @db.Text
+  templateName   String?
+  waMessageId    String?                  @unique
+  status         WhatsappMessageStatus    @default(ENVIADO)
+  createdAt      DateTime                 @default(now())
+
+  @@index([organizationId, phone])
+  @@map("whatsapp_messages")
 }
 
 // ---------- Contabilidade ----------
