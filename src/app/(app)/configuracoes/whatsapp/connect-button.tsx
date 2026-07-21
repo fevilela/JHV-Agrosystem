@@ -64,6 +64,22 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+  async function finalizarConexao(code: string) {
+    const resultado = await conectarWhatsappAction(organizationId, {
+      code,
+      phoneNumberId: signupData.current.phoneNumberId || "",
+      wabaId: signupData.current.wabaId,
+    });
+
+    if (resultado?.error) {
+      setStatus("error");
+      setMessage(resultado.error);
+    } else {
+      setStatus("success");
+      setMessage("WhatsApp conectado com sucesso!");
+    }
+  }
+
   function handleClick() {
     const configId = process.env.NEXT_PUBLIC_META_WHATSAPP_CONFIG_ID;
     if (!window.FB || !configId) {
@@ -76,8 +92,12 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
     setMessage(null);
     signupData.current = {};
 
+    // O callback do FB.login precisa ser uma função síncrona (não async) — o SDK do
+    // Facebook rejeita internamente uma função assíncrona passada direto aqui
+    // ("Expression is of type asyncfunction, not function"), então o trabalho
+    // assíncrono fica isolado em finalizarConexao, só disparado daqui.
     window.FB.login(
-      async (response) => {
+      (response) => {
         const code = response.authResponse?.code;
         if (!code) {
           setStatus("error");
@@ -85,19 +105,7 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
           return;
         }
 
-        const resultado = await conectarWhatsappAction(organizationId, {
-          code,
-          phoneNumberId: signupData.current.phoneNumberId || "",
-          wabaId: signupData.current.wabaId,
-        });
-
-        if (resultado?.error) {
-          setStatus("error");
-          setMessage(resultado.error);
-        } else {
-          setStatus("success");
-          setMessage("WhatsApp conectado com sucesso!");
-        }
+        finalizarConexao(code);
       },
       {
         config_id: configId,
