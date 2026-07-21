@@ -93,6 +93,12 @@ O formulário valida o token direto contra a API da Meta antes de salvar (`GET /
 
 Além do envio automático de boleto, o sistema recebe e guarda as mensagens trocadas pelo número conectado — modelo `WhatsappMessage`, associado por telefone ao `Client` quando bate. O webhook em `src/app/api/webhooks/whatsapp/route.ts` processa `messages` (mensagens recebidas, casadas ao cliente pelo telefone) e `statuses` (atualização de entrega/leitura das mensagens enviadas). A tela `/configuracoes/whatsapp/conversas` lista as conversas e permite responder em texto livre — a Meta só aceita texto livre até 24h depois da última mensagem do cliente; fora disso, é preciso um modelo aprovado (como o de boleto).
 
+### Envio de contrato por WhatsApp e e-mail
+
+Na página de um contrato (`/hipica/contratos/[id]`) há botões "Enviar por E-mail" e "Enviar por WhatsApp", além de "Baixar PDF". O e-mail (via Resend, configurado por organização em Configurações → Empresa) anexa o PDF direto. O WhatsApp não anexa arquivo — envia um modelo de mensagem com um link para `/contrato-publico/[id]/pdf`, uma rota pública (sem login) que serve o PDF do contrato, protegida só pelo id do contrato ser um cuid não adivinhável (mesmo padrão de segurança do link do boleto do Mercado Pago).
+
+Assim como o boleto, o envio por WhatsApp exige um modelo aprovado no Meta Business Manager: `notificacao_contrato` (categoria Utilidade), com 3 variáveis de corpo, nesta ordem: nome do cliente, descrição do contrato, link do contrato. Sem esse modelo aprovado (ou sem WhatsApp conectado), o envio falha com uma mensagem de erro explicando o motivo.
+
 ## Contabilidade (partida dobrada)
 
 Módulo de contabilidade formal em `/contabilidade`: Plano de Contas (hierárquico, com um plano padrão já semeado via `npm run db:seed` — Ativo/Passivo/PL/Receitas/Custos/Despesas adaptado ao agro), Lançamentos Contábeis (partidas de débito/crédito que precisam fechar — validado no cliente e no servidor), Livro Razão, Balancete de Verificação, Balanço Patrimonial e DRE.

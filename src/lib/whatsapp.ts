@@ -121,6 +121,74 @@ export async function enviarBoletoWhatsapp(params: {
   return { success: true };
 }
 
+export async function enviarContratoWhatsapp(params: {
+  organizationId: string;
+  telefone: string;
+  nomeCliente: string;
+  descricaoContrato: string;
+  contratoUrl: string;
+}): Promise<{ success?: true; skipped?: true; error?: string }> {
+  const { accessToken, phoneNumberId } = await getWhatsappCredentials(params.organizationId);
+  const templateName = "notificacao_contrato";
+
+  if (!accessToken || !phoneNumberId) return { skipped: true };
+
+  const to = normalizarTelefoneWhatsapp(params.telefone);
+  if (!to) return { skipped: true, error: "Telefone do cliente inválido para WhatsApp." };
+
+  const res = await fetch(
+    `https://graph.facebook.com/${GRAPH_API_VERSION}/${phoneNumberId}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to,
+        type: "template",
+        template: {
+          name: templateName,
+          language: { code: "pt_BR" },
+          components: [
+            {
+              type: "body",
+              parameters: [
+                { type: "text", parameter_name: "nome_cliente", text: params.nomeCliente },
+                { type: "text", parameter_name: "descricao", text: params.descricaoContrato },
+                { type: "text", parameter_name: "link_contrato", text: params.contratoUrl },
+              ],
+            },
+          ],
+        },
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const body = await res.text();
+    return { error: `WhatsApp API respondeu ${res.status}: ${body}` };
+  }
+
+  const data = await res.json();
+  const waMessageId = data?.messages?.[0]?.id as string | undefined;
+
+  try {
+    await registrarMensagemEnviada({
+      organizationId: params.organizationId,
+      phone: to,
+      content: `Contrato: ${params.descricaoContrato}`,
+      templateName,
+      waMessageId,
+    });
+  } catch (err) {
+    console.error("Erro ao registrar mensagem de WhatsApp enviada:", err);
+  }
+
+  return { success: true };
+}
+
 export async function enviarMensagemLivreWhatsapp(params: {
   organizationId: string;
   telefone: string;

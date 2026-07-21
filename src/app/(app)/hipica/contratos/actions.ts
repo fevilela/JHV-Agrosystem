@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { requireModule } from "@/lib/tenant";
 import { renderContractPdf } from "@/lib/contract-pdf";
 import { enviarContratoEmail } from "@/lib/email";
+import { enviarContratoWhatsapp } from "@/lib/whatsapp";
 import { contractTypeLabels } from "@/lib/labels";
 import type { ContractType } from "@prisma/client";
 
@@ -100,6 +101,46 @@ export async function enviarContratoEmailAction(
     return {
       error:
         "Configure a Resend desta organização (Painel JHV → editar organização) antes de enviar contratos por e-mail.",
+    };
+  }
+
+  revalidatePath(`/hipica/contratos/${contractId}`);
+  return { success: true };
+}
+
+type WhatsappState = { error?: string; success?: true } | undefined;
+
+export async function enviarContratoWhatsappAction(
+  contractId: string,
+  _prevState: WhatsappState
+): Promise<WhatsappState> {
+  const { organizationId } = await requireModule("hipica");
+
+  const contract = await prisma.contract.findFirst({
+    where: { id: contractId, organizationId },
+    include: { client: true },
+  });
+  if (!contract) return { error: "Contrato não encontrado." };
+  if (!contract.client.phone) {
+    return { error: "Cadastre o telefone do cliente antes de enviar o contrato por WhatsApp." };
+  }
+
+  const baseUrl = process.env.NEXTAUTH_URL || "";
+  const contratoUrl = `${baseUrl}/contrato-publico/${contract.id}/pdf`;
+
+  const resultado = await enviarContratoWhatsapp({
+    organizationId,
+    telefone: contract.client.phone,
+    nomeCliente: contract.client.name,
+    descricaoContrato: `${contractTypeLabels[contract.type]} — ${contract.client.name}`,
+    contratoUrl,
+  });
+
+  if (resultado.error) return { error: resultado.error };
+  if (resultado.skipped) {
+    return {
+      error:
+        "Conecte um número de WhatsApp desta organização (Configurações → WhatsApp) antes de enviar contratos por WhatsApp.",
     };
   }
 

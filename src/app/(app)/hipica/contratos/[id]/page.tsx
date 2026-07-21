@@ -7,6 +7,7 @@ import { DeleteButton } from "@/components/crud/delete-button";
 import { requireModule } from "@/lib/tenant";
 import { deleteContractAction } from "../actions";
 import { SendContractEmailButton } from "./send-contract-email-button";
+import { SendContractWhatsappButton } from "./send-contract-whatsapp-button";
 
 export default async function ContractDetailPage({
   params,
@@ -61,6 +62,7 @@ export default async function ContractDetailPage({
             Baixar PDF
           </a>
           <SendContractEmailButton contractId={contract.id} />
+          <SendContractWhatsappButton contractId={contract.id} />
           <DeleteButton onDelete={deleteContractAction.bind(null, contract.id)} />
         </div>
       </div>

@@ -4,7 +4,9 @@ import { auth } from "@/lib/auth";
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isLoginPage = req.nextUrl.pathname.startsWith("/login");
-  const isPublicPage = req.nextUrl.pathname.startsWith("/privacidade");
+  const isPublicPage =
+    req.nextUrl.pathname.startsWith("/privacidade") ||
+    req.nextUrl.pathname.startsWith("/contrato-publico");
 
   if (!isLoggedIn && !isLoginPage && !isPublicPage) {
     const loginUrl = new URL("/login", req.nextUrl.origin);
