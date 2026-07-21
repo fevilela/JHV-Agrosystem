@@ -11,7 +11,7 @@ export async function conectarWhatsappAction(
   organizationId: string,
   params: {
     code: string;
-    phoneNumberId: string;
+    phoneNumberId?: string;
     wabaId?: string;
   }
 ): Promise<ConectarState> {
@@ -21,8 +21,8 @@ export async function conectarWhatsappAction(
   if (!appId || !appSecret) {
     return { error: "NEXT_PUBLIC_META_APP_ID / META_APP_SECRET não configurados no servidor." };
   }
-  if (!params.code || !params.phoneNumberId) {
-    return { error: "Conexão incompleta: faltou o código de autorização ou o Phone Number ID." };
+  if (!params.code || (!params.phoneNumberId && !params.wabaId)) {
+    return { error: "Conexão incompleta: faltou o código de autorização ou os dados do WhatsApp Business." };
   }
 
   try {
@@ -44,6 +44,7 @@ export async function conectarWhatsappAction(
 
     const accessToken = longLivedData.access_token as string;
     let businessName: string | undefined;
+    let phoneNumberId = params.phoneNumberId;
 
     if (params.wabaId) {
       try {
@@ -60,19 +61,42 @@ export async function conectarWhatsappAction(
       } catch {
         // não bloqueia a conexão se esses passos auxiliares falharem
       }
+
+      // No fluxo de Coexistência (conectar um número que já está no app WhatsApp
+      // Business), a mensagem de conclusão da Meta só traz o waba_id — não o
+      // phone_number_id. Buscamos o número direto na conta que acabou de conectar.
+      if (!phoneNumberId) {
+        try {
+          const phonesRes = await fetch(
+            `https://graph.facebook.com/${GRAPH_API_VERSION}/${params.wabaId}/phone_numbers`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          );
+          const phonesData = await phonesRes.json();
+          phoneNumberId = phonesData?.data?.[0]?.id;
+        } catch {
+          // tratado abaixo pelo guard de phoneNumberId ausente
+        }
+      }
+    }
+
+    if (!phoneNumberId) {
+      return {
+        error:
+          "Não encontramos nenhum número de WhatsApp associado a essa conta. Confirme se a conexão foi concluída (incluindo a leitura do QR code) e tente de novo.",
+      };
     }
 
     await prisma.whatsappConnection.upsert({
       where: { organizationId },
       create: {
         organizationId,
-        phoneNumberId: params.phoneNumberId,
+        phoneNumberId,
         wabaId: params.wabaId,
         accessToken,
         businessName,
       },
       update: {
-        phoneNumberId: params.phoneNumberId,
+        phoneNumberId,
         wabaId: params.wabaId,
         accessToken,
         businessName,

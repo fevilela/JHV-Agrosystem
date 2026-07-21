@@ -83,7 +83,7 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
   async function finalizarConexao(code: string) {
     const resultado = await conectarWhatsappAction(organizationId, {
       code,
-      phoneNumberId: signupData.current.phoneNumberId || "",
+      phoneNumberId: signupData.current.phoneNumberId,
       wabaId: signupData.current.wabaId,
     });
 
