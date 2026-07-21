@@ -35,8 +35,24 @@ export function ConnectWhatsappButton({ organizationId }: { organizationId: stri
   const signupData = useRef<{ phoneNumberId?: string; wabaId?: string }>({});
 
   useEffect(() => {
+    const origensAceitas = [
+      "https://www.facebook.com",
+      "https://web.facebook.com",
+      "https://business.facebook.com",
+    ];
+
     function handleMessage(event: MessageEvent) {
-      if (event.origin !== "https://www.facebook.com" && event.origin !== "https://web.facebook.com") return;
+      // Log temporário pra diagnosticar o formato real das mensagens do Embedded Signup —
+      // a Meta muda esse contrato com frequência, então vale registrar tudo que chega
+      // (mesmo de origens que a gente ainda não trata) até confirmarmos o formato certo.
+      if (event.origin.includes("facebook.com")) {
+        console.log("[WhatsApp Embedded Signup] mensagem recebida", {
+          origin: event.origin,
+          data: event.data,
+        });
+      }
+
+      if (!origensAceitas.includes(event.origin)) return;
       try {
         const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
         if (data?.type === "WA_EMBEDDED_SIGNUP" && data?.data) {
