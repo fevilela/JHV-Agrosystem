@@ -1,4 +1,4 @@
-const SW_VERSION = "v1";
+const SW_VERSION = "v2";
 const STATIC_CACHE = `jhv-static-${SW_VERSION}`;
 const PAGES_CACHE = `jhv-pages-${SW_VERSION}`;
 const CURRENT_CACHES = [STATIC_CACHE, PAGES_CACHE];
@@ -13,10 +13,29 @@ const OFFLINE_PAGE_PREFIXES = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches
-      .open(STATIC_CACHE)
-      .then((cache) => cache.addAll(["/offline", "/manifest.webmanifest", "/JHV_icon.png"]))
-      .then(() => self.skipWaiting())
+    (async () => {
+      const staticCache = await caches.open(STATIC_CACHE);
+      await staticCache.addAll(["/offline", "/manifest.webmanifest", "/JHV_icon.png"]);
+
+      // Precache the offline-capable pages (list + "novo" form) right away
+      // so the first offline visit works without needing an earlier online
+      // visit first. Registration only happens post-login (see
+      // offline-status.tsx), so these authenticated requests should succeed.
+      const pagesCache = await caches.open(PAGES_CACHE);
+      await Promise.all(
+        OFFLINE_PAGE_PREFIXES.flatMap((prefix) => [prefix, `${prefix}/novo`]).map(async (url) => {
+          try {
+            const response = await fetch(url);
+            if (response.ok) await pagesCache.put(url, response);
+          } catch {
+            // best-effort precache; runtime networkFirst() will fill this
+            // in on the user's first successful online visit instead
+          }
+        })
+      );
+
+      await self.skipWaiting();
+    })()
   );
 });
 

@@ -3,10 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
+import { OFFLINE_PAGE_PREFIXES } from "@/lib/offline-pages";
 
 function navItemKey(href: string) {
   const last = href.split("/").filter(Boolean).pop() ?? "";
@@ -23,6 +24,19 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
     visibleGroups.find((g) => g.items?.some((i) => pathname.startsWith(i.href)))
       ?.key ?? "cadastro"
   );
+  const [online, setOnline] = useState(true);
+
+  useEffect(() => {
+    setOnline(navigator.onLine);
+    const handleOnline = () => setOnline(true);
+    const handleOffline = () => setOnline(false);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   return (
     <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-neutral-200/80 bg-white">
@@ -61,21 +75,37 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
                 <ul className="mt-0.5 mb-1 space-y-0.5 border-l border-neutral-100 pl-3">
                   {group.items.map((item) => {
                     const active = pathname.startsWith(item.href);
+                    const linkClassName = `relative block rounded-lg px-3 py-1.5 text-sm transition-colors duration-150 ${
+                      active
+                        ? "bg-brand-50 font-medium text-brand-800"
+                        : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800"
+                    }`;
+                    const label = (
+                      <>
+                        {active && (
+                          <span className="absolute -left-3 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-brand-600" />
+                        )}
+                        {t(`${group.key}.items.${navItemKey(item.href)}`)}
+                      </>
+                    );
+                    // Client-side <Link> transitions fetch the RSC payload,
+                    // which the service worker doesn't cache — only a real
+                    // browser navigation (request.mode "navigate") hits the
+                    // cached-page fallback. Force that for offline-capable
+                    // pages when we're actually offline.
+                    const forceFullNavigation =
+                      !online && OFFLINE_PAGE_PREFIXES.some((p) => item.href.startsWith(p));
                     return (
                       <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          className={`relative block rounded-lg px-3 py-1.5 text-sm transition-colors duration-150 ${
-                            active
-                              ? "bg-brand-50 font-medium text-brand-800"
-                              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800"
-                          }`}
-                        >
-                          {active && (
-                            <span className="absolute -left-3 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-brand-600" />
-                          )}
-                          {t(`${group.key}.items.${navItemKey(item.href)}`)}
-                        </Link>
+                        {forceFullNavigation ? (
+                          <a href={item.href} className={linkClassName}>
+                            {label}
+                          </a>
+                        ) : (
+                          <Link href={item.href} className={linkClassName}>
+                            {label}
+                          </Link>
+                        )}
                       </li>
                     );
                   })}
