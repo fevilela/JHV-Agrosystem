@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
@@ -24,19 +24,6 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
     visibleGroups.find((g) => g.items?.some((i) => pathname.startsWith(i.href)))
       ?.key ?? "cadastro"
   );
-  const [online, setOnline] = useState(true);
-
-  useEffect(() => {
-    setOnline(navigator.onLine);
-    const handleOnline = () => setOnline(true);
-    const handleOffline = () => setOnline(false);
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
 
   return (
     <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-neutral-200/80 bg-white">
@@ -91,10 +78,14 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
                     // Client-side <Link> transitions fetch the RSC payload,
                     // which the service worker doesn't cache — only a real
                     // browser navigation (request.mode "navigate") hits the
-                    // cached-page fallback. Force that for offline-capable
-                    // pages when we're actually offline.
-                    const forceFullNavigation =
-                      !online && OFFLINE_PAGE_PREFIXES.some((p) => item.href.startsWith(p));
+                    // cached-page fallback. Always force that for these 4
+                    // offline-capable pages rather than trying to detect
+                    // offline state first — navigator.onLine/'offline'
+                    // events are unreliable in practice (confirmed: they
+                    // stayed "online" during real Wi-Fi-off testing), so
+                    // any online/offline check here would silently defeat
+                    // this fix the same way it defeated the form's.
+                    const forceFullNavigation = OFFLINE_PAGE_PREFIXES.some((p) => item.href.startsWith(p));
                     return (
                       <li key={item.href}>
                         {forceFullNavigation ? (
