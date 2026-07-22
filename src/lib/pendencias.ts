@@ -25,11 +25,21 @@ export async function getPendencias(organizationId: string): Promise<Pendencia[]
   const in30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
   const contasPagar = await prisma.financeEntry.findMany({
-    where: { type: "PAGAR", status: "PENDENTE", dueDate: { lte: in7 }, organizationId },
+    where: {
+      type: "PAGAR",
+      status: { in: ["PENDENTE", "ATRASADO"] },
+      dueDate: { lte: in7 },
+      organizationId,
+    },
     include: { supplier: true },
   });
   const contasReceber = await prisma.financeEntry.findMany({
-    where: { type: "RECEBER", status: "PENDENTE", dueDate: { lte: in7 }, organizationId },
+    where: {
+      type: "RECEBER",
+      status: { in: ["PENDENTE", "ATRASADO"] },
+      dueDate: { lte: in7 },
+      organizationId,
+    },
     include: { client: true },
   });
   const materiais = await prisma.stockItem.findMany({
