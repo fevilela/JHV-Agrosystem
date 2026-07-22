@@ -7,6 +7,7 @@
     "confirmDelete": "Confirmar eliminación",
     "select": "Seleccione",
     "savedOffline": "Guardado sin conexión — se enviará cuando vuelva la conexión.",
+    "saveError": "No se pudo guardar. Intente de nuevo.",
     "online": "En línea",
     "offline": "Sin conexión",
     "pendingSync": "{count, plural, one {# pendiente de sincronización} other {# pendientes de sincronización}}"

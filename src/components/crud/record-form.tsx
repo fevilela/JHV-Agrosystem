@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { enqueueWrite } from "@/lib/offline-queue";
 
@@ -61,16 +62,43 @@ export function RecordForm({
 }) {
   const [state, formAction, isPending] = useActionState(action, undefined);
   const [savedOffline, setSavedOffline] = useState(false);
+  const [offlineError, setOfflineError] = useState<string | undefined>();
+  const [offlineSubmitting, setOfflineSubmitting] = useState(false);
+  const router = useRouter();
   const t = useTranslations("common");
 
+  // navigator.onLine is unreliable in practice (some Windows/Chrome setups
+  // never flip it to false even with Wi-Fi off), so instead of trusting it
+  // upfront we always try the real request first and only fall back to the
+  // offline queue when that request actually fails.
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    if (!offline || navigator.onLine) return;
+    if (!offline) return;
     e.preventDefault();
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
-    await enqueueWrite({ endpoint: offline.syncEndpoint, moduleLabel: offline.moduleLabel, payload: data });
-    form.reset();
-    setSavedOffline(true);
+    const payload = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+
+    setOfflineSubmitting(true);
+    setOfflineError(undefined);
+    try {
+      const res = await fetch(offline.syncEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        credentials: "same-origin",
+      });
+      if (res.ok) {
+        router.push(backHref);
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      setOfflineError(data.error || t("saveError"));
+    } catch {
+      await enqueueWrite({ endpoint: offline.syncEndpoint, moduleLabel: offline.moduleLabel, payload });
+      form.reset();
+      setSavedOffline(true);
+    } finally {
+      setOfflineSubmitting(false);
+    }
   }
 
   return (
@@ -181,9 +209,9 @@ export function RecordForm({
         })}
       </div>
 
-      {state?.error && (
+      {(state?.error || offlineError) && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {state.error}
+          {state?.error || offlineError}
         </p>
       )}
 
@@ -196,10 +224,10 @@ export function RecordForm({
       <div className="flex items-center gap-3">
         <button
           type="submit"
-          disabled={isPending}
+          disabled={offline ? offlineSubmitting : isPending}
           className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800 disabled:opacity-60"
         >
-          {isPending ? t("saving") : t("save")}
+          {(offline ? offlineSubmitting : isPending) ? t("saving") : t("save")}
         </button>
         <Link
           href={backHref}
