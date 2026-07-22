@@ -872,5 +872,105 @@
         "dateRequired": "Indique la fecha."
       }
     }
+  },
+  "compras": {
+    "solicitacoes": {
+      "title": "Solicitudes de Compra",
+      "new": "Nueva Solicitud",
+      "editTitle": "Editar Solicitud",
+      "recordCount": "{count, plural, one {# solicitud} other {# solicitudes}}",
+      "noRecords": "Aún no hay solicitudes registradas.",
+      "table": {
+        "date": "Fecha",
+        "item": "Ítem",
+        "quantity": "Cantidad",
+        "requester": "Solicitante",
+        "status": "Estado",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "description": "Descripción del Ítem",
+        "quantity": "Cantidad",
+        "unit": "Unidad",
+        "date": "Fecha",
+        "requestedBy": "Solicitante",
+        "stockItemId": "Ítem de Inventario (opcional)",
+        "status": "Estado",
+        "justification": "Justificación",
+        "notes": "Observaciones"
+      },
+      "actions": { "approve": "Aprobar", "reject": "Rechazar" },
+      "errors": {
+        "descriptionRequired": "Indique la descripción del ítem.",
+        "quantityRequired": "Indique la cantidad.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "cotacoes": {
+      "title": "Cotizaciones",
+      "new": "Nueva Cotización",
+      "editTitle": "Editar Cotización",
+      "recordCount": "{count, plural, one {# cotización} other {# cotizaciones}}",
+      "noRecords": "Aún no hay cotizaciones registradas.",
+      "table": {
+        "supplier": "Proveedor",
+        "description": "Descripción",
+        "request": "Solicitud",
+        "totalValue": "Valor Total",
+        "validUntil": "Válida hasta",
+        "status": "Estado",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "supplierId": "Proveedor",
+        "purchaseRequestId": "Solicitud (opcional)",
+        "description": "Descripción",
+        "quantity": "Cantidad",
+        "unitPrice": "Precio Unitario ($)",
+        "totalValue": "Valor Total ($)",
+        "validUntil": "Válida hasta",
+        "status": "Estado",
+        "notes": "Observaciones"
+      },
+      "errors": {
+        "supplierRequired": "Seleccione el proveedor."
+      }
+    },
+    "pedidos": {
+      "title": "Pedidos de Compra",
+      "new": "Nuevo Pedido",
+      "editTitle": "Editar Pedido",
+      "recordCount": "{count, plural, one {# pedido} other {# pedidos}}",
+      "noRecords": "Aún no hay pedidos registrados.",
+      "table": {
+        "date": "Fecha",
+        "supplier": "Proveedor",
+        "invoice": "Factura",
+        "totalValue": "Valor Total",
+        "expectedDelivery": "Entrega Prevista",
+        "status": "Estado",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "supplierId": "Proveedor",
+        "quotationId": "Cotización (opcional)",
+        "orderDate": "Fecha del Pedido",
+        "expectedDeliveryDate": "Entrega Prevista",
+        "actualDeliveryDate": "Entrega Realizada",
+        "invoiceNumber": "Factura",
+        "totalValue": "Valor Total ($)",
+        "status": "Estado",
+        "notes": "Observaciones"
+      },
+      "markDelivered": "Marcar entregado",
+      "noDescription": "sin descripción",
+      "errors": {
+        "supplierRequired": "Seleccione el proveedor.",
+        "orderDateRequired": "Indique la fecha del pedido."
+      }
+    }
   }
 }

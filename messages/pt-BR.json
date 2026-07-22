@@ -872,5 +872,105 @@
         "dateRequired": "Informe a data."
       }
     }
+  },
+  "compras": {
+    "solicitacoes": {
+      "title": "Solicitações de Compra",
+      "new": "Nova Solicitação",
+      "editTitle": "Editar Solicitação",
+      "recordCount": "{count, plural, one {# solicitação} other {# solicitações}}",
+      "noRecords": "Nenhuma solicitação cadastrada ainda.",
+      "table": {
+        "date": "Data",
+        "item": "Item",
+        "quantity": "Quantidade",
+        "requester": "Solicitante",
+        "status": "Status",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "fields": {
+        "description": "Descrição do Item",
+        "quantity": "Quantidade",
+        "unit": "Unidade",
+        "date": "Data",
+        "requestedBy": "Solicitante",
+        "stockItemId": "Item de Estoque (opcional)",
+        "status": "Status",
+        "justification": "Justificativa",
+        "notes": "Observações"
+      },
+      "actions": { "approve": "Aprovar", "reject": "Rejeitar" },
+      "errors": {
+        "descriptionRequired": "Informe a descrição do item.",
+        "quantityRequired": "Informe a quantidade.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "cotacoes": {
+      "title": "Cotações",
+      "new": "Nova Cotação",
+      "editTitle": "Editar Cotação",
+      "recordCount": "{count, plural, one {# cotação} other {# cotações}}",
+      "noRecords": "Nenhuma cotação cadastrada ainda.",
+      "table": {
+        "supplier": "Fornecedor",
+        "description": "Descrição",
+        "request": "Solicitação",
+        "totalValue": "Valor Total",
+        "validUntil": "Válida até",
+        "status": "Status",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "fields": {
+        "supplierId": "Fornecedor",
+        "purchaseRequestId": "Solicitação (opcional)",
+        "description": "Descrição",
+        "quantity": "Quantidade",
+        "unitPrice": "Preço Unitário (R$)",
+        "totalValue": "Valor Total (R$)",
+        "validUntil": "Válida até",
+        "status": "Status",
+        "notes": "Observações"
+      },
+      "errors": {
+        "supplierRequired": "Selecione o fornecedor."
+      }
+    },
+    "pedidos": {
+      "title": "Pedidos de Compra",
+      "new": "Novo Pedido",
+      "editTitle": "Editar Pedido",
+      "recordCount": "{count, plural, one {# pedido} other {# pedidos}}",
+      "noRecords": "Nenhum pedido cadastrado ainda.",
+      "table": {
+        "date": "Data",
+        "supplier": "Fornecedor",
+        "invoice": "Nota Fiscal",
+        "totalValue": "Valor Total",
+        "expectedDelivery": "Entrega Prevista",
+        "status": "Status",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "fields": {
+        "supplierId": "Fornecedor",
+        "quotationId": "Cotação (opcional)",
+        "orderDate": "Data do Pedido",
+        "expectedDeliveryDate": "Entrega Prevista",
+        "actualDeliveryDate": "Entrega Realizada",
+        "invoiceNumber": "Nota Fiscal",
+        "totalValue": "Valor Total (R$)",
+        "status": "Status",
+        "notes": "Observações"
+      },
+      "markDelivered": "Marcar entregue",
+      "noDescription": "sem descrição",
+      "errors": {
+        "supplierRequired": "Selecione o fornecedor.",
+        "orderDateRequired": "Informe a data do pedido."
+      }
+    }
   }
 }

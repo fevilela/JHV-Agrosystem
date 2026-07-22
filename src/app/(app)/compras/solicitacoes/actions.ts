@@ -3,20 +3,28 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma, PurchaseRequestStatus } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { purchaseRequestFields } from "./fields";
+import { getPurchaseRequestFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFieldsAndT() {
+  const t = await getTranslations("compras.solicitacoes");
+  const tStatus = await getTranslations("labels.purchaseRequestStatus");
+  return { t, fields: getPurchaseRequestFields(t, tStatus) };
+}
 
 export async function createPurchaseRequestAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(purchaseRequestFields, formData);
-  if (!data.description) return { error: "Informe a descrição do item." };
-  if (!data.quantity) return { error: "Informe a quantidade." };
-  if (!data.date) return { error: "Informe a data." };
+  const { t, fields } = await getFieldsAndT();
+  const data = buildRecordData(fields, formData);
+  if (!data.description) return { error: t("errors.descriptionRequired") };
+  if (!data.quantity) return { error: t("errors.quantityRequired") };
+  if (!data.date) return { error: t("errors.dateRequired") };
 
   await prisma.purchaseRequest.create({
     data: data as Prisma.PurchaseRequestUncheckedCreateInput,
@@ -31,10 +39,11 @@ export async function updatePurchaseRequestAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(purchaseRequestFields, formData);
-  if (!data.description) return { error: "Informe a descrição do item." };
-  if (!data.quantity) return { error: "Informe a quantidade." };
-  if (!data.date) return { error: "Informe a data." };
+  const { t, fields } = await getFieldsAndT();
+  const data = buildRecordData(fields, formData);
+  if (!data.description) return { error: t("errors.descriptionRequired") };
+  if (!data.quantity) return { error: t("errors.quantityRequired") };
+  if (!data.date) return { error: t("errors.dateRequired") };
 
   await prisma.purchaseRequest.update({
     where: { id },

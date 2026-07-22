@@ -1,20 +1,25 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, purchaseOrderStatusLabels } from "@/lib/labels";
+import { toOptionsFromKeys, purchaseOrderStatusLabels } from "@/lib/labels";
 
-export const purchaseOrderFields: RecordField[] = [
-  { name: "supplierId", label: "Fornecedor", type: "relation", required: true },
-  { name: "quotationId", label: "Cotação (opcional)", type: "relation" },
-  { name: "orderDate", label: "Data do Pedido", type: "date", required: true },
-  { name: "expectedDeliveryDate", label: "Entrega Prevista", type: "date" },
-  { name: "actualDeliveryDate", label: "Entrega Realizada", type: "date" },
-  { name: "invoiceNumber", label: "Nota Fiscal", type: "text" },
-  { name: "totalValue", label: "Valor Total (R$)", type: "number" },
-  {
-    name: "status",
-    label: "Status",
-    type: "select",
-    required: true,
-    options: toOptions(purchaseOrderStatusLabels),
-  },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+export function getPurchaseOrderFields(
+  t: (key: string) => string,
+  tStatus: (key: string) => string
+): RecordField[] {
+  return [
+    { name: "supplierId", label: t("fields.supplierId"), type: "relation", required: true },
+    { name: "quotationId", label: t("fields.quotationId"), type: "relation" },
+    { name: "orderDate", label: t("fields.orderDate"), type: "date", required: true },
+    { name: "expectedDeliveryDate", label: t("fields.expectedDeliveryDate"), type: "date" },
+    { name: "actualDeliveryDate", label: t("fields.actualDeliveryDate"), type: "date" },
+    { name: "invoiceNumber", label: t("fields.invoiceNumber"), type: "text" },
+    { name: "totalValue", label: t("fields.totalValue"), type: "number" },
+    {
+      name: "status",
+      label: t("fields.status"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(purchaseOrderStatusLabels, tStatus),
+    },
+    { name: "notes", label: t("fields.notes"), type: "textarea", colSpan: 2 },
+  ];
+}

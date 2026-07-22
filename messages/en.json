@@ -872,5 +872,105 @@
         "dateRequired": "Enter the date."
       }
     }
+  },
+  "compras": {
+    "solicitacoes": {
+      "title": "Purchase Requests",
+      "new": "New Request",
+      "editTitle": "Edit Request",
+      "recordCount": "{count, plural, one {# request} other {# requests}}",
+      "noRecords": "No requests registered yet.",
+      "table": {
+        "date": "Date",
+        "item": "Item",
+        "quantity": "Quantity",
+        "requester": "Requester",
+        "status": "Status",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "description": "Item Description",
+        "quantity": "Quantity",
+        "unit": "Unit",
+        "date": "Date",
+        "requestedBy": "Requester",
+        "stockItemId": "Stock Item (optional)",
+        "status": "Status",
+        "justification": "Justification",
+        "notes": "Notes"
+      },
+      "actions": { "approve": "Approve", "reject": "Reject" },
+      "errors": {
+        "descriptionRequired": "Enter the item description.",
+        "quantityRequired": "Enter the quantity.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "cotacoes": {
+      "title": "Quotes",
+      "new": "New Quote",
+      "editTitle": "Edit Quote",
+      "recordCount": "{count, plural, one {# quote} other {# quotes}}",
+      "noRecords": "No quotes registered yet.",
+      "table": {
+        "supplier": "Supplier",
+        "description": "Description",
+        "request": "Request",
+        "totalValue": "Total Value",
+        "validUntil": "Valid Until",
+        "status": "Status",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "supplierId": "Supplier",
+        "purchaseRequestId": "Request (optional)",
+        "description": "Description",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price ($)",
+        "totalValue": "Total Value ($)",
+        "validUntil": "Valid Until",
+        "status": "Status",
+        "notes": "Notes"
+      },
+      "errors": {
+        "supplierRequired": "Select the supplier."
+      }
+    },
+    "pedidos": {
+      "title": "Purchase Orders",
+      "new": "New Order",
+      "editTitle": "Edit Order",
+      "recordCount": "{count, plural, one {# order} other {# orders}}",
+      "noRecords": "No orders registered yet.",
+      "table": {
+        "date": "Date",
+        "supplier": "Supplier",
+        "invoice": "Invoice",
+        "totalValue": "Total Value",
+        "expectedDelivery": "Expected Delivery",
+        "status": "Status",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "supplierId": "Supplier",
+        "quotationId": "Quote (optional)",
+        "orderDate": "Order Date",
+        "expectedDeliveryDate": "Expected Delivery",
+        "actualDeliveryDate": "Actual Delivery",
+        "invoiceNumber": "Invoice",
+        "totalValue": "Total Value ($)",
+        "status": "Status",
+        "notes": "Notes"
+      },
+      "markDelivered": "Mark delivered",
+      "noDescription": "no description",
+      "errors": {
+        "supplierRequired": "Select the supplier.",
+        "orderDateRequired": "Enter the order date."
+      }
+    }
   }
 }

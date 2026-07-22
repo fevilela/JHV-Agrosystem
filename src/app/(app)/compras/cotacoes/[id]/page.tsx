@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { quotationFields } from "../fields";
+import { getQuotationFields } from "../fields";
 import { updateQuotationAction } from "../actions";
 
 export default async function EditQuotationPage({
@@ -19,11 +20,14 @@ export default async function EditQuotationPage({
 
   if (!quotation) notFound();
 
+  const t = await getTranslations("compras.cotacoes");
+  const tStatus = await getTranslations("labels.quotationStatus");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Cotação</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={quotationFields}
+        fields={getQuotationFields(t, tStatus)}
         action={updateQuotationAction.bind(null, id)}
         initialValues={quotation}
         relationOptions={{

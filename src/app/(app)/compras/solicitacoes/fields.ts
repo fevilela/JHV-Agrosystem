@@ -1,20 +1,25 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, purchaseRequestStatusLabels } from "@/lib/labels";
+import { toOptionsFromKeys, purchaseRequestStatusLabels } from "@/lib/labels";
 
-export const purchaseRequestFields: RecordField[] = [
-  { name: "description", label: "Descrição do Item", type: "text", required: true, colSpan: 2 },
-  { name: "quantity", label: "Quantidade", type: "number", required: true },
-  { name: "unit", label: "Unidade", type: "text" },
-  { name: "date", label: "Data", type: "date", required: true },
-  { name: "requestedBy", label: "Solicitante", type: "text" },
-  { name: "stockItemId", label: "Item de Estoque (opcional)", type: "relation" },
-  {
-    name: "status",
-    label: "Status",
-    type: "select",
-    required: true,
-    options: toOptions(purchaseRequestStatusLabels),
-  },
-  { name: "justification", label: "Justificativa", type: "textarea", colSpan: 2 },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+export function getPurchaseRequestFields(
+  t: (key: string) => string,
+  tStatus: (key: string) => string
+): RecordField[] {
+  return [
+    { name: "description", label: t("fields.description"), type: "text", required: true, colSpan: 2 },
+    { name: "quantity", label: t("fields.quantity"), type: "number", required: true },
+    { name: "unit", label: t("fields.unit"), type: "text" },
+    { name: "date", label: t("fields.date"), type: "date", required: true },
+    { name: "requestedBy", label: t("fields.requestedBy"), type: "text" },
+    { name: "stockItemId", label: t("fields.stockItemId"), type: "relation" },
+    {
+      name: "status",
+      label: t("fields.status"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(purchaseRequestStatusLabels, tStatus),
+    },
+    { name: "justification", label: t("fields.justification"), type: "textarea", colSpan: 2 },
+    { name: "notes", label: t("fields.notes"), type: "textarea", colSpan: 2 },
+  ];
+}
