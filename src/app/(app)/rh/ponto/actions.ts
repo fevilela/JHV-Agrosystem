@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getAttendanceFields } from "./fields";
 
@@ -20,10 +21,16 @@ export async function createAttendanceAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("rh.ponto.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.employeeId) return { error: t("employeeRequired") };
   if (!data.date) return { error: t("dateRequired") };
+
+  const employee = await prisma.employee.findFirst({
+    where: { id: data.employeeId as string, organizationId },
+  });
+  if (!employee) return { error: t("employeeRequired") };
 
   await prisma.attendance.create({
     data: data as Prisma.AttendanceUncheckedCreateInput,
@@ -38,13 +45,14 @@ export async function updateAttendanceAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("rh.ponto.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.employeeId) return { error: t("employeeRequired") };
   if (!data.date) return { error: t("dateRequired") };
 
-  await prisma.attendance.update({
-    where: { id },
+  await prisma.attendance.updateMany({
+    where: { id, employee: { organizationId } },
     data: data as Prisma.AttendanceUncheckedUpdateInput,
   });
 
@@ -53,6 +61,7 @@ export async function updateAttendanceAction(
 }
 
 export async function deleteAttendanceAction(id: string) {
-  await prisma.attendance.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.attendance.deleteMany({ where: { id, employee: { organizationId } } });
   revalidatePath("/rh/ponto");
 }

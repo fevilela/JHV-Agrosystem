@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getEpiFields } from "../../epi-fields";
 import { createEpiAction } from "../../epi-actions";
 
 export default async function NewEpiPage() {
-  const employees = await prisma.employee.findMany({ orderBy: { name: "asc" } });
+  const { organizationId } = await requireOrg();
+  const employees = await prisma.employee.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
 
   const t = await getTranslations("rh.epis");
   const tf = await getTranslations("rh.epis.fields");

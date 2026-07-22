@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getAttendanceFields } from "../fields";
 import { updateAttendanceAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditAttendancePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [record, employees] = await Promise.all([
-    prisma.attendance.findUnique({ where: { id } }),
-    prisma.employee.findMany({ orderBy: { name: "asc" } }),
+    prisma.attendance.findFirst({ where: { id, employee: { organizationId } } }),
+    prisma.employee.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!record) notFound();

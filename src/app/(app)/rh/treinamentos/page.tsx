@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil, AlertTriangle, HardHat } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteTrainingAction } from "./actions";
 
 export default async function TrainingListPage() {
+  const { organizationId } = await requireOrg();
   const trainings = await prisma.training.findMany({
+    where: { employee: { organizationId } },
     orderBy: { date: "desc" },
     include: { employee: true },
   });

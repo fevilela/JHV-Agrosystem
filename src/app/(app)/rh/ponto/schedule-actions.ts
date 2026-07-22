@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getScheduleFields } from "./schedule-fields";
 
@@ -20,10 +21,16 @@ export async function createScheduleAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("rh.escalas.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.employeeId) return { error: t("employeeRequired") };
   if (!data.startDate) return { error: t("startDateRequired") };
+
+  const employee = await prisma.employee.findFirst({
+    where: { id: data.employeeId as string, organizationId },
+  });
+  if (!employee) return { error: t("employeeRequired") };
 
   await prisma.schedule.create({
     data: data as Prisma.ScheduleUncheckedCreateInput,
@@ -38,13 +45,14 @@ export async function updateScheduleAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("rh.escalas.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.employeeId) return { error: t("employeeRequired") };
   if (!data.startDate) return { error: t("startDateRequired") };
 
-  await prisma.schedule.update({
-    where: { id },
+  await prisma.schedule.updateMany({
+    where: { id, employee: { organizationId } },
     data: data as Prisma.ScheduleUncheckedUpdateInput,
   });
 
@@ -53,6 +61,7 @@ export async function updateScheduleAction(
 }
 
 export async function deleteScheduleAction(id: string) {
-  await prisma.schedule.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.schedule.deleteMany({ where: { id, employee: { organizationId } } });
   revalidatePath("/rh/ponto/escalas");
 }

@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteScheduleAction } from "../schedule-actions";
 
 export default async function ScheduleListPage() {
+  const { organizationId } = await requireOrg();
   const schedules = await prisma.schedule.findMany({
+    where: { employee: { organizationId } },
     orderBy: { startDate: "desc" },
     include: { employee: true },
   });

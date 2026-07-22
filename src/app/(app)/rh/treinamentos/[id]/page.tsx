@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getTrainingFields } from "../fields";
 import { updateTrainingAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditTrainingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [training, employees] = await Promise.all([
-    prisma.training.findUnique({ where: { id } }),
-    prisma.employee.findMany({ orderBy: { name: "asc" } }),
+    prisma.training.findFirst({ where: { id, employee: { organizationId } } }),
+    prisma.employee.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!training) notFound();

@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil, AlertTriangle } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteEpiAction } from "../epi-actions";
 
 export default async function EpiListPage() {
+  const { organizationId } = await requireOrg();
   const issuances = await prisma.epiIssuance.findMany({
+    where: { employee: { organizationId } },
     orderBy: { issueDate: "desc" },
     include: { employee: true },
   });

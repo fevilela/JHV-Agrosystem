@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getScheduleFields } from "../../schedule-fields";
 import { updateScheduleAction } from "../../schedule-actions";
@@ -11,10 +12,11 @@ export default async function EditSchedulePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [schedule, employees] = await Promise.all([
-    prisma.schedule.findUnique({ where: { id } }),
-    prisma.employee.findMany({ orderBy: { name: "asc" } }),
+    prisma.schedule.findFirst({ where: { id, employee: { organizationId } } }),
+    prisma.employee.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!schedule) notFound();
