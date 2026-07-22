@@ -324,6 +324,13 @@ export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }
 
+// Mesma ideia do toOptions, mas pra quando o rótulo precisa vir traduzido
+// (`t` já escopado pro namespace `labels.<mapa>` certo, ex: getTranslations("labels.stockCategory")).
+// O dict PT só serve aqui como fonte das CHAVES do enum, não do texto exibido.
+export function toOptionsFromKeys(labels: Record<string, string>, t: (key: string) => string) {
+  return Object.keys(labels).map((value) => ({ value, label: t(value) }));
+}
+
 export function formatCurrency(value: unknown, locale: string = "pt-BR") {
   if (value === null || value === undefined) return "—";
   const n = Number(value);

@@ -624,5 +624,73 @@
         "notFound": "Animal não encontrado."
       }
     }
+  },
+  "estoque": {
+    "materiais": {
+      "title": "Materiais e Insumos",
+      "new": "Novo Item",
+      "recordCount": "{count, plural, one {# item cadastrado} other {# itens cadastrados}}",
+      "noRecords": "Nenhum item cadastrado ainda.",
+      "table": {
+        "code": "Código",
+        "name": "Nome",
+        "category": "Categoria",
+        "currentStock": "Estoque Atual",
+        "minStock": "Estoque Mínimo",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "fields": {
+        "code": "Código",
+        "name": "Nome",
+        "category": "Categoria",
+        "unit": "Unidade (kg, L, un...)",
+        "minQuantity": "Estoque Mínimo",
+        "barcode": "Código de Barras / QR Code",
+        "notes": "Observações"
+      },
+      "detail": {
+        "currentStock": "Estoque atual",
+        "batches": "Lotes",
+        "newBatch": "+ Novo lote",
+        "noBatches": "Nenhum lote cadastrado ainda.",
+        "noNumber": "Sem número",
+        "validity": "Validade",
+        "consume": "Consumir"
+      },
+      "errors": {
+        "codeRequired": "Informe o código do item.",
+        "nameRequired": "Informe o nome do item.",
+        "duplicateCode": "Já existe um item com esse código ou código de barras."
+      }
+    },
+    "lotes": {
+      "title": "Lotes e Validade",
+      "new": "Novo Lote",
+      "recordCount": "{count, plural, one {# lote cadastrado} other {# lotes cadastrados}}",
+      "noRecords": "Nenhum lote cadastrado ainda.",
+      "table": {
+        "item": "Item",
+        "batch": "Lote",
+        "quantity": "Quantidade",
+        "validity": "Validade",
+        "status": "Status",
+        "actions": "Ações"
+      },
+      "fields": {
+        "stockItemId": "Item",
+        "batchNumber": "Número do Lote",
+        "quantity": "Quantidade",
+        "expiryDate": "Validade",
+        "entryDate": "Data de Entrada",
+        "supplierName": "Fornecedor",
+        "notes": "Observações"
+      },
+      "consume": "Consumir",
+      "errors": {
+        "itemRequired": "Selecione o item.",
+        "quantityRequired": "Informe a quantidade."
+      }
+    }
   }
 }

@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { stockItemFields } from "./fields";
+import { getStockItemFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,16 +14,18 @@ export async function createStockItemAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(stockItemFields, formData);
-  if (!data.code) return { error: "Informe o código do item." };
-  if (!data.name) return { error: "Informe o nome do item." };
+  const t = await getTranslations("estoque.materiais");
+  const tCategory = await getTranslations("labels.stockCategory");
+  const data = buildRecordData(getStockItemFields(t, tCategory), formData);
+  if (!data.code) return { error: t("errors.codeRequired") };
+  if (!data.name) return { error: t("errors.nameRequired") };
 
   try {
     await prisma.stockItem.create({
       data: data as Prisma.StockItemUncheckedCreateInput,
     });
   } catch {
-    return { error: "Já existe um item com esse código ou código de barras." };
+    return { error: t("errors.duplicateCode") };
   }
 
   revalidatePath("/estoque/materiais");
@@ -34,9 +37,11 @@ export async function updateStockItemAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(stockItemFields, formData);
-  if (!data.code) return { error: "Informe o código do item." };
-  if (!data.name) return { error: "Informe o nome do item." };
+  const t = await getTranslations("estoque.materiais");
+  const tCategory = await getTranslations("labels.stockCategory");
+  const data = buildRecordData(getStockItemFields(t, tCategory), formData);
+  if (!data.code) return { error: t("errors.codeRequired") };
+  if (!data.name) return { error: t("errors.nameRequired") };
 
   try {
     await prisma.stockItem.update({
@@ -44,7 +49,7 @@ export async function updateStockItemAction(
       data: data as Prisma.StockItemUncheckedUpdateInput,
     });
   } catch {
-    return { error: "Já existe um item com esse código ou código de barras." };
+    return { error: t("errors.duplicateCode") };
   }
 
   revalidatePath("/estoque/materiais");

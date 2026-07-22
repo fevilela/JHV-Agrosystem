@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { stockItemFields } from "../fields";
+import { getStockItemFields } from "../fields";
 import { updateStockItemAction } from "../actions";
-import { stockBatchStatusLabels, formatDate } from "@/lib/labels";
+import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { consumeStockBatchAction, deleteStockBatchAction } from "../../lotes/actions";
 import { Check } from "lucide-react";
@@ -23,18 +24,23 @@ export default async function StockItemDetailPage({
 
   if (!item) notFound();
 
+  const t = await getTranslations("estoque.materiais");
+  const tCategory = await getTranslations("labels.stockCategory");
+  const tBatchStatus = await getTranslations("labels.stockBatchStatus");
+  const locale = await getLocale();
+
   return (
     <div>
       <Link href="/estoque/materiais" className="text-sm text-neutral-500 hover:text-neutral-800">
-        ← Materiais e Insumos
+        ← {t("title")}
       </Link>
       <h1 className="mt-1 mb-6 text-xl font-semibold text-neutral-900">
-        {item.name} — Estoque atual: {String(item.currentQuantity)} {item.unit || ""}
+        {item.name} — {t("detail.currentStock")}: {String(item.currentQuantity)} {item.unit || ""}
       </h1>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecordForm
-          fields={stockItemFields}
+          fields={getStockItemFields(t, tCategory)}
           action={updateStockItemAction.bind(null, id)}
           initialValues={item}
           backHref="/estoque/materiais"
@@ -43,28 +49,28 @@ export default async function StockItemDetailPage({
         <div className="rounded-2xl border border-neutral-200 bg-white p-4">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
-              Lotes
+              {t("detail.batches")}
             </h2>
             <Link
               href="/estoque/lotes/novo"
               className="text-xs font-medium text-brand-700 hover:underline"
             >
-              + Novo lote
+              {t("detail.newBatch")}
             </Link>
           </div>
           {item.batches.length === 0 ? (
-            <p className="text-sm text-neutral-400">Nenhum lote cadastrado ainda.</p>
+            <p className="text-sm text-neutral-400">{t("detail.noBatches")}</p>
           ) : (
             <ul className="space-y-2">
               {item.batches.map((b) => (
                 <li key={b.id} className="flex items-center justify-between text-sm">
                   <div>
                     <span className="font-medium text-neutral-800">
-                      {b.batchNumber || "Sem número"}
+                      {b.batchNumber || t("detail.noNumber")}
                     </span>{" "}
                     <span className="text-neutral-600">{String(b.quantity)}</span>
                     <span className="block text-xs text-neutral-400">
-                      Validade: {formatDate(b.expiryDate)} · {stockBatchStatusLabels[b.status]}
+                      {t("detail.validity")}: {formatDate(b.expiryDate, locale)} · {tBatchStatus(b.status)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -72,7 +78,7 @@ export default async function StockItemDetailPage({
                       <form action={consumeStockBatchAction.bind(null, b.id)}>
                         <button
                           type="submit"
-                          title="Consumir"
+                          title={t("detail.consume")}
                           className="rounded-md p-1.5 text-neutral-400 transition hover:bg-green-50 hover:text-green-700"
                         >
                           <Check size={16} />

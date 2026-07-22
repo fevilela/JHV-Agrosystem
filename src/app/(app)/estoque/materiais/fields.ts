@@ -1,18 +1,23 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, stockCategoryLabels } from "@/lib/labels";
+import { toOptionsFromKeys, stockCategoryLabels } from "@/lib/labels";
 
-export const stockItemFields: RecordField[] = [
-  { name: "code", label: "Código", type: "text", required: true },
-  { name: "name", label: "Nome", type: "text", required: true, colSpan: 2 },
-  {
-    name: "category",
-    label: "Categoria",
-    type: "select",
-    required: true,
-    options: toOptions(stockCategoryLabels),
-  },
-  { name: "unit", label: "Unidade (kg, L, un...)", type: "text" },
-  { name: "minQuantity", label: "Estoque Mínimo", type: "number" },
-  { name: "barcode", label: "Código de Barras / QR Code", type: "text" },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+export function getStockItemFields(
+  t: (key: string) => string,
+  tCategory: (key: string) => string
+): RecordField[] {
+  return [
+    { name: "code", label: t("fields.code"), type: "text", required: true },
+    { name: "name", label: t("fields.name"), type: "text", required: true, colSpan: 2 },
+    {
+      name: "category",
+      label: t("fields.category"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(stockCategoryLabels, tCategory),
+    },
+    { name: "unit", label: t("fields.unit"), type: "text" },
+    { name: "minQuantity", label: t("fields.minQuantity"), type: "number" },
+    { name: "barcode", label: t("fields.barcode"), type: "text" },
+    { name: "notes", label: t("fields.notes"), type: "textarea", colSpan: 2 },
+  ];
+}

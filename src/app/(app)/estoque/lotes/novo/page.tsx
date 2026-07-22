@@ -1,16 +1,18 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { stockBatchFields } from "../fields";
+import { getStockBatchFields } from "../fields";
 import { createStockBatchAction } from "../actions";
 
 export default async function NewStockBatchPage() {
   const items = await prisma.stockItem.findMany({ orderBy: { name: "asc" } });
+  const t = await getTranslations("estoque.lotes");
 
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Lote</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("new")}</h1>
       <RecordForm
-        fields={stockBatchFields}
+        fields={getStockBatchFields(t)}
         action={createStockBatchAction}
         relationOptions={{
           stockItemId: items.map((i) => ({ id: i.id, label: `${i.code} — ${i.name}` })),

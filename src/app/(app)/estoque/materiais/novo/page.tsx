@@ -1,13 +1,17 @@
+import { getTranslations } from "next-intl/server";
 import { RecordForm } from "@/components/crud/record-form";
-import { stockItemFields } from "../fields";
+import { getStockItemFields } from "../fields";
 import { createStockItemAction } from "../actions";
 
-export default function NewStockItemPage() {
+export default async function NewStockItemPage() {
+  const t = await getTranslations("estoque.materiais");
+  const tCategory = await getTranslations("labels.stockCategory");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Item</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("new")}</h1>
       <RecordForm
-        fields={stockItemFields}
+        fields={getStockItemFields(t, tCategory)}
         action={createStockItemAction}
         backHref="/estoque/materiais"
       />

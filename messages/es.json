@@ -624,5 +624,73 @@
         "notFound": "Animal no encontrado."
       }
     }
+  },
+  "estoque": {
+    "materiais": {
+      "title": "Materiales e Insumos",
+      "new": "Nuevo Ítem",
+      "recordCount": "{count, plural, one {# ítem registrado} other {# ítems registrados}}",
+      "noRecords": "Aún no hay ítems registrados.",
+      "table": {
+        "code": "Código",
+        "name": "Nombre",
+        "category": "Categoría",
+        "currentStock": "Stock Actual",
+        "minStock": "Stock Mínimo",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "code": "Código",
+        "name": "Nombre",
+        "category": "Categoría",
+        "unit": "Unidad (kg, L, un...)",
+        "minQuantity": "Stock Mínimo",
+        "barcode": "Código de Barras / QR",
+        "notes": "Observaciones"
+      },
+      "detail": {
+        "currentStock": "Stock actual",
+        "batches": "Lotes",
+        "newBatch": "+ Nuevo lote",
+        "noBatches": "Aún no hay lotes registrados.",
+        "noNumber": "Sin número",
+        "validity": "Vencimiento",
+        "consume": "Consumir"
+      },
+      "errors": {
+        "codeRequired": "Indique el código del ítem.",
+        "nameRequired": "Indique el nombre del ítem.",
+        "duplicateCode": "Ya existe un ítem con ese código o código de barras."
+      }
+    },
+    "lotes": {
+      "title": "Lotes y Vencimiento",
+      "new": "Nuevo Lote",
+      "recordCount": "{count, plural, one {# lote registrado} other {# lotes registrados}}",
+      "noRecords": "Aún no hay lotes registrados.",
+      "table": {
+        "item": "Ítem",
+        "batch": "Lote",
+        "quantity": "Cantidad",
+        "validity": "Vencimiento",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "stockItemId": "Ítem",
+        "batchNumber": "Número de Lote",
+        "quantity": "Cantidad",
+        "expiryDate": "Vencimiento",
+        "entryDate": "Fecha de Entrada",
+        "supplierName": "Proveedor",
+        "notes": "Observaciones"
+      },
+      "consume": "Consumir",
+      "errors": {
+        "itemRequired": "Seleccione el ítem.",
+        "quantityRequired": "Indique la cantidad."
+      }
+    }
   }
 }

@@ -624,5 +624,73 @@
         "notFound": "Animal not found."
       }
     }
+  },
+  "estoque": {
+    "materiais": {
+      "title": "Materials & Supplies",
+      "new": "New Item",
+      "recordCount": "{count, plural, one {# item registered} other {# items registered}}",
+      "noRecords": "No items registered yet.",
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "category": "Category",
+        "currentStock": "Current Stock",
+        "minStock": "Min Stock",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "category": "Category",
+        "unit": "Unit (kg, L, ea...)",
+        "minQuantity": "Minimum Stock",
+        "barcode": "Barcode / QR Code",
+        "notes": "Notes"
+      },
+      "detail": {
+        "currentStock": "Current stock",
+        "batches": "Batches",
+        "newBatch": "+ New batch",
+        "noBatches": "No batches registered yet.",
+        "noNumber": "No number",
+        "validity": "Expiry",
+        "consume": "Consume"
+      },
+      "errors": {
+        "codeRequired": "Enter the item's code.",
+        "nameRequired": "Enter the item's name.",
+        "duplicateCode": "An item with this code or barcode already exists."
+      }
+    },
+    "lotes": {
+      "title": "Batches & Expiry",
+      "new": "New Batch",
+      "recordCount": "{count, plural, one {# batch registered} other {# batches registered}}",
+      "noRecords": "No batches registered yet.",
+      "table": {
+        "item": "Item",
+        "batch": "Batch",
+        "quantity": "Quantity",
+        "validity": "Expiry",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "stockItemId": "Item",
+        "batchNumber": "Batch Number",
+        "quantity": "Quantity",
+        "expiryDate": "Expiry Date",
+        "entryDate": "Entry Date",
+        "supplierName": "Supplier",
+        "notes": "Notes"
+      },
+      "consume": "Consume",
+      "errors": {
+        "itemRequired": "Select the item.",
+        "quantityRequired": "Enter the quantity."
+      }
+    }
   }
 }

@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { stockBatchFields } from "./fields";
+import { getStockBatchFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,9 +14,10 @@ export async function createStockBatchAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(stockBatchFields, formData);
-  if (!data.stockItemId) return { error: "Selecione o item." };
-  if (!data.quantity) return { error: "Informe a quantidade." };
+  const t = await getTranslations("estoque.lotes");
+  const data = buildRecordData(getStockBatchFields(t), formData);
+  if (!data.stockItemId) return { error: t("errors.itemRequired") };
+  if (!data.quantity) return { error: t("errors.quantityRequired") };
 
   await prisma.$transaction([
     prisma.stockBatch.create({
