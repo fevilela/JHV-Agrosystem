@@ -10,6 +10,8 @@ import {
   healthRecordTypeLabels,
   maintenanceTypeLabels,
 } from "@/lib/labels";
+import { PendenciasByCategoryChart } from "@/components/dashboard/pendencias-by-category-chart";
+import { CashFlowTrendChart } from "@/components/dashboard/cash-flow-trend-chart";
 
 type Pendencia = {
   category: string;
@@ -75,6 +77,11 @@ export default async function DashboardPage() {
   const sanidadePecuaria = await prisma.healthRecord.findMany({
     where: { nextDoseDate: { lte: in30 }, animal: { organizationId } },
     include: { animal: true },
+  });
+  const paidEntries = await prisma.financeEntry.findMany({
+    where: { organizationId, status: "PAGO", paymentDate: { not: null } },
+    orderBy: { paymentDate: "asc" },
+    take: 200,
   });
 
   const pendencias: Pendencia[] = [];
@@ -195,6 +202,27 @@ export default async function DashboardPage() {
   const vencidos = pendencias.filter((p) => p.severity === "vencido").length;
   const vencendo = pendencias.filter((p) => p.severity === "vencendo").length;
 
+  const pendenciasByCategoryMap = new Map<string, number>();
+  for (const p of pendencias) {
+    pendenciasByCategoryMap.set(p.category, (pendenciasByCategoryMap.get(p.category) ?? 0) + 1);
+  }
+  const pendenciasByCategory = [...pendenciasByCategoryMap.entries()].map(([category, count]) => ({
+    category,
+    count,
+  }));
+
+  const dailyNet = new Map<string, number>();
+  for (const e of paidEntries) {
+    const key = new Date(e.paymentDate!).toISOString().slice(0, 10);
+    const delta = e.type === "RECEBER" ? Number(e.amount) : -Number(e.amount);
+    dailyNet.set(key, (dailyNet.get(key) ?? 0) + delta);
+  }
+  let runningBalance = 0;
+  const cashFlowTrend = [...dailyNet.keys()].sort().map((date) => {
+    runningBalance += dailyNet.get(date)!;
+    return { date, balance: runningBalance };
+  });
+
   return (
     <div>
       <h1 className="text-xl font-semibold text-neutral-900">
@@ -236,6 +264,25 @@ export default async function DashboardPage() {
             <Clock size={18} className="text-amber-600" />
           </div>
           <p className="mt-3 text-2xl font-semibold text-neutral-900">{vencendo}</p>
+        </div>
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+          <h2 className="mb-3 text-sm font-semibold text-neutral-700">Pendências por Categoria</h2>
+          {pendenciasByCategory.length === 0 ? (
+            <p className="py-16 text-center text-sm text-neutral-400">Nenhuma pendência no momento.</p>
+          ) : (
+            <PendenciasByCategoryChart data={pendenciasByCategory} />
+          )}
+        </div>
+        <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+          <h2 className="mb-3 text-sm font-semibold text-neutral-700">Evolução do Fluxo de Caixa</h2>
+          {cashFlowTrend.length === 0 ? (
+            <p className="py-16 text-center text-sm text-neutral-400">Sem movimentações pagas ainda.</p>
+          ) : (
+            <CashFlowTrendChart data={cashFlowTrend} />
+          )}
         </div>
       </div>
 
