@@ -774,5 +774,103 @@
         "currentStock": "Current Stock"
       }
     }
+  },
+  "maquinas": {
+    "cadastro": {
+      "title": "Machinery & Equipment",
+      "new": "New Machine",
+      "editTitle": "Edit Machine",
+      "recordCount": "{count, plural, one {# machine registered} other {# machines registered}}",
+      "noRecords": "No machines registered yet.",
+      "table": {
+        "type": "Type",
+        "brandModel": "Brand/Model",
+        "plateSerial": "Plate/Serial",
+        "year": "Year",
+        "horimeter": "Hour Meter",
+        "status": "Status",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "type": "Type",
+        "brand": "Brand",
+        "model": "Model",
+        "plateOrSerial": "Plate/Serial Number",
+        "year": "Year",
+        "acquisitionDate": "Acquisition Date",
+        "horimetroAtual": "Current Hour Meter (h)",
+        "status": "Status",
+        "notes": "Notes"
+      },
+      "errors": {
+        "typeRequired": "Select the machine type.",
+        "duplicatePlate": "A machine with this plate/serial number already exists."
+      }
+    },
+    "controle": {
+      "title": "Usage Log",
+      "new": "New Record",
+      "newDetail": "New Usage Record",
+      "editTitle": "Edit Usage Record",
+      "recordCount": "{count, plural, one {# record} other {# records}}",
+      "noRecords": "No records registered yet.",
+      "table": {
+        "date": "Date",
+        "machine": "Machine",
+        "horimeter": "Hour Meter",
+        "fuel": "Fuel",
+        "operator": "Operator",
+        "plot": "Field",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "machineId": "Machine",
+        "date": "Date",
+        "horimetro": "Hour Meter (h)",
+        "combustivelLitros": "Fuel (L)",
+        "operador": "Operator",
+        "talhaoId": "Field",
+        "notes": "Notes"
+      },
+      "errors": {
+        "machineRequired": "Select the machine.",
+        "dateRequired": "Enter the date.",
+        "horimeterRequired": "Enter the hour meter."
+      }
+    },
+    "manutencoes": {
+      "title": "Maintenance",
+      "new": "New Maintenance",
+      "editTitle": "Edit Maintenance",
+      "recordCount": "{count, plural, one {# record} other {# records}}",
+      "noRecords": "No maintenance records yet.",
+      "table": {
+        "date": "Date",
+        "machine": "Machine",
+        "type": "Type",
+        "description": "Description",
+        "cost": "Cost",
+        "next": "Next",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "machineId": "Machine",
+        "type": "Type",
+        "date": "Date",
+        "description": "Description",
+        "cost": "Cost ($)",
+        "horimetro": "Hour Meter at Maintenance (h)",
+        "nextDueDate": "Next Maintenance (date)",
+        "nextDueHorimetro": "Next Maintenance (hour meter)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "machineRequired": "Select the machine.",
+        "dateRequired": "Enter the date."
+      }
+    }
   }
 }

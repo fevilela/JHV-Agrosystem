@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { usageLogFields } from "./fields";
+import { getUsageLogFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,10 +14,11 @@ export async function createUsageLogAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(usageLogFields, formData);
-  if (!data.machineId) return { error: "Selecione a máquina." };
-  if (!data.date) return { error: "Informe a data." };
-  if (!data.horimetro) return { error: "Informe o horímetro." };
+  const t = await getTranslations("maquinas.controle");
+  const data = buildRecordData(getUsageLogFields(t), formData);
+  if (!data.machineId) return { error: t("errors.machineRequired") };
+  if (!data.date) return { error: t("errors.dateRequired") };
+  if (!data.horimetro) return { error: t("errors.horimeterRequired") };
 
   await prisma.$transaction([
     prisma.usageLog.create({
@@ -38,10 +40,11 @@ export async function updateUsageLogAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(usageLogFields, formData);
-  if (!data.machineId) return { error: "Selecione a máquina." };
-  if (!data.date) return { error: "Informe a data." };
-  if (!data.horimetro) return { error: "Informe o horímetro." };
+  const t = await getTranslations("maquinas.controle");
+  const data = buildRecordData(getUsageLogFields(t), formData);
+  if (!data.machineId) return { error: t("errors.machineRequired") };
+  if (!data.date) return { error: t("errors.dateRequired") };
+  if (!data.horimetro) return { error: t("errors.horimeterRequired") };
 
   await prisma.usageLog.update({
     where: { id },

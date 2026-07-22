@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
-import { machineTypeLabels, machineStatusLabels } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteMachineAction } from "./actions";
 
@@ -16,14 +16,17 @@ export default async function MachineListPage() {
   const machines = await prisma.machine.findMany({
     orderBy: [{ type: "asc" }, { brand: "asc" }],
   });
+  const t = await getTranslations("maquinas.cadastro");
+  const tType = await getTranslations("labels.machineType");
+  const tStatus = await getTranslations("labels.machineStatus");
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-neutral-900">Máquinas e Equipamentos</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {machines.length} {machines.length === 1 ? "máquina cadastrada" : "máquinas cadastradas"}
+            {t("recordCount", { count: machines.length })}
           </p>
         </div>
         <Link
@@ -31,7 +34,7 @@ export default async function MachineListPage() {
           className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
           <Plus size={16} />
-          Nova Máquina
+          {t("new")}
         </Link>
       </div>
 
@@ -39,26 +42,26 @@ export default async function MachineListPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
-              <th className="px-4 py-3">Tipo</th>
-              <th className="px-4 py-3">Marca/Modelo</th>
-              <th className="px-4 py-3">Placa/Série</th>
-              <th className="px-4 py-3">Ano</th>
-              <th className="px-4 py-3">Horímetro</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Ações</th>
+              <th className="px-4 py-3">{t("table.type")}</th>
+              <th className="px-4 py-3">{t("table.brandModel")}</th>
+              <th className="px-4 py-3">{t("table.plateSerial")}</th>
+              <th className="px-4 py-3">{t("table.year")}</th>
+              <th className="px-4 py-3">{t("table.horimeter")}</th>
+              <th className="px-4 py-3">{t("table.status")}</th>
+              <th className="px-4 py-3 text-right">{t("table.actions")}</th>
             </tr>
           </thead>
           <tbody>
             {machines.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-sm text-neutral-400">
-                  Nenhuma máquina cadastrada ainda.
+                  {t("noRecords")}
                 </td>
               </tr>
             )}
             {machines.map((m) => (
               <tr key={m.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                <td className="px-4 py-3 text-neutral-700">{machineTypeLabels[m.type]}</td>
+                <td className="px-4 py-3 text-neutral-700">{tType(m.type)}</td>
                 <td className="px-4 py-3 text-neutral-700">
                   {[m.brand, m.model].filter(Boolean).join(" ") || "—"}
                 </td>
@@ -69,7 +72,7 @@ export default async function MachineListPage() {
                 </td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[m.status]}`}>
-                    {machineStatusLabels[m.status]}
+                    {tStatus(m.status)}
                   </span>
                 </td>
                 <td className="px-4 py-3">
@@ -77,7 +80,7 @@ export default async function MachineListPage() {
                     <Link
                       href={`/maquinas/cadastro/${m.id}`}
                       className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
-                      title="Editar"
+                      title={t("table.edit")}
                     >
                       <Pencil size={16} />
                     </Link>

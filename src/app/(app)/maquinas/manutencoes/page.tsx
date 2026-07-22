@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Plus, Pencil, AlertTriangle } from "lucide-react";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
-import { maintenanceTypeLabels, machineTypeLabels, formatCurrency, formatDate } from "@/lib/labels";
+import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteMaintenanceAction } from "./actions";
 
@@ -10,6 +11,10 @@ export default async function MaintenanceListPage() {
     orderBy: { date: "desc" },
     include: { machine: true },
   });
+  const t = await getTranslations("maquinas.manutencoes");
+  const tType = await getTranslations("labels.maintenanceType");
+  const tMachineType = await getTranslations("labels.machineType");
+  const locale = await getLocale();
 
   const now = new Date();
   const soon = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -18,9 +23,9 @@ export default async function MaintenanceListPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-neutral-900">Manutenções</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {maintenances.length} {maintenances.length === 1 ? "registro" : "registros"}
+            {t("recordCount", { count: maintenances.length })}
           </p>
         </div>
         <Link
@@ -28,7 +33,7 @@ export default async function MaintenanceListPage() {
           className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
           <Plus size={16} />
-          Nova Manutenção
+          {t("new")}
         </Link>
       </div>
 
@@ -36,20 +41,20 @@ export default async function MaintenanceListPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
-              <th className="px-4 py-3">Data</th>
-              <th className="px-4 py-3">Máquina</th>
-              <th className="px-4 py-3">Tipo</th>
-              <th className="px-4 py-3">Descrição</th>
-              <th className="px-4 py-3">Custo</th>
-              <th className="px-4 py-3">Próxima</th>
-              <th className="px-4 py-3 text-right">Ações</th>
+              <th className="px-4 py-3">{t("table.date")}</th>
+              <th className="px-4 py-3">{t("table.machine")}</th>
+              <th className="px-4 py-3">{t("table.type")}</th>
+              <th className="px-4 py-3">{t("table.description")}</th>
+              <th className="px-4 py-3">{t("table.cost")}</th>
+              <th className="px-4 py-3">{t("table.next")}</th>
+              <th className="px-4 py-3 text-right">{t("table.actions")}</th>
             </tr>
           </thead>
           <tbody>
             {maintenances.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-sm text-neutral-400">
-                  Nenhuma manutenção cadastrada ainda.
+                  {t("noRecords")}
                 </td>
               </tr>
             )}
@@ -58,16 +63,16 @@ export default async function MaintenanceListPage() {
               const upcoming = m.nextDueDate && !overdue && new Date(m.nextDueDate) <= soon;
               return (
                 <tr key={m.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                  <td className="px-4 py-3 text-neutral-700">{formatDate(m.date)}</td>
+                  <td className="px-4 py-3 text-neutral-700">{formatDate(m.date, locale)}</td>
                   <td className="px-4 py-3 text-neutral-700">
-                    {machineTypeLabels[m.machine.type]}
+                    {tMachineType(m.machine.type)}
                     {m.machine.plateOrSerial && (
                       <span className="block text-xs text-neutral-400">{m.machine.plateOrSerial}</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-neutral-700">{maintenanceTypeLabels[m.type]}</td>
+                  <td className="px-4 py-3 text-neutral-700">{tType(m.type)}</td>
                   <td className="px-4 py-3 text-neutral-700">{m.description || "—"}</td>
-                  <td className="px-4 py-3 text-neutral-700">{formatCurrency(m.cost)}</td>
+                  <td className="px-4 py-3 text-neutral-700">{formatCurrency(m.cost, locale)}</td>
                   <td className="px-4 py-3">
                     {m.nextDueDate ? (
                       <span
@@ -80,7 +85,7 @@ export default async function MaintenanceListPage() {
                         }`}
                       >
                         {(overdue || upcoming) && <AlertTriangle size={12} />}
-                        {formatDate(m.nextDueDate)}
+                        {formatDate(m.nextDueDate, locale)}
                       </span>
                     ) : (
                       "—"
@@ -91,7 +96,7 @@ export default async function MaintenanceListPage() {
                       <Link
                         href={`/maquinas/manutencoes/${m.id}`}
                         className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
-                        title="Editar"
+                        title={t("table.edit")}
                       >
                         <Pencil size={16} />
                       </Link>

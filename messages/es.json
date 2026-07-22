@@ -774,5 +774,103 @@
         "currentStock": "Stock Actual"
       }
     }
+  },
+  "maquinas": {
+    "cadastro": {
+      "title": "Máquinas y Equipos",
+      "new": "Nueva Máquina",
+      "editTitle": "Editar Máquina",
+      "recordCount": "{count, plural, one {# máquina registrada} other {# máquinas registradas}}",
+      "noRecords": "Aún no hay máquinas registradas.",
+      "table": {
+        "type": "Tipo",
+        "brandModel": "Marca/Modelo",
+        "plateSerial": "Placa/Serie",
+        "year": "Año",
+        "horimeter": "Horómetro",
+        "status": "Estado",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "type": "Tipo",
+        "brand": "Marca",
+        "model": "Modelo",
+        "plateOrSerial": "Placa/Nº de Serie",
+        "year": "Año",
+        "acquisitionDate": "Fecha de Adquisición",
+        "horimetroAtual": "Horómetro Actual (h)",
+        "status": "Estado",
+        "notes": "Observaciones"
+      },
+      "errors": {
+        "typeRequired": "Seleccione el tipo de máquina.",
+        "duplicatePlate": "Ya existe una máquina con esa placa/número de serie."
+      }
+    },
+    "controle": {
+      "title": "Control de Uso",
+      "new": "Nuevo Registro",
+      "newDetail": "Nuevo Registro de Uso",
+      "editTitle": "Editar Registro de Uso",
+      "recordCount": "{count, plural, one {# registro} other {# registros}}",
+      "noRecords": "Aún no hay registros.",
+      "table": {
+        "date": "Fecha",
+        "machine": "Máquina",
+        "horimeter": "Horómetro",
+        "fuel": "Combustible",
+        "operator": "Operador",
+        "plot": "Parcela",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "machineId": "Máquina",
+        "date": "Fecha",
+        "horimetro": "Horómetro (h)",
+        "combustivelLitros": "Combustible (L)",
+        "operador": "Operador",
+        "talhaoId": "Parcela",
+        "notes": "Observaciones"
+      },
+      "errors": {
+        "machineRequired": "Seleccione la máquina.",
+        "dateRequired": "Indique la fecha.",
+        "horimeterRequired": "Indique el horómetro."
+      }
+    },
+    "manutencoes": {
+      "title": "Mantenimientos",
+      "new": "Nuevo Mantenimiento",
+      "editTitle": "Editar Mantenimiento",
+      "recordCount": "{count, plural, one {# registro} other {# registros}}",
+      "noRecords": "Aún no hay mantenimientos registrados.",
+      "table": {
+        "date": "Fecha",
+        "machine": "Máquina",
+        "type": "Tipo",
+        "description": "Descripción",
+        "cost": "Costo",
+        "next": "Próximo",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "machineId": "Máquina",
+        "type": "Tipo",
+        "date": "Fecha",
+        "description": "Descripción",
+        "cost": "Costo ($)",
+        "horimetro": "Horómetro en el Mantenimiento (h)",
+        "nextDueDate": "Próximo Mantenimiento (fecha)",
+        "nextDueHorimetro": "Próximo Mantenimiento (horómetro)",
+        "notes": "Observaciones"
+      },
+      "errors": {
+        "machineRequired": "Seleccione la máquina.",
+        "dateRequired": "Indique la fecha."
+      }
+    }
   }
 }

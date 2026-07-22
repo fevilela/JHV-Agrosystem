@@ -1,6 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { usageLogFields } from "../fields";
+import { getUsageLogFields } from "../fields";
 import { createUsageLogAction } from "../actions";
 
 export default async function NewUsageLogPage() {
@@ -8,12 +9,13 @@ export default async function NewUsageLogPage() {
     prisma.machine.findMany({ orderBy: { type: "asc" } }),
     prisma.talhao.findMany({ orderBy: { code: "asc" } }),
   ]);
+  const t = await getTranslations("maquinas.controle");
 
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Registro de Uso</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newDetail")}</h1>
       <RecordForm
-        fields={usageLogFields}
+        fields={getUsageLogFields(t)}
         action={createUsageLogAction}
         relationOptions={{
           machineId: machines.map((m) => ({
