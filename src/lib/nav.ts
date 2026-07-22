@@ -14,7 +14,15 @@ export type NavGroup = {
 export const ALWAYS_ON_MODULES = ["cadastro", "configuracoes"];
 
 /** Módulos que já têm isolamento de dados por organização e podem ser liberados no /admin. */
-export const RETROFITTED_MODULES = ["hipica"];
+export const RETROFITTED_MODULES = [
+  "cadastro",
+  "hipica",
+  "estoque",
+  "maquinas",
+  "oficina",
+  "compras",
+  "rh",
+];
 
 export const navGroups: NavGroup[] = [
   {
