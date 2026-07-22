@@ -1,21 +1,8 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
-
-const sexoLabel: Record<string, string> = {
-  MACHO: "Macho",
-  FEMEA: "Fêmea",
-  CASTRADO: "Castrado",
-};
-
-const statusLabel: Record<string, string> = {
-  ATIVO: "Ativo",
-  VENDIDO: "Vendido",
-  EMPRESTADO: "Emprestado",
-  OBITO: "Óbito",
-  INATIVO: "Inativo",
-};
 
 const statusColor: Record<string, string> = {
   ATIVO: "bg-green-50 text-green-700",
@@ -32,17 +19,16 @@ export default async function AnimaisListPage() {
     orderBy: { name: "asc" },
     include: { owner: true },
   });
+  const t = await getTranslations("cadastro.animais");
+  const tl = await getTranslations("labels");
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-neutral-900">
-            Animais / Cavalos
-          </h1>
+          <h1 className="text-xl font-semibold text-neutral-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {animals.length}{" "}
-            {animals.length === 1 ? "animal cadastrado" : "animais cadastrados"}
+            {t("recordCount", { count: animals.length })}
           </p>
         </div>
         <Link
@@ -50,14 +36,14 @@ export default async function AnimaisListPage() {
           className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
           <Plus size={16} />
-          Novo Animal
+          {t("new")}
         </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {animals.length === 0 && (
           <p className="col-span-full rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-16 text-center text-sm text-neutral-400">
-            Nenhum animal cadastrado ainda.
+            {t("noRecords")}
           </p>
         )}
 
@@ -73,7 +59,7 @@ export default async function AnimaisListPage() {
                   {animal.name}
                 </h2>
                 <p className="text-xs text-neutral-500">
-                  {animal.raca || "Raça não informada"}
+                  {animal.raca || t("breedNotInformed")}
                 </p>
               </div>
               <span
@@ -81,21 +67,21 @@ export default async function AnimaisListPage() {
                   statusColor[animal.status]
                 }`}
               >
-                {statusLabel[animal.status]}
+                {tl(`animalStatus.${animal.status}`)}
               </span>
             </div>
 
             <dl className="mt-4 space-y-1 text-sm text-neutral-600">
               <div className="flex justify-between">
-                <dt className="text-neutral-400">Registro</dt>
+                <dt className="text-neutral-400">{t("card.registro")}</dt>
                 <dd>{animal.registro || "—"}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-neutral-400">Sexo</dt>
-                <dd>{animal.sexo ? sexoLabel[animal.sexo] : "—"}</dd>
+                <dt className="text-neutral-400">{t("card.sexo")}</dt>
+                <dd>{animal.sexo ? tl(`animalSexo.${animal.sexo}`) : "—"}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-neutral-400">Proprietário</dt>
+                <dt className="text-neutral-400">{t("card.owner")}</dt>
                 <dd>{animal.owner?.name || "—"}</dd>
               </div>
             </dl>

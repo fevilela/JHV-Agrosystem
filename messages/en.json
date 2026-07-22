@@ -416,6 +416,13 @@
       "ENTREGUE": "Delivered",
       "LIDO": "Read",
       "FALHOU": "Failed"
+    },
+    "animalStatus": {
+      "ATIVO": "Active",
+      "VENDIDO": "Sold",
+      "EMPRESTADO": "Loaned",
+      "OBITO": "Deceased",
+      "INATIVO": "Inactive"
     }
   },
   "configuracoes": {
@@ -476,6 +483,145 @@
         "placeholder": "Write a message...",
         "helperText": "Free-text messages only work up to 24h after the client's last message. Outside that window, an approved template from Meta is required.",
         "errorEmpty": "Write a message."
+      }
+    }
+  },
+  "cadastro": {
+    "fields": {
+      "name": "Name",
+      "cpfCnpj": "Tax ID",
+      "cpf": "Tax ID",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "streetAddress": "Street",
+      "streetNumber": "Number",
+      "neighborhood": "Neighborhood",
+      "zipCode": "ZIP Code",
+      "city": "City",
+      "state": "State",
+      "notes": "Notes",
+      "role": "Role",
+      "active": "Active",
+      "admissionDate": "Hire Date",
+      "salary": "Salary",
+      "crmv": "Vet License (CRMV)",
+      "specialty": "Specialty",
+      "productsOrServices": "Products/Services"
+    },
+    "entities": {
+      "proprietarios": { "title": "Owners", "singular": "Owner" },
+      "clientes": { "title": "Clients", "singular": "Client" },
+      "fornecedores": { "title": "Suppliers", "singular": "Supplier" },
+      "funcionarios": { "title": "Employees", "singular": "Employee" },
+      "veterinarios": { "title": "Veterinarians", "singular": "Veterinarian" },
+      "ferradores": { "title": "Farriers", "singular": "Farrier" },
+      "instrutores": { "title": "Instructors", "singular": "Instructor" },
+      "tratadores": { "title": "Handlers", "singular": "Handler" }
+    },
+    "list": {
+      "new": "New {singular}",
+      "edit": "Edit {singular}",
+      "recordCount": "{count, plural, one {# record registered} other {# records registered}}",
+      "noRecords": "No records yet.",
+      "actions": "Actions",
+      "editAction": "Edit",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "errors": {
+      "invalidEntity": "Invalid entity.",
+      "saveError": "Couldn't save. Check the information entered."
+    },
+    "animais": {
+      "title": "Animals / Horses",
+      "new": "New Animal",
+      "recordCount": "{count, plural, one {# animal registered} other {# animals registered}}",
+      "noRecords": "No animals registered yet.",
+      "breedNotInformed": "Breed not specified",
+      "card": { "registro": "Registration", "sexo": "Sex", "owner": "Owner" },
+      "form": {
+        "identification": "Identification",
+        "name": "Name",
+        "registro": "Registration",
+        "microchip": "Microchip",
+        "especie": "Species",
+        "raca": "Breed",
+        "sexo": "Sex",
+        "pelagem": "Coat",
+        "dataNascimento": "Date of Birth",
+        "peso": "Weight (kg)",
+        "altura": "Height (m)",
+        "status": "Status",
+        "ownerGenealogy": "Owner & Genealogy",
+        "owner": "Owner",
+        "noOwner": "No owner",
+        "father": "Sire",
+        "mother": "Dam",
+        "notInformed": "Not specified",
+        "notes": "Notes"
+      },
+      "detail": {
+        "backLink": "Animals / Horses",
+        "tabs": {
+          "general": "General Info",
+          "genealogy": "Genealogy",
+          "photos": "Photos",
+          "documents": "Documents",
+          "health": "Health",
+          "history": "History",
+          "training": "Training"
+        },
+        "father": "Sire",
+        "mother": "Dam",
+        "children": "Offspring ({count})",
+        "noChildren": "No offspring registered",
+        "notInformed": "Not specified",
+        "trainingPlaceholderTitle": "Training",
+        "trainingPlaceholderDescription": "Daily exercise tracking — duration, intensity, jumping, barrel racing, gaited riding, and progress — is part of the Equestrian module, coming in a future step."
+      },
+      "photos": {
+        "file": "File",
+        "caption": "Caption",
+        "upload": "Upload Photo",
+        "empty": "No photos yet.",
+        "defaultAlt": "Animal photo"
+      },
+      "documents": {
+        "file": "File",
+        "type": "Type (e.g. Registration, Exam, Invoice)",
+        "upload": "Upload Document",
+        "empty": "No documents yet."
+      },
+      "health": {
+        "newRecord": "New Record",
+        "empty": "No health records yet.",
+        "date": "Date",
+        "type": "Type",
+        "product": "Product",
+        "nextDose": "Next Dose",
+        "notes": "Notes",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "history": {
+        "empty": "No events recorded yet.",
+        "newDiet": "New diet started",
+        "categories": {
+          "saude": "Health",
+          "treino": "Training",
+          "dieta": "Diet",
+          "baia": "Stall",
+          "agenda": "Schedule",
+          "competicao": "Competition",
+          "transacao": "Transaction"
+        }
+      },
+      "errors": {
+        "nameRequired": "Enter the animal's name.",
+        "saveConflict": "Couldn't save. Check that the registration/microchip isn't already in use.",
+        "selfParent": "An animal can't be its own sire/dam.",
+        "notFound": "Animal not found."
       }
     }
   }

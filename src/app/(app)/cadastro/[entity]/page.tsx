@@ -1,17 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Plus, Pencil } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { getEntityConfig } from "@/lib/entities";
 import { listEntities } from "@/lib/crud";
 import { requireOrg } from "@/lib/tenant";
 import { deleteEntityAction } from "./actions";
 import { DeleteButton } from "@/components/crud/delete-button";
-
-function formatCell(value: unknown) {
-  if (value === null || value === undefined || value === "") return "—";
-  if (typeof value === "boolean") return value ? "Sim" : "Não";
-  return String(value);
-}
 
 export default async function EntityListPage({
   params,
@@ -19,8 +14,16 @@ export default async function EntityListPage({
   params: Promise<{ entity: string }>;
 }) {
   const { entity } = await params;
-  const config = getEntityConfig(entity);
+  const t = await getTranslations("cadastro");
+  const tList = await getTranslations("cadastro.list");
+  const config = getEntityConfig(entity, t);
   if (!config) notFound();
+
+  function formatCell(value: unknown) {
+    if (value === null || value === undefined || value === "") return "—";
+    if (typeof value === "boolean") return value ? tList("yes") : tList("no");
+    return String(value);
+  }
 
   const { organizationId } = await requireOrg();
   const rows = await listEntities(config, organizationId);
@@ -33,8 +36,7 @@ export default async function EntityListPage({
             {config.title}
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {rows.length}{" "}
-            {rows.length === 1 ? "registro cadastrado" : "registros cadastrados"}
+            {tList("recordCount", { count: rows.length })}
           </p>
         </div>
         <Link
@@ -42,7 +44,7 @@ export default async function EntityListPage({
           className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
           <Plus size={16} />
-          Novo {config.singular}
+          {tList("new", { singular: config.singular })}
         </Link>
       </div>
 
@@ -55,7 +57,7 @@ export default async function EntityListPage({
                   {col.label}
                 </th>
               ))}
-              <th className="px-4 py-3 text-right">Ações</th>
+              <th className="px-4 py-3 text-right">{tList("actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +67,7 @@ export default async function EntityListPage({
                   colSpan={config.listColumns.length + 1}
                   className="px-4 py-10 text-center text-sm text-neutral-400"
                 >
-                  Nenhum registro cadastrado ainda.
+                  {tList("noRecords")}
                 </td>
               </tr>
             )}
@@ -84,7 +86,7 @@ export default async function EntityListPage({
                     <Link
                       href={`/cadastro/${entity}/${row.id}`}
                       className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
-                      title="Editar"
+                      title={tList("editAction")}
                     >
                       <Pencil size={16} />
                     </Link>

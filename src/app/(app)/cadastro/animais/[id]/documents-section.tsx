@@ -1,4 +1,5 @@
 import { FileText } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import {
   uploadAnimalDocumentAction,
   deleteAnimalDocumentAction,
@@ -7,13 +8,15 @@ import { DeleteButton } from "@/components/crud/delete-button";
 
 type Doc = { id: string; url: string; name: string; type: string | null };
 
-export function DocumentsSection({
+export async function DocumentsSection({
   animalId,
   documents,
 }: {
   animalId: string;
   documents: Doc[];
 }) {
+  const t = await getTranslations("cadastro.animais.documents");
+
   return (
     <div className="space-y-6">
       <form
@@ -22,13 +25,13 @@ export function DocumentsSection({
       >
         <div className="flex-1 min-w-[200px]">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Arquivo
+            {t("file")}
           </label>
           <input type="file" name="file" required className="w-full text-sm" />
         </div>
         <div className="flex-1 min-w-[200px]">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Tipo (ex: Registro, Exame, Nota Fiscal)
+            {t("type")}
           </label>
           <input
             name="type"
@@ -39,13 +42,13 @@ export function DocumentsSection({
           type="submit"
           className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
-          Enviar Documento
+          {t("upload")}
         </button>
       </form>
 
       {documents.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-10 text-center text-sm text-neutral-400">
-          Nenhum documento cadastrado ainda.
+          {t("empty")}
         </p>
       ) : (
         <div className="divide-y divide-neutral-100 rounded-2xl border border-neutral-200 bg-white">

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { AnimalForm } from "../animal-form";
 import { updateAnimalAction, deleteAnimalAction } from "../actions";
@@ -11,14 +12,7 @@ import { Tabs } from "@/components/tabs";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { ModulePlaceholder } from "@/components/placeholder";
 import { requireOrg } from "@/lib/tenant";
-import {
-  equineHealthRecordTypeLabels,
-  exerciseTypeLabels,
-  stallEventTypeLabels,
-  agendaEventTypeLabels,
-  animalTransactionTypeLabels,
-  formatCurrency,
-} from "@/lib/labels";
+import { formatCurrency } from "@/lib/labels";
 
 export default async function AnimalDetailPage({
   params,
@@ -27,6 +21,9 @@ export default async function AnimalDetailPage({
 }) {
   const { id } = await params;
   const { organizationId } = await requireOrg();
+  const t = await getTranslations("cadastro.animais");
+  const tl = await getTranslations("labels");
+  const locale = await getLocale();
 
   const [
     animal,
@@ -71,44 +68,44 @@ export default async function AnimalDetailPage({
   const timeline: TimelineEntry[] = [
     ...healthRecords.map((r) => ({
       date: r.date,
-      category: "Saúde",
-      title: equineHealthRecordTypeLabels[r.type],
+      category: "saude" as const,
+      title: tl(`equineHealthRecordType.${r.type}`),
       detail: [r.product, r.notes].filter(Boolean).join(" — ") || null,
     })),
-    ...trainingSessions.map((t) => ({
-      date: t.date,
-      category: "Treino",
-      title: exerciseTypeLabels[t.exerciseType],
-      detail: [t.evolution, t.notes].filter(Boolean).join(" — ") || null,
+    ...trainingSessions.map((ts) => ({
+      date: ts.date,
+      category: "treino" as const,
+      title: tl(`exerciseType.${ts.exerciseType}`),
+      detail: [ts.evolution, ts.notes].filter(Boolean).join(" — ") || null,
     })),
     ...diets.map((d) => ({
       date: d.startDate,
-      category: "Dieta",
-      title: "Nova dieta iniciada",
+      category: "dieta" as const,
+      title: t("history.newDiet"),
       detail: [d.suplementos, d.notes].filter(Boolean).join(" — ") || null,
     })),
     ...stallEvents.map((s) => ({
       date: s.date,
-      category: "Baia",
-      title: `${stallEventTypeLabels[s.type]} — Baia ${s.stall.code}`,
+      category: "baia" as const,
+      title: `${tl(`stallEventType.${s.type}`)} — Baia ${s.stall.code}`,
       detail: s.notes,
     })),
     ...agendaEvents.map((a) => ({
       date: a.date,
-      category: "Agenda",
-      title: `${a.title} (${agendaEventTypeLabels[a.type]})`,
+      category: "agenda" as const,
+      title: `${a.title} (${tl(`agendaEventType.${a.type}`)})`,
       detail: a.notes,
     })),
     ...competitions.map((c) => ({
       date: c.date,
-      category: "Competição",
+      category: "competicao" as const,
       title: c.name,
       detail: [c.result, c.location].filter(Boolean).join(" — ") || null,
     })),
     ...transactions.map((tr) => ({
       date: tr.date,
-      category: "Transação",
-      title: `${animalTransactionTypeLabels[tr.type]} — ${formatCurrency(tr.value)}`,
+      category: "transacao" as const,
+      title: `${tl(`animalTransactionType.${tr.type}`)} — ${formatCurrency(tr.value, locale)}`,
       detail: tr.counterpartyName,
     })),
   ].sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -121,7 +118,7 @@ export default async function AnimalDetailPage({
             href="/cadastro/animais"
             className="text-sm text-neutral-500 hover:text-neutral-800"
           >
-            ← Animais / Cavalos
+            ← {t("detail.backLink")}
           </Link>
           <h1 className="mt-1 text-xl font-semibold text-neutral-900">
             {animal.name}
@@ -136,7 +133,7 @@ export default async function AnimalDetailPage({
         tabs={[
           {
             id: "dados",
-            label: "Dados Gerais",
+            label: t("detail.tabs.general"),
             content: (
               <AnimalForm
                 action={updateAnimalAction.bind(null, id)}
@@ -149,12 +146,12 @@ export default async function AnimalDetailPage({
           },
           {
             id: "genealogia",
-            label: "Genealogia",
+            label: t("detail.tabs.genealogy"),
             content: (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5">
                   <h3 className="mb-3 text-sm font-semibold text-neutral-500">
-                    Pai
+                    {t("detail.father")}
                   </h3>
                   {animal.pai ? (
                     <Link
@@ -164,12 +161,12 @@ export default async function AnimalDetailPage({
                       {animal.pai.name}
                     </Link>
                   ) : (
-                    <p className="text-sm text-neutral-400">Não informado</p>
+                    <p className="text-sm text-neutral-400">{t("detail.notInformed")}</p>
                   )}
                 </div>
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5">
                   <h3 className="mb-3 text-sm font-semibold text-neutral-500">
-                    Mãe
+                    {t("detail.mother")}
                   </h3>
                   {animal.mae ? (
                     <Link
@@ -179,16 +176,16 @@ export default async function AnimalDetailPage({
                       {animal.mae.name}
                     </Link>
                   ) : (
-                    <p className="text-sm text-neutral-400">Não informado</p>
+                    <p className="text-sm text-neutral-400">{t("detail.notInformed")}</p>
                   )}
                 </div>
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:col-span-2">
                   <h3 className="mb-3 text-sm font-semibold text-neutral-500">
-                    Filhos ({filhos.length})
+                    {t("detail.children", { count: filhos.length })}
                   </h3>
                   {filhos.length === 0 ? (
                     <p className="text-sm text-neutral-400">
-                      Nenhum filho cadastrado
+                      {t("detail.noChildren")}
                     </p>
                   ) : (
                     <ul className="space-y-1">
@@ -210,33 +207,33 @@ export default async function AnimalDetailPage({
           },
           {
             id: "fotos",
-            label: "Fotos",
+            label: t("detail.tabs.photos"),
             content: <PhotosSection animalId={id} photos={animal.photos} />,
           },
           {
             id: "documentos",
-            label: "Documentos",
+            label: t("detail.tabs.documents"),
             content: (
               <DocumentsSection animalId={id} documents={animal.documents} />
             ),
           },
           {
             id: "saude",
-            label: "Saúde",
+            label: t("detail.tabs.health"),
             content: <SaudeSection records={healthRecords} />,
           },
           {
             id: "historico",
-            label: "Histórico",
+            label: t("detail.tabs.history"),
             content: <HistoricoSection entries={timeline} />,
           },
           {
             id: "treinamento",
-            label: "Treinamento",
+            label: t("detail.tabs.training"),
             content: (
               <ModulePlaceholder
-                title="Treinamento"
-                description="Controle diário de exercícios, tempo, intensidade, salto, tambor, marcha e evolução entram no módulo Hípica, em uma próxima etapa."
+                title={t("detail.trainingPlaceholderTitle")}
+                description={t("detail.trainingPlaceholderDescription")}
               />
             ),
           },

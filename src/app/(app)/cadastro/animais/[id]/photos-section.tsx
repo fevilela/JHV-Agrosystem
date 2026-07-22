@@ -1,16 +1,19 @@
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import { uploadAnimalPhotoAction, deleteAnimalPhotoAction } from "../actions";
 import { DeleteButton } from "@/components/crud/delete-button";
 
 type Photo = { id: string; url: string; caption: string | null };
 
-export function PhotosSection({
+export async function PhotosSection({
   animalId,
   photos,
 }: {
   animalId: string;
   photos: Photo[];
 }) {
+  const t = await getTranslations("cadastro.animais.photos");
+
   return (
     <div className="space-y-6">
       <form
@@ -19,7 +22,7 @@ export function PhotosSection({
       >
         <div className="flex-1 min-w-[200px]">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Arquivo
+            {t("file")}
           </label>
           <input
             type="file"
@@ -31,7 +34,7 @@ export function PhotosSection({
         </div>
         <div className="flex-1 min-w-[200px]">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Legenda
+            {t("caption")}
           </label>
           <input
             name="caption"
@@ -42,13 +45,13 @@ export function PhotosSection({
           type="submit"
           className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
-          Enviar Foto
+          {t("upload")}
         </button>
       </form>
 
       {photos.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-10 text-center text-sm text-neutral-400">
-          Nenhuma foto cadastrada ainda.
+          {t("empty")}
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -60,7 +63,7 @@ export function PhotosSection({
               <div className="relative aspect-square">
                 <Image
                   src={photo.url}
-                  alt={photo.caption || "Foto do animal"}
+                  alt={photo.caption || t("defaultAlt")}
                   fill
                   className="object-cover"
                 />

@@ -416,6 +416,13 @@
       "ENTREGUE": "Entregado",
       "LIDO": "Leído",
       "FALHOU": "Falló"
+    },
+    "animalStatus": {
+      "ATIVO": "Activo",
+      "VENDIDO": "Vendido",
+      "EMPRESTADO": "Prestado",
+      "OBITO": "Fallecido",
+      "INATIVO": "Inactivo"
     }
   },
   "configuracoes": {
@@ -476,6 +483,145 @@
         "placeholder": "Escriba un mensaje...",
         "helperText": "El mensaje de texto libre solo funciona hasta 24h después del último mensaje del cliente. Fuera de ese plazo, es necesario usar una plantilla aprobada por Meta.",
         "errorEmpty": "Escriba un mensaje."
+      }
+    }
+  },
+  "cadastro": {
+    "fields": {
+      "name": "Nombre",
+      "cpfCnpj": "CPF/CNPJ",
+      "cpf": "CPF",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "address": "Dirección",
+      "streetAddress": "Calle",
+      "streetNumber": "Número",
+      "neighborhood": "Barrio",
+      "zipCode": "Código Postal",
+      "city": "Ciudad",
+      "state": "Provincia/Estado",
+      "notes": "Observaciones",
+      "role": "Cargo",
+      "active": "Activo",
+      "admissionDate": "Fecha de Admisión",
+      "salary": "Salario",
+      "crmv": "CRMV",
+      "specialty": "Especialidad",
+      "productsOrServices": "Productos/Servicios"
+    },
+    "entities": {
+      "proprietarios": { "title": "Propietarios", "singular": "Propietario" },
+      "clientes": { "title": "Clientes", "singular": "Cliente" },
+      "fornecedores": { "title": "Proveedores", "singular": "Proveedor" },
+      "funcionarios": { "title": "Empleados", "singular": "Empleado" },
+      "veterinarios": { "title": "Veterinarios", "singular": "Veterinario" },
+      "ferradores": { "title": "Herradores", "singular": "Herrador" },
+      "instrutores": { "title": "Instructores", "singular": "Instructor" },
+      "tratadores": { "title": "Cuidadores", "singular": "Cuidador" }
+    },
+    "list": {
+      "new": "Nuevo {singular}",
+      "edit": "Editar {singular}",
+      "recordCount": "{count, plural, one {# registro guardado} other {# registros guardados}}",
+      "noRecords": "Aún no hay registros.",
+      "actions": "Acciones",
+      "editAction": "Editar",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "errors": {
+      "invalidEntity": "Registro inválido.",
+      "saveError": "No fue posible guardar. Verifique los datos ingresados."
+    },
+    "animais": {
+      "title": "Animales / Caballos",
+      "new": "Nuevo Animal",
+      "recordCount": "{count, plural, one {# animal registrado} other {# animales registrados}}",
+      "noRecords": "Aún no hay animales registrados.",
+      "breedNotInformed": "Raza no informada",
+      "card": { "registro": "Registro", "sexo": "Sexo", "owner": "Propietario" },
+      "form": {
+        "identification": "Identificación",
+        "name": "Nombre",
+        "registro": "Registro",
+        "microchip": "Microchip",
+        "especie": "Especie",
+        "raca": "Raza",
+        "sexo": "Sexo",
+        "pelagem": "Pelaje",
+        "dataNascimento": "Fecha de Nacimiento",
+        "peso": "Peso (kg)",
+        "altura": "Altura (m)",
+        "status": "Estado",
+        "ownerGenealogy": "Propietario y Genealogía",
+        "owner": "Propietario",
+        "noOwner": "Sin propietario",
+        "father": "Padre",
+        "mother": "Madre",
+        "notInformed": "No informado",
+        "notes": "Observaciones"
+      },
+      "detail": {
+        "backLink": "Animales / Caballos",
+        "tabs": {
+          "general": "Datos Generales",
+          "genealogy": "Genealogía",
+          "photos": "Fotos",
+          "documents": "Documentos",
+          "health": "Sanidad",
+          "history": "Historial",
+          "training": "Entrenamiento"
+        },
+        "father": "Padre",
+        "mother": "Madre",
+        "children": "Hijos ({count})",
+        "noChildren": "Ningún hijo registrado",
+        "notInformed": "No informado",
+        "trainingPlaceholderTitle": "Entrenamiento",
+        "trainingPlaceholderDescription": "El control diario de ejercicios, tiempo, intensidad, salto, barriles, marcha y evolución entra en el módulo Hípica, en una próxima etapa."
+      },
+      "photos": {
+        "file": "Archivo",
+        "caption": "Leyenda",
+        "upload": "Subir Foto",
+        "empty": "Aún no hay fotos registradas.",
+        "defaultAlt": "Foto del animal"
+      },
+      "documents": {
+        "file": "Archivo",
+        "type": "Tipo (ej: Registro, Examen, Factura)",
+        "upload": "Subir Documento",
+        "empty": "Aún no hay documentos registrados."
+      },
+      "health": {
+        "newRecord": "Nuevo Registro",
+        "empty": "Aún no hay registros de sanidad.",
+        "date": "Fecha",
+        "type": "Tipo",
+        "product": "Producto",
+        "nextDose": "Próxima Dosis",
+        "notes": "Observaciones",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "history": {
+        "empty": "Aún no hay eventos registrados.",
+        "newDiet": "Nueva dieta iniciada",
+        "categories": {
+          "saude": "Sanidad",
+          "treino": "Entrenamiento",
+          "dieta": "Dieta",
+          "baia": "Establo",
+          "agenda": "Agenda",
+          "competicao": "Competencia",
+          "transacao": "Transacción"
+        }
+      },
+      "errors": {
+        "nameRequired": "Indique el nombre del animal.",
+        "saveConflict": "No fue posible guardar. Verifique que el registro/microchip no esté ya en uso.",
+        "selfParent": "Un animal no puede ser padre/madre de sí mismo.",
+        "notFound": "Animal no encontrado."
       }
     }
   }

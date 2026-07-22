@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getEntityConfig } from "@/lib/entities";
 import { getEntity } from "@/lib/crud";
 import { EntityForm } from "@/components/crud/entity-form";
@@ -11,7 +12,9 @@ export default async function EditEntityPage({
   params: Promise<{ entity: string; id: string }>;
 }) {
   const { entity, id } = await params;
-  const config = getEntityConfig(entity);
+  const t = await getTranslations("cadastro");
+  const tList = await getTranslations("cadastro.list");
+  const config = getEntityConfig(entity, t);
   if (!config) notFound();
 
   const { organizationId } = await requireOrg();
@@ -21,7 +24,7 @@ export default async function EditEntityPage({
   return (
     <div>
       <h1 className="mb-6 text-xl font-semibold text-neutral-900">
-        Editar {config.singular}
+        {tList("edit", { singular: config.singular })}
       </h1>
       <EntityForm
         config={config}

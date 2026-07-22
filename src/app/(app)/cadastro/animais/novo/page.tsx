@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { AnimalForm } from "../animal-form";
 import { createAnimalAction } from "../actions";
@@ -9,11 +10,12 @@ export default async function NewAnimalPage() {
     prisma.owner.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
     prisma.animal.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
+  const t = await getTranslations("cadastro.animais");
 
   return (
     <div>
       <h1 className="mb-6 text-xl font-semibold text-neutral-900">
-        Novo Animal
+        {t("new")}
       </h1>
       <AnimalForm
         action={createAnimalAction}

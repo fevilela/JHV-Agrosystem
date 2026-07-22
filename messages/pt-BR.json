@@ -416,6 +416,13 @@
       "ENTREGUE": "Entregue",
       "LIDO": "Lido",
       "FALHOU": "Falhou"
+    },
+    "animalStatus": {
+      "ATIVO": "Ativo",
+      "VENDIDO": "Vendido",
+      "EMPRESTADO": "Emprestado",
+      "OBITO": "Óbito",
+      "INATIVO": "Inativo"
     }
   },
   "configuracoes": {
@@ -476,6 +483,145 @@
         "placeholder": "Escreva uma mensagem...",
         "helperText": "Mensagem de texto livre só funciona até 24h depois da última mensagem do cliente. Fora desse prazo, é preciso usar um modelo aprovado pela Meta.",
         "errorEmpty": "Escreva uma mensagem."
+      }
+    }
+  },
+  "cadastro": {
+    "fields": {
+      "name": "Nome",
+      "cpfCnpj": "CPF/CNPJ",
+      "cpf": "CPF",
+      "phone": "Telefone",
+      "email": "E-mail",
+      "address": "Endereço",
+      "streetAddress": "Rua/Logradouro",
+      "streetNumber": "Número",
+      "neighborhood": "Bairro",
+      "zipCode": "CEP",
+      "city": "Cidade",
+      "state": "UF",
+      "notes": "Observações",
+      "role": "Cargo",
+      "active": "Ativo",
+      "admissionDate": "Data de Admissão",
+      "salary": "Salário",
+      "crmv": "CRMV",
+      "specialty": "Especialidade",
+      "productsOrServices": "Produtos/Serviços"
+    },
+    "entities": {
+      "proprietarios": { "title": "Proprietários", "singular": "Proprietário" },
+      "clientes": { "title": "Clientes", "singular": "Cliente" },
+      "fornecedores": { "title": "Fornecedores", "singular": "Fornecedor" },
+      "funcionarios": { "title": "Funcionários", "singular": "Funcionário" },
+      "veterinarios": { "title": "Veterinários", "singular": "Veterinário" },
+      "ferradores": { "title": "Ferradores", "singular": "Ferrador" },
+      "instrutores": { "title": "Instrutores", "singular": "Instrutor" },
+      "tratadores": { "title": "Tratadores", "singular": "Tratador" }
+    },
+    "list": {
+      "new": "Novo {singular}",
+      "edit": "Editar {singular}",
+      "recordCount": "{count, plural, one {# registro cadastrado} other {# registros cadastrados}}",
+      "noRecords": "Nenhum registro cadastrado ainda.",
+      "actions": "Ações",
+      "editAction": "Editar",
+      "yes": "Sim",
+      "no": "Não"
+    },
+    "errors": {
+      "invalidEntity": "Cadastro inválido.",
+      "saveError": "Não foi possível salvar. Verifique os dados informados."
+    },
+    "animais": {
+      "title": "Animais / Cavalos",
+      "new": "Novo Animal",
+      "recordCount": "{count, plural, one {# animal cadastrado} other {# animais cadastrados}}",
+      "noRecords": "Nenhum animal cadastrado ainda.",
+      "breedNotInformed": "Raça não informada",
+      "card": { "registro": "Registro", "sexo": "Sexo", "owner": "Proprietário" },
+      "form": {
+        "identification": "Identificação",
+        "name": "Nome",
+        "registro": "Registro",
+        "microchip": "Microchip",
+        "especie": "Espécie",
+        "raca": "Raça",
+        "sexo": "Sexo",
+        "pelagem": "Pelagem",
+        "dataNascimento": "Data de Nascimento",
+        "peso": "Peso (kg)",
+        "altura": "Altura (m)",
+        "status": "Status",
+        "ownerGenealogy": "Proprietário e Genealogia",
+        "owner": "Proprietário",
+        "noOwner": "Sem proprietário",
+        "father": "Pai",
+        "mother": "Mãe",
+        "notInformed": "Não informado",
+        "notes": "Observações"
+      },
+      "detail": {
+        "backLink": "Animais / Cavalos",
+        "tabs": {
+          "general": "Dados Gerais",
+          "genealogy": "Genealogia",
+          "photos": "Fotos",
+          "documents": "Documentos",
+          "health": "Saúde",
+          "history": "Histórico",
+          "training": "Treinamento"
+        },
+        "father": "Pai",
+        "mother": "Mãe",
+        "children": "Filhos ({count})",
+        "noChildren": "Nenhum filho cadastrado",
+        "notInformed": "Não informado",
+        "trainingPlaceholderTitle": "Treinamento",
+        "trainingPlaceholderDescription": "Controle diário de exercícios, tempo, intensidade, salto, tambor, marcha e evolução entram no módulo Hípica, em uma próxima etapa."
+      },
+      "photos": {
+        "file": "Arquivo",
+        "caption": "Legenda",
+        "upload": "Enviar Foto",
+        "empty": "Nenhuma foto cadastrada ainda.",
+        "defaultAlt": "Foto do animal"
+      },
+      "documents": {
+        "file": "Arquivo",
+        "type": "Tipo (ex: Registro, Exame, Nota Fiscal)",
+        "upload": "Enviar Documento",
+        "empty": "Nenhum documento cadastrado ainda."
+      },
+      "health": {
+        "newRecord": "Novo Registro",
+        "empty": "Nenhum registro de sanidade ainda.",
+        "date": "Data",
+        "type": "Tipo",
+        "product": "Produto",
+        "nextDose": "Próxima Dose",
+        "notes": "Observações",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "history": {
+        "empty": "Nenhum evento registrado ainda.",
+        "newDiet": "Nova dieta iniciada",
+        "categories": {
+          "saude": "Saúde",
+          "treino": "Treino",
+          "dieta": "Dieta",
+          "baia": "Baia",
+          "agenda": "Agenda",
+          "competicao": "Competição",
+          "transacao": "Transação"
+        }
+      },
+      "errors": {
+        "nameRequired": "Informe o nome do animal.",
+        "saveConflict": "Não foi possível salvar. Verifique se o registro/microchip já não está em uso.",
+        "selfParent": "Um animal não pode ser pai/mãe de si mesmo.",
+        "notFound": "Animal não encontrado."
       }
     }
   }

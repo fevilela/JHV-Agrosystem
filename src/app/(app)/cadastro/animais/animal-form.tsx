@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (
@@ -32,6 +33,9 @@ export function AnimalForm({
   backHref: string;
 }) {
   const [state, formAction, isPending] = useActionState(action, undefined);
+  const t = useTranslations("cadastro.animais.form");
+  const tl = useTranslations("labels");
+  const tc = useTranslations("common");
 
   return (
     <form
@@ -40,12 +44,12 @@ export function AnimalForm({
     >
       <section>
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
-          Identificação
+          {t("identification")}
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Nome <span className="text-red-500">*</span>
+              {t("name")} <span className="text-red-500">*</span>
             </label>
             <input
               name="name"
@@ -57,7 +61,7 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Registro
+              {t("registro")}
             </label>
             <input
               name="registro"
@@ -68,7 +72,7 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Microchip
+              {t("microchip")}
             </label>
             <input
               name="microchip"
@@ -79,7 +83,7 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Espécie
+              {t("especie")}
             </label>
             <input
               name="especie"
@@ -90,7 +94,7 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Raça
+              {t("raca")}
             </label>
             <input
               name="raca"
@@ -101,23 +105,23 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Sexo
+              {t("sexo")}
             </label>
             <select
               name="sexo"
               defaultValue={(animal?.sexo as string) ?? ""}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
             >
-              <option value="">Selecione</option>
-              <option value="MACHO">Macho</option>
-              <option value="FEMEA">Fêmea</option>
-              <option value="CASTRADO">Castrado</option>
+              <option value="">{tc("select")}</option>
+              <option value="MACHO">{tl("animalSexo.MACHO")}</option>
+              <option value="FEMEA">{tl("animalSexo.FEMEA")}</option>
+              <option value="CASTRADO">{tl("animalSexo.CASTRADO")}</option>
             </select>
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Pelagem
+              {t("pelagem")}
             </label>
             <input
               name="pelagem"
@@ -128,7 +132,7 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Data de Nascimento
+              {t("dataNascimento")}
             </label>
             <input
               type="date"
@@ -140,7 +144,7 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Peso (kg)
+              {t("peso")}
             </label>
             <input
               type="number"
@@ -153,7 +157,7 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Altura (m)
+              {t("altura")}
             </label>
             <input
               type="number"
@@ -166,18 +170,18 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Status
+              {t("status")}
             </label>
             <select
               name="status"
               defaultValue={(animal?.status as string) ?? "ATIVO"}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
             >
-              <option value="ATIVO">Ativo</option>
-              <option value="VENDIDO">Vendido</option>
-              <option value="EMPRESTADO">Emprestado</option>
-              <option value="OBITO">Óbito</option>
-              <option value="INATIVO">Inativo</option>
+              <option value="ATIVO">{tl("animalStatus.ATIVO")}</option>
+              <option value="VENDIDO">{tl("animalStatus.VENDIDO")}</option>
+              <option value="EMPRESTADO">{tl("animalStatus.EMPRESTADO")}</option>
+              <option value="OBITO">{tl("animalStatus.OBITO")}</option>
+              <option value="INATIVO">{tl("animalStatus.INATIVO")}</option>
             </select>
           </div>
         </div>
@@ -185,19 +189,19 @@ export function AnimalForm({
 
       <section>
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
-          Proprietário e Genealogia
+          {t("ownerGenealogy")}
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Proprietário
+              {t("owner")}
             </label>
             <select
               name="ownerId"
               defaultValue={(animal?.ownerId as string) ?? ""}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
             >
-              <option value="">Sem proprietário</option>
+              <option value="">{t("noOwner")}</option>
               {owners.map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.name}
@@ -208,14 +212,14 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Pai
+              {t("father")}
             </label>
             <select
               name="paiId"
               defaultValue={(animal?.paiId as string) ?? ""}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
             >
-              <option value="">Não informado</option>
+              <option value="">{t("notInformed")}</option>
               {animalsForGenealogy.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.name}
@@ -226,14 +230,14 @@ export function AnimalForm({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Mãe
+              {t("mother")}
             </label>
             <select
               name="maeId"
               defaultValue={(animal?.maeId as string) ?? ""}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
             >
-              <option value="">Não informado</option>
+              <option value="">{t("notInformed")}</option>
               {animalsForGenealogy.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.name}
@@ -246,7 +250,7 @@ export function AnimalForm({
 
       <section>
         <label className="mb-1 block text-sm font-medium text-neutral-700">
-          Observações
+          {t("notes")}
         </label>
         <textarea
           name="notes"
@@ -268,13 +272,13 @@ export function AnimalForm({
           disabled={isPending}
           className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800 disabled:opacity-60"
         >
-          {isPending ? "Salvando..." : "Salvar"}
+          {isPending ? tc("saving") : tc("save")}
         </button>
         <Link
           href={backHref}
           className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
         >
-          Cancelar
+          {tc("cancel")}
         </Link>
       </div>
     </form>

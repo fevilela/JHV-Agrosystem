@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/upload";
 import { requireOrg } from "@/lib/tenant";
@@ -46,7 +47,10 @@ async function requireOwnedAnimal(animalId: string, organizationId: string) {
     where: { id: animalId, organizationId },
     select: { id: true },
   });
-  if (!animal) throw new Error("Animal não encontrado.");
+  if (!animal) {
+    const t = await getTranslations("cadastro.animais.errors");
+    throw new Error(t("notFound"));
+  }
 }
 
 export async function createAnimalAction(
@@ -55,16 +59,14 @@ export async function createAnimalAction(
 ) {
   const { organizationId } = await requireOrg();
   const data = buildAnimalData(formData);
-  if (!data.name) return { error: "Informe o nome do animal." };
+  const t = await getTranslations("cadastro.animais.errors");
+  if (!data.name) return { error: t("nameRequired") };
 
   let animal;
   try {
     animal = await prisma.animal.create({ data: { ...data, organizationId } });
   } catch {
-    return {
-      error:
-        "Não foi possível salvar. Verifique se o registro/microchip já não está em uso.",
-    };
+    return { error: t("saveConflict") };
   }
 
   revalidatePath("/cadastro/animais");
@@ -78,18 +80,16 @@ export async function updateAnimalAction(
 ) {
   const { organizationId } = await requireOrg();
   const data = buildAnimalData(formData);
-  if (!data.name) return { error: "Informe o nome do animal." };
+  const t = await getTranslations("cadastro.animais.errors");
+  if (!data.name) return { error: t("nameRequired") };
   if (data.paiId === id || data.maeId === id) {
-    return { error: "Um animal não pode ser pai/mãe de si mesmo." };
+    return { error: t("selfParent") };
   }
 
   try {
     await prisma.animal.updateMany({ where: { id, organizationId }, data });
   } catch {
-    return {
-      error:
-        "Não foi possível salvar. Verifique se o registro/microchip já não está em uso.",
-    };
+    return { error: t("saveConflict") };
   }
 
   revalidatePath("/cadastro/animais");

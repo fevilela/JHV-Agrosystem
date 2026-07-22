@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getEntityConfig } from "@/lib/entities";
 import {
   createEntityRecord,
@@ -15,15 +16,16 @@ export async function createEntityAction(
   _prevState: { error?: string } | undefined,
   formData: FormData
 ) {
-  const config = getEntityConfig(entitySlug);
-  if (!config) return { error: "Cadastro inválido." };
+  const t = await getTranslations("cadastro");
+  const config = getEntityConfig(entitySlug, t);
+  if (!config) return { error: t("errors.invalidEntity") };
 
   const { organizationId } = await requireOrg();
 
   try {
     await createEntityRecord(config, formData, organizationId);
   } catch {
-    return { error: "Não foi possível salvar. Verifique os dados informados." };
+    return { error: t("errors.saveError") };
   }
 
   revalidatePath(`/cadastro/${entitySlug}`);
@@ -36,15 +38,16 @@ export async function updateEntityAction(
   _prevState: { error?: string } | undefined,
   formData: FormData
 ) {
-  const config = getEntityConfig(entitySlug);
-  if (!config) return { error: "Cadastro inválido." };
+  const t = await getTranslations("cadastro");
+  const config = getEntityConfig(entitySlug, t);
+  if (!config) return { error: t("errors.invalidEntity") };
 
   const { organizationId } = await requireOrg();
 
   try {
     await updateEntityRecord(config, id, formData, organizationId);
   } catch {
-    return { error: "Não foi possível salvar. Verifique os dados informados." };
+    return { error: t("errors.saveError") };
   }
 
   revalidatePath(`/cadastro/${entitySlug}`);
@@ -52,7 +55,8 @@ export async function updateEntityAction(
 }
 
 export async function deleteEntityAction(entitySlug: string, id: string) {
-  const config = getEntityConfig(entitySlug);
+  const t = await getTranslations("cadastro");
+  const config = getEntityConfig(entitySlug, t);
   if (!config) return;
 
   const { organizationId } = await requireOrg();
