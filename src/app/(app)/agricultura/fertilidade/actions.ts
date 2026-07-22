@@ -2,20 +2,28 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { fertilityFields } from "./fields";
+import { getFertilityFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("agricultura.fertilidade.fields");
+  const tType = await getTranslations("labels.fertilityType");
+  return getFertilityFields(tf, tType);
+}
 
 export async function createFertilityAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(fertilityFields, formData);
-  if (!data.talhaoId) return { error: "Selecione o talhão." };
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("agricultura.fertilidade.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.talhaoId) return { error: t("talhaoRequired") };
+  if (!data.date) return { error: t("dateRequired") };
 
   await prisma.fertility.create({
     data: data as Prisma.FertilityUncheckedCreateInput,
@@ -30,9 +38,10 @@ export async function updateFertilityAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(fertilityFields, formData);
-  if (!data.talhaoId) return { error: "Selecione o talhão." };
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("agricultura.fertilidade.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.talhaoId) return { error: t("talhaoRequired") };
+  if (!data.date) return { error: t("dateRequired") };
 
   await prisma.fertility.update({
     where: { id },

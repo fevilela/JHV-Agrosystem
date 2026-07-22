@@ -1393,5 +1393,258 @@
         "issueDateRequired": "Indique la fecha de entrega."
       }
     }
+  },
+  "agricultura": {
+    "talhoes": {
+      "title": "Parcelas",
+      "count": "{count, plural, one {# parcela registrada} other {# parcelas registradas}}",
+      "new": "Nueva Parcela",
+      "newTitle": "Nueva Parcela",
+      "editTitle": "Editar Parcela",
+      "empty": "Aún no hay parcelas registradas.",
+      "edit": "Editar",
+      "areaUnit": "{value} ha",
+      "table": {
+        "code": "Código",
+        "name": "Nombre",
+        "area": "Área",
+        "soil": "Suelo",
+        "safras": "Cosechas",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "code": "Código",
+        "name": "Nombre",
+        "areaHectares": "Área (ha)",
+        "soilType": "Tipo de Suelo",
+        "coordinates": "Coordenadas",
+        "notes": "Notas / Historial"
+      },
+      "errors": {
+        "codeRequired": "Indique el código de la parcela.",
+        "duplicateCode": "Ya existe una parcela con ese código."
+      }
+    },
+    "safra": {
+      "title": "Planificación de Cosecha",
+      "count": "{count, plural, one {# cosecha registrada} other {# cosechas registradas}}",
+      "new": "Nueva Cosecha",
+      "newTitle": "Nueva Cosecha",
+      "editTitle": "Editar Cosecha",
+      "empty": "Aún no hay cosechas registradas.",
+      "edit": "Editar",
+      "table": {
+        "safra": "Cosecha",
+        "talhao": "Parcela",
+        "cultura": "Cultivo",
+        "start": "Inicio",
+        "expectedCost": "Costo Previsto",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "talhaoId": "Parcela",
+        "name": "Nombre de la Cosecha",
+        "cultura": "Cultivo",
+        "variedade": "Variedad",
+        "status": "Estado",
+        "dataInicio": "Fecha de Inicio",
+        "dataFimPrevista": "Previsión de Cierre",
+        "custoPrevisto": "Costo Previsto (R$)",
+        "notes": "Notas"
+      },
+      "errors": {
+        "talhaoRequired": "Seleccione la parcela.",
+        "nameRequired": "Indique el nombre de la cosecha.",
+        "culturaRequired": "Indique el cultivo."
+      }
+    },
+    "plantio": {
+      "title": "Siembra",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Nueva Siembra",
+      "newTitle": "Nueva Siembra",
+      "editTitle": "Editar Siembra",
+      "empty": "Aún no hay registros.",
+      "edit": "Editar",
+      "populationUnit": "{value}/ha",
+      "table": {
+        "date": "Fecha",
+        "safra": "Cosecha",
+        "talhao": "Parcela",
+        "seeds": "Semillas",
+        "population": "Población",
+        "machine": "Máquina",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "safraId": "Cosecha",
+        "date": "Fecha",
+        "sementes": "Semillas",
+        "populacaoPlantasHa": "Población (plantas/ha)",
+        "maquina": "Máquina",
+        "operador": "Operador",
+        "tempoHoras": "Tiempo (horas)",
+        "notes": "Notas"
+      },
+      "errors": {
+        "safraRequired": "Seleccione la cosecha.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "tratosCulturais": {
+      "title": "Labores Culturales",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Nuevo Registro",
+      "newTitle": "Nueva Labor Cultural",
+      "editTitle": "Editar Labor Cultural",
+      "empty": "Aún no hay registros.",
+      "edit": "Editar",
+      "table": {
+        "date": "Fecha",
+        "safra": "Cosecha",
+        "type": "Tipo",
+        "product": "Producto",
+        "dose": "Dosis",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "safraId": "Cosecha",
+        "type": "Tipo",
+        "date": "Fecha",
+        "product": "Producto",
+        "dose": "Dosis",
+        "operador": "Operador",
+        "notes": "Notas"
+      },
+      "errors": {
+        "safraRequired": "Seleccione la cosecha.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "fertilidade": {
+      "title": "Fertilidad",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Nuevo Registro",
+      "newTitle": "Nuevo Registro de Fertilidad",
+      "editTitle": "Editar Registro de Fertilidad",
+      "empty": "Aún no hay registros.",
+      "edit": "Editar",
+      "table": {
+        "date": "Fecha",
+        "talhao": "Parcela",
+        "type": "Tipo",
+        "ph": "pH",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "talhaoId": "Parcela",
+        "type": "Tipo",
+        "date": "Fecha",
+        "ph": "pH",
+        "results": "Resultados",
+        "recommendation": "Recomendación",
+        "notes": "Notas"
+      },
+      "errors": {
+        "talhaoRequired": "Seleccione la parcela.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "irrigacao": {
+      "title": "Riego",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Nuevo Registro",
+      "newTitle": "Nuevo Registro de Riego",
+      "editTitle": "Editar Registro de Riego",
+      "empty": "Aún no hay registros.",
+      "edit": "Editar",
+      "consumptionUnit": "{value} m³",
+      "hoursUnit": "{value} h",
+      "table": {
+        "date": "Fecha",
+        "talhao": "Parcela",
+        "consumption": "Consumo",
+        "pumpHours": "Horas de Bomba",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "talhaoId": "Parcela",
+        "date": "Fecha",
+        "consumoM3": "Consumo (m³)",
+        "horasBomba": "Horas de Bomba",
+        "notes": "Notas"
+      },
+      "errors": {
+        "talhaoRequired": "Seleccione la parcela.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "colheita": {
+      "title": "Cosecha",
+      "summary": "{count, plural, one {# registro} other {# registros}} · {total} kg en total",
+      "new": "Nueva Cosecha",
+      "newTitle": "Nueva Cosecha",
+      "editTitle": "Editar Cosecha",
+      "empty": "Aún no hay cosechas registradas.",
+      "edit": "Editar",
+      "weightUnit": "{value} kg",
+      "moistureUnit": "{value}%",
+      "table": {
+        "date": "Fecha",
+        "safra": "Cosecha",
+        "talhao": "Parcela",
+        "production": "Producción",
+        "moisture": "Humedad",
+        "quality": "Calidad",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "safraId": "Cosecha",
+        "date": "Fecha",
+        "producaoKg": "Producción (kg)",
+        "umidade": "Humedad (%)",
+        "qualidade": "Calidad",
+        "maquina": "Máquina",
+        "operador": "Operador",
+        "notes": "Notas"
+      },
+      "errors": {
+        "safraRequired": "Seleccione la cosecha.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "armazenagem": {
+      "backLink": "Almacenamiento",
+      "title": "Almacenamiento",
+      "count": "{count, plural, one {# unidad registrada} other {# unidades registradas}}",
+      "new": "Nuevo Silo/Almacén",
+      "newTitle": "Nuevo Silo/Almacén",
+      "empty": "Aún no hay silos o almacenes registrados.",
+      "detailTitle": "{code} — Existencia actual: {stock} ton",
+      "currentStock": "Existencia actual",
+      "capacity": "Capacidad",
+      "tonUnit": "{value} ton",
+      "newMovement": "Nuevo Movimiento",
+      "movementType": "Tipo",
+      "movementDate": "Fecha",
+      "movementQuantity": "Cantidad (ton)",
+      "movementMoisture": "Humedad (%)",
+      "noSafra": "Sin cosecha vinculada",
+      "register": "Registrar",
+      "history": "Historial",
+      "noMovements": "Aún no hay movimientos registrados.",
+      "fields": {
+        "code": "Código",
+        "name": "Nombre",
+        "type": "Tipo",
+        "capacityTon": "Capacidad (ton)",
+        "notes": "Notas"
+      },
+      "errors": {
+        "codeRequired": "Indique el código.",
+        "duplicateCode": "Ya existe un silo/almacén con ese código."
+      }
+    }
   }
 }

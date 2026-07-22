@@ -2,20 +2,28 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { tratoFields } from "./fields";
+import { getTratoFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("agricultura.tratosCulturais.fields");
+  const tType = await getTranslations("labels.tratoCulturalType");
+  return getTratoFields(tf, tType);
+}
 
 export async function createTratoAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(tratoFields, formData);
-  if (!data.safraId) return { error: "Selecione a safra." };
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("agricultura.tratosCulturais.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.safraId) return { error: t("safraRequired") };
+  if (!data.date) return { error: t("dateRequired") };
 
   await prisma.tratoCultural.create({
     data: data as Prisma.TratoCulturalUncheckedCreateInput,
@@ -30,9 +38,10 @@ export async function updateTratoAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(tratoFields, formData);
-  if (!data.safraId) return { error: "Selecione a safra." };
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("agricultura.tratosCulturais.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.safraId) return { error: t("safraRequired") };
+  if (!data.date) return { error: t("dateRequired") };
 
   await prisma.tratoCultural.update({
     where: { id },

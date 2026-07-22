@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { fertilityFields } from "../fields";
+import { getFertilityFields } from "../fields";
 import { updateFertilityAction } from "../actions";
 
 export default async function EditFertilityPage({
@@ -18,15 +19,19 @@ export default async function EditFertilityPage({
 
   if (!record) notFound();
 
+  const t = await getTranslations("agricultura.fertilidade");
+  const tf = await getTranslations("agricultura.fertilidade.fields");
+  const tType = await getTranslations("labels.fertilityType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Registro de Fertilidade</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={fertilityFields}
+        fields={getFertilityFields(tf, tType)}
         action={updateFertilityAction.bind(null, id)}
         initialValues={record}
         relationOptions={{
-          talhaoId: talhoes.map((t) => ({ id: t.id, label: t.code })),
+          talhaoId: talhoes.map((t2) => ({ id: t2.id, label: t2.code })),
         }}
         backHref="/agricultura/fertilidade"
       />

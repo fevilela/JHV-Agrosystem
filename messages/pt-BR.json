@@ -1393,5 +1393,258 @@
         "issueDateRequired": "Informe a data de entrega."
       }
     }
+  },
+  "agricultura": {
+    "talhoes": {
+      "title": "Talhões",
+      "count": "{count, plural, one {# talhão cadastrado} other {# talhões cadastrados}}",
+      "new": "Novo Talhão",
+      "newTitle": "Novo Talhão",
+      "editTitle": "Editar Talhão",
+      "empty": "Nenhum talhão cadastrado ainda.",
+      "edit": "Editar",
+      "areaUnit": "{value} ha",
+      "table": {
+        "code": "Código",
+        "name": "Nome",
+        "area": "Área",
+        "soil": "Solo",
+        "safras": "Safras",
+        "actions": "Ações"
+      },
+      "fields": {
+        "code": "Código",
+        "name": "Nome",
+        "areaHectares": "Área (ha)",
+        "soilType": "Tipo de Solo",
+        "coordinates": "Coordenadas",
+        "notes": "Observações / Histórico"
+      },
+      "errors": {
+        "codeRequired": "Informe o código do talhão.",
+        "duplicateCode": "Já existe um talhão com esse código."
+      }
+    },
+    "safra": {
+      "title": "Planejamento de Safra",
+      "count": "{count, plural, one {# safra cadastrada} other {# safras cadastradas}}",
+      "new": "Nova Safra",
+      "newTitle": "Nova Safra",
+      "editTitle": "Editar Safra",
+      "empty": "Nenhuma safra cadastrada ainda.",
+      "edit": "Editar",
+      "table": {
+        "safra": "Safra",
+        "talhao": "Talhão",
+        "cultura": "Cultura",
+        "start": "Início",
+        "expectedCost": "Custo Previsto",
+        "status": "Status",
+        "actions": "Ações"
+      },
+      "fields": {
+        "talhaoId": "Talhão",
+        "name": "Nome da Safra",
+        "cultura": "Cultura",
+        "variedade": "Variedade",
+        "status": "Status",
+        "dataInicio": "Data de Início",
+        "dataFimPrevista": "Previsão de Encerramento",
+        "custoPrevisto": "Custo Previsto (R$)",
+        "notes": "Observações"
+      },
+      "errors": {
+        "talhaoRequired": "Selecione o talhão.",
+        "nameRequired": "Informe o nome da safra.",
+        "culturaRequired": "Informe a cultura."
+      }
+    },
+    "plantio": {
+      "title": "Plantio",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Novo Plantio",
+      "newTitle": "Novo Plantio",
+      "editTitle": "Editar Plantio",
+      "empty": "Nenhum registro cadastrado ainda.",
+      "edit": "Editar",
+      "populationUnit": "{value}/ha",
+      "table": {
+        "date": "Data",
+        "safra": "Safra",
+        "talhao": "Talhão",
+        "seeds": "Sementes",
+        "population": "População",
+        "machine": "Máquina",
+        "actions": "Ações"
+      },
+      "fields": {
+        "safraId": "Safra",
+        "date": "Data",
+        "sementes": "Sementes",
+        "populacaoPlantasHa": "População (plantas/ha)",
+        "maquina": "Máquina",
+        "operador": "Operador",
+        "tempoHoras": "Tempo (horas)",
+        "notes": "Observações"
+      },
+      "errors": {
+        "safraRequired": "Selecione a safra.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "tratosCulturais": {
+      "title": "Tratos Culturais",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Novo Registro",
+      "newTitle": "Novo Trato Cultural",
+      "editTitle": "Editar Trato Cultural",
+      "empty": "Nenhum registro cadastrado ainda.",
+      "edit": "Editar",
+      "table": {
+        "date": "Data",
+        "safra": "Safra",
+        "type": "Tipo",
+        "product": "Produto",
+        "dose": "Dose",
+        "actions": "Ações"
+      },
+      "fields": {
+        "safraId": "Safra",
+        "type": "Tipo",
+        "date": "Data",
+        "product": "Produto",
+        "dose": "Dose",
+        "operador": "Operador",
+        "notes": "Observações"
+      },
+      "errors": {
+        "safraRequired": "Selecione a safra.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "fertilidade": {
+      "title": "Fertilidade",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Novo Registro",
+      "newTitle": "Novo Registro de Fertilidade",
+      "editTitle": "Editar Registro de Fertilidade",
+      "empty": "Nenhum registro cadastrado ainda.",
+      "edit": "Editar",
+      "table": {
+        "date": "Data",
+        "talhao": "Talhão",
+        "type": "Tipo",
+        "ph": "pH",
+        "actions": "Ações"
+      },
+      "fields": {
+        "talhaoId": "Talhão",
+        "type": "Tipo",
+        "date": "Data",
+        "ph": "pH",
+        "results": "Resultados",
+        "recommendation": "Recomendação",
+        "notes": "Observações"
+      },
+      "errors": {
+        "talhaoRequired": "Selecione o talhão.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "irrigacao": {
+      "title": "Irrigação",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Novo Registro",
+      "newTitle": "Novo Registro de Irrigação",
+      "editTitle": "Editar Registro de Irrigação",
+      "empty": "Nenhum registro cadastrado ainda.",
+      "edit": "Editar",
+      "consumptionUnit": "{value} m³",
+      "hoursUnit": "{value} h",
+      "table": {
+        "date": "Data",
+        "talhao": "Talhão",
+        "consumption": "Consumo",
+        "pumpHours": "Horas de Bomba",
+        "actions": "Ações"
+      },
+      "fields": {
+        "talhaoId": "Talhão",
+        "date": "Data",
+        "consumoM3": "Consumo (m³)",
+        "horasBomba": "Horas de Bomba",
+        "notes": "Observações"
+      },
+      "errors": {
+        "talhaoRequired": "Selecione o talhão.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "colheita": {
+      "title": "Colheita",
+      "summary": "{count, plural, one {# registro} other {# registros}} · {total} kg no total",
+      "new": "Nova Colheita",
+      "newTitle": "Nova Colheita",
+      "editTitle": "Editar Colheita",
+      "empty": "Nenhuma colheita registrada ainda.",
+      "edit": "Editar",
+      "weightUnit": "{value} kg",
+      "moistureUnit": "{value}%",
+      "table": {
+        "date": "Data",
+        "safra": "Safra",
+        "talhao": "Talhão",
+        "production": "Produção",
+        "moisture": "Umidade",
+        "quality": "Qualidade",
+        "actions": "Ações"
+      },
+      "fields": {
+        "safraId": "Safra",
+        "date": "Data",
+        "producaoKg": "Produção (kg)",
+        "umidade": "Umidade (%)",
+        "qualidade": "Qualidade",
+        "maquina": "Máquina",
+        "operador": "Operador",
+        "notes": "Observações"
+      },
+      "errors": {
+        "safraRequired": "Selecione a safra.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "armazenagem": {
+      "backLink": "Armazenagem",
+      "title": "Armazenagem",
+      "count": "{count, plural, one {# unidade cadastrada} other {# unidades cadastradas}}",
+      "new": "Novo Silo/Armazém",
+      "newTitle": "Novo Silo/Armazém",
+      "empty": "Nenhum silo ou armazém cadastrado ainda.",
+      "detailTitle": "{code} — Estoque atual: {stock} ton",
+      "currentStock": "Estoque atual",
+      "capacity": "Capacidade",
+      "tonUnit": "{value} ton",
+      "newMovement": "Nova Movimentação",
+      "movementType": "Tipo",
+      "movementDate": "Data",
+      "movementQuantity": "Quantidade (ton)",
+      "movementMoisture": "Umidade (%)",
+      "noSafra": "Sem safra vinculada",
+      "register": "Registrar",
+      "history": "Histórico",
+      "noMovements": "Nenhuma movimentação registrada ainda.",
+      "fields": {
+        "code": "Código",
+        "name": "Nome",
+        "type": "Tipo",
+        "capacityTon": "Capacidade (ton)",
+        "notes": "Observações"
+      },
+      "errors": {
+        "codeRequired": "Informe o código.",
+        "duplicateCode": "Já existe um silo/armazém com esse código."
+      }
+    }
   }
 }

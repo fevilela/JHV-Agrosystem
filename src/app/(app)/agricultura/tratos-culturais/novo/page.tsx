@@ -1,6 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { tratoFields } from "../fields";
+import { getTratoFields } from "../fields";
 import { createTratoAction } from "../actions";
 
 export default async function NewTratoPage() {
@@ -9,11 +10,15 @@ export default async function NewTratoPage() {
     include: { talhao: true },
   });
 
+  const t = await getTranslations("agricultura.tratosCulturais");
+  const tf = await getTranslations("agricultura.tratosCulturais.fields");
+  const tType = await getTranslations("labels.tratoCulturalType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Trato Cultural</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={tratoFields}
+        fields={getTratoFields(tf, tType)}
         action={createTratoAction}
         relationOptions={{
           safraId: safras.map((s) => ({ id: s.id, label: `${s.name} (${s.talhao.code})` })),

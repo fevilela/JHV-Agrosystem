@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { irrigationFields } from "../fields";
+import { getIrrigationFields } from "../fields";
 import { updateIrrigationAction } from "../actions";
 
 export default async function EditIrrigationPage({
@@ -18,15 +19,18 @@ export default async function EditIrrigationPage({
 
   if (!record) notFound();
 
+  const t = await getTranslations("agricultura.irrigacao");
+  const tf = await getTranslations("agricultura.irrigacao.fields");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Registro de Irrigação</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={irrigationFields}
+        fields={getIrrigationFields(tf)}
         action={updateIrrigationAction.bind(null, id)}
         initialValues={record}
         relationOptions={{
-          talhaoId: talhoes.map((t) => ({ id: t.id, label: t.code })),
+          talhaoId: talhoes.map((t2) => ({ id: t2.id, label: t2.code })),
         }}
         backHref="/agricultura/irrigacao"
       />

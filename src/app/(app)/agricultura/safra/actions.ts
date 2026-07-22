@@ -2,21 +2,29 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { safraFields } from "./fields";
+import { getSafraFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("agricultura.safra.fields");
+  const tStatus = await getTranslations("labels.safraStatus");
+  return getSafraFields(tf, tStatus);
+}
 
 export async function createSafraAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(safraFields, formData);
-  if (!data.talhaoId) return { error: "Selecione o talhão." };
-  if (!data.name) return { error: "Informe o nome da safra." };
-  if (!data.cultura) return { error: "Informe a cultura." };
+  const t = await getTranslations("agricultura.safra.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.talhaoId) return { error: t("talhaoRequired") };
+  if (!data.name) return { error: t("nameRequired") };
+  if (!data.cultura) return { error: t("culturaRequired") };
 
   await prisma.safra.create({
     data: data as Prisma.SafraUncheckedCreateInput,
@@ -31,10 +39,11 @@ export async function updateSafraAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(safraFields, formData);
-  if (!data.talhaoId) return { error: "Selecione o talhão." };
-  if (!data.name) return { error: "Informe o nome da safra." };
-  if (!data.cultura) return { error: "Informe a cultura." };
+  const t = await getTranslations("agricultura.safra.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.talhaoId) return { error: t("talhaoRequired") };
+  if (!data.name) return { error: t("nameRequired") };
+  if (!data.cultura) return { error: t("culturaRequired") };
 
   await prisma.safra.update({
     where: { id },

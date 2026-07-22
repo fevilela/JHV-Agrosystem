@@ -1,13 +1,17 @@
+import { getTranslations } from "next-intl/server";
 import { RecordForm } from "@/components/crud/record-form";
-import { talhaoFields } from "../fields";
+import { getTalhaoFields } from "../fields";
 import { createTalhaoAction } from "../actions";
 
-export default function NewTalhaoPage() {
+export default async function NewTalhaoPage() {
+  const t = await getTranslations("agricultura.talhoes");
+  const tf = await getTranslations("agricultura.talhoes.fields");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Talhão</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={talhaoFields}
+        fields={getTalhaoFields(tf)}
         action={createTalhaoAction}
         backHref="/agricultura/talhoes"
       />

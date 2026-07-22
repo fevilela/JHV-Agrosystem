@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { safraFields } from "../fields";
+import { getSafraFields } from "../fields";
 import { updateSafraAction } from "../actions";
 
 export default async function EditSafraPage({
@@ -18,15 +19,19 @@ export default async function EditSafraPage({
 
   if (!safra) notFound();
 
+  const t = await getTranslations("agricultura.safra");
+  const tf = await getTranslations("agricultura.safra.fields");
+  const tStatus = await getTranslations("labels.safraStatus");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Safra</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={safraFields}
+        fields={getSafraFields(tf, tStatus)}
         action={updateSafraAction.bind(null, id)}
         initialValues={safra}
         relationOptions={{
-          talhaoId: talhoes.map((t) => ({ id: t.id, label: t.code })),
+          talhaoId: talhoes.map((t2) => ({ id: t2.id, label: t2.code })),
         }}
         backHref="/agricultura/safra"
       />

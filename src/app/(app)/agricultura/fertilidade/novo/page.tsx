@@ -1,19 +1,24 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { fertilityFields } from "../fields";
+import { getFertilityFields } from "../fields";
 import { createFertilityAction } from "../actions";
 
 export default async function NewFertilityPage() {
   const talhoes = await prisma.talhao.findMany({ orderBy: { code: "asc" } });
 
+  const t = await getTranslations("agricultura.fertilidade");
+  const tf = await getTranslations("agricultura.fertilidade.fields");
+  const tType = await getTranslations("labels.fertilityType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Registro de Fertilidade</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={fertilityFields}
+        fields={getFertilityFields(tf, tType)}
         action={createFertilityAction}
         relationOptions={{
-          talhaoId: talhoes.map((t) => ({ id: t.id, label: t.code })),
+          talhaoId: talhoes.map((t2) => ({ id: t2.id, label: t2.code })),
         }}
         backHref="/agricultura/fertilidade"
       />

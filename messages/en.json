@@ -1393,5 +1393,258 @@
         "issueDateRequired": "Enter the issue date."
       }
     }
+  },
+  "agricultura": {
+    "talhoes": {
+      "title": "Fields",
+      "count": "{count, plural, one {# field registered} other {# fields registered}}",
+      "new": "New Field",
+      "newTitle": "New Field",
+      "editTitle": "Edit Field",
+      "empty": "No fields registered yet.",
+      "edit": "Edit",
+      "areaUnit": "{value} ha",
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "area": "Area",
+        "soil": "Soil",
+        "safras": "Crops",
+        "actions": "Actions"
+      },
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "areaHectares": "Area (ha)",
+        "soilType": "Soil Type",
+        "coordinates": "Coordinates",
+        "notes": "Notes / History"
+      },
+      "errors": {
+        "codeRequired": "Enter the field code.",
+        "duplicateCode": "A field with this code already exists."
+      }
+    },
+    "safra": {
+      "title": "Crop Planning",
+      "count": "{count, plural, one {# crop registered} other {# crops registered}}",
+      "new": "New Crop",
+      "newTitle": "New Crop",
+      "editTitle": "Edit Crop",
+      "empty": "No crops registered yet.",
+      "edit": "Edit",
+      "table": {
+        "safra": "Crop",
+        "talhao": "Field",
+        "cultura": "Culture",
+        "start": "Start",
+        "expectedCost": "Expected Cost",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "talhaoId": "Field",
+        "name": "Crop Name",
+        "cultura": "Culture",
+        "variedade": "Variety",
+        "status": "Status",
+        "dataInicio": "Start Date",
+        "dataFimPrevista": "Expected End Date",
+        "custoPrevisto": "Expected Cost (R$)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "talhaoRequired": "Select the field.",
+        "nameRequired": "Enter the crop name.",
+        "culturaRequired": "Enter the culture."
+      }
+    },
+    "plantio": {
+      "title": "Planting",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "new": "New Planting",
+      "newTitle": "New Planting",
+      "editTitle": "Edit Planting",
+      "empty": "No records registered yet.",
+      "edit": "Edit",
+      "populationUnit": "{value}/ha",
+      "table": {
+        "date": "Date",
+        "safra": "Crop",
+        "talhao": "Field",
+        "seeds": "Seeds",
+        "population": "Population",
+        "machine": "Machine",
+        "actions": "Actions"
+      },
+      "fields": {
+        "safraId": "Crop",
+        "date": "Date",
+        "sementes": "Seeds",
+        "populacaoPlantasHa": "Population (plants/ha)",
+        "maquina": "Machine",
+        "operador": "Operator",
+        "tempoHoras": "Time (hours)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "safraRequired": "Select the crop.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "tratosCulturais": {
+      "title": "Crop Treatments",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "new": "New Record",
+      "newTitle": "New Crop Treatment",
+      "editTitle": "Edit Crop Treatment",
+      "empty": "No records registered yet.",
+      "edit": "Edit",
+      "table": {
+        "date": "Date",
+        "safra": "Crop",
+        "type": "Type",
+        "product": "Product",
+        "dose": "Dose",
+        "actions": "Actions"
+      },
+      "fields": {
+        "safraId": "Crop",
+        "type": "Type",
+        "date": "Date",
+        "product": "Product",
+        "dose": "Dose",
+        "operador": "Operator",
+        "notes": "Notes"
+      },
+      "errors": {
+        "safraRequired": "Select the crop.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "fertilidade": {
+      "title": "Fertility",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "new": "New Record",
+      "newTitle": "New Fertility Record",
+      "editTitle": "Edit Fertility Record",
+      "empty": "No records registered yet.",
+      "edit": "Edit",
+      "table": {
+        "date": "Date",
+        "talhao": "Field",
+        "type": "Type",
+        "ph": "pH",
+        "actions": "Actions"
+      },
+      "fields": {
+        "talhaoId": "Field",
+        "type": "Type",
+        "date": "Date",
+        "ph": "pH",
+        "results": "Results",
+        "recommendation": "Recommendation",
+        "notes": "Notes"
+      },
+      "errors": {
+        "talhaoRequired": "Select the field.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "irrigacao": {
+      "title": "Irrigation",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "new": "New Record",
+      "newTitle": "New Irrigation Record",
+      "editTitle": "Edit Irrigation Record",
+      "empty": "No records registered yet.",
+      "edit": "Edit",
+      "consumptionUnit": "{value} m³",
+      "hoursUnit": "{value} h",
+      "table": {
+        "date": "Date",
+        "talhao": "Field",
+        "consumption": "Consumption",
+        "pumpHours": "Pump Hours",
+        "actions": "Actions"
+      },
+      "fields": {
+        "talhaoId": "Field",
+        "date": "Date",
+        "consumoM3": "Consumption (m³)",
+        "horasBomba": "Pump Hours",
+        "notes": "Notes"
+      },
+      "errors": {
+        "talhaoRequired": "Select the field.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "colheita": {
+      "title": "Harvest",
+      "summary": "{count, plural, one {# record} other {# records}} · {total} kg total",
+      "new": "New Harvest",
+      "newTitle": "New Harvest",
+      "editTitle": "Edit Harvest",
+      "empty": "No harvests registered yet.",
+      "edit": "Edit",
+      "weightUnit": "{value} kg",
+      "moistureUnit": "{value}%",
+      "table": {
+        "date": "Date",
+        "safra": "Crop",
+        "talhao": "Field",
+        "production": "Production",
+        "moisture": "Moisture",
+        "quality": "Quality",
+        "actions": "Actions"
+      },
+      "fields": {
+        "safraId": "Crop",
+        "date": "Date",
+        "producaoKg": "Production (kg)",
+        "umidade": "Moisture (%)",
+        "qualidade": "Quality",
+        "maquina": "Machine",
+        "operador": "Operator",
+        "notes": "Notes"
+      },
+      "errors": {
+        "safraRequired": "Select the crop.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "armazenagem": {
+      "backLink": "Storage",
+      "title": "Storage",
+      "count": "{count, plural, one {# unit registered} other {# units registered}}",
+      "new": "New Silo/Warehouse",
+      "newTitle": "New Silo/Warehouse",
+      "empty": "No silos or warehouses registered yet.",
+      "detailTitle": "{code} — Current Stock: {stock} ton",
+      "currentStock": "Current Stock",
+      "capacity": "Capacity",
+      "tonUnit": "{value} ton",
+      "newMovement": "New Movement",
+      "movementType": "Type",
+      "movementDate": "Date",
+      "movementQuantity": "Quantity (ton)",
+      "movementMoisture": "Moisture (%)",
+      "noSafra": "No crop linked",
+      "register": "Register",
+      "history": "History",
+      "noMovements": "No movements registered yet.",
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "type": "Type",
+        "capacityTon": "Capacity (ton)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "codeRequired": "Enter the code.",
+        "duplicateCode": "A silo/warehouse with this code already exists."
+      }
+    }
   }
 }

@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { harvestFields } from "../fields";
+import { getHarvestFields } from "../fields";
 import { updateHarvestAction } from "../actions";
 
 export default async function EditHarvestPage({
@@ -18,11 +19,14 @@ export default async function EditHarvestPage({
 
   if (!harvest) notFound();
 
+  const t = await getTranslations("agricultura.colheita");
+  const tf = await getTranslations("agricultura.colheita.fields");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Colheita</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={harvestFields}
+        fields={getHarvestFields(tf)}
         action={updateHarvestAction.bind(null, id)}
         initialValues={harvest}
         relationOptions={{

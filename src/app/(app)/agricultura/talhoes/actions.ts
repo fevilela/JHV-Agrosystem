@@ -2,10 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { talhaoFields } from "./fields";
+import { getTalhaoFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,15 +14,17 @@ export async function createTalhaoAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(talhaoFields, formData);
-  if (!data.code) return { error: "Informe o código do talhão." };
+  const t = await getTranslations("agricultura.talhoes.errors");
+  const tf = await getTranslations("agricultura.talhoes.fields");
+  const data = buildRecordData(getTalhaoFields(tf), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.talhao.create({
       data: data as Prisma.TalhaoUncheckedCreateInput,
     });
   } catch {
-    return { error: "Já existe um talhão com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/agricultura/talhoes");
@@ -33,8 +36,10 @@ export async function updateTalhaoAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(talhaoFields, formData);
-  if (!data.code) return { error: "Informe o código do talhão." };
+  const t = await getTranslations("agricultura.talhoes.errors");
+  const tf = await getTranslations("agricultura.talhoes.fields");
+  const data = buildRecordData(getTalhaoFields(tf), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.talhao.update({
@@ -42,7 +47,7 @@ export async function updateTalhaoAction(
       data: data as Prisma.TalhaoUncheckedUpdateInput,
     });
   } catch {
-    return { error: "Já existe um talhão com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/agricultura/talhoes");

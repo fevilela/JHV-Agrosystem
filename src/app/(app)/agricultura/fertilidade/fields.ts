@@ -1,18 +1,22 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, fertilityTypeLabels } from "@/lib/labels";
+import { toOptionsFromKeys, fertilityTypeLabels } from "@/lib/labels";
 
-export const fertilityFields: RecordField[] = [
-  { name: "talhaoId", label: "Talhão", type: "relation", required: true },
-  {
-    name: "type",
-    label: "Tipo",
-    type: "select",
-    required: true,
-    options: toOptions(fertilityTypeLabels),
-  },
-  { name: "date", label: "Data", type: "date", required: true },
-  { name: "ph", label: "pH", type: "number" },
-  { name: "results", label: "Resultados", type: "textarea", colSpan: 2 },
-  { name: "recommendation", label: "Recomendação", type: "textarea", colSpan: 2 },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+type Translator = (key: string) => string;
+
+export function getFertilityFields(t: Translator, tType: Translator): RecordField[] {
+  return [
+    { name: "talhaoId", label: t("talhaoId"), type: "relation", required: true },
+    {
+      name: "type",
+      label: t("type"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(fertilityTypeLabels, tType),
+    },
+    { name: "date", label: t("date"), type: "date", required: true },
+    { name: "ph", label: t("ph"), type: "number" },
+    { name: "results", label: t("results"), type: "textarea", colSpan: 2 },
+    { name: "recommendation", label: t("recommendation"), type: "textarea", colSpan: 2 },
+    { name: "notes", label: t("notes"), type: "textarea", colSpan: 2 },
+  ];
+}

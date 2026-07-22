@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
-import { safraStatusLabels, formatCurrency, formatDate } from "@/lib/labels";
+import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteSafraAction } from "./actions";
 
@@ -18,13 +19,17 @@ export default async function SafraListPage() {
     include: { talhao: true },
   });
 
+  const t = await getTranslations("agricultura.safra");
+  const tStatus = await getTranslations("labels.safraStatus");
+  const locale = await getLocale();
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-neutral-900">Planejamento de Safra</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {safras.length} {safras.length === 1 ? "safra cadastrada" : "safras cadastradas"}
+            {t("count", { count: safras.length })}
           </p>
         </div>
         <Link
@@ -32,7 +37,7 @@ export default async function SafraListPage() {
           className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
           <Plus size={16} />
-          Nova Safra
+          {t("new")}
         </Link>
       </div>
 
@@ -40,20 +45,20 @@ export default async function SafraListPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
-              <th className="px-4 py-3">Safra</th>
-              <th className="px-4 py-3">Talhão</th>
-              <th className="px-4 py-3">Cultura</th>
-              <th className="px-4 py-3">Início</th>
-              <th className="px-4 py-3">Custo Previsto</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Ações</th>
+              <th className="px-4 py-3">{t("table.safra")}</th>
+              <th className="px-4 py-3">{t("table.talhao")}</th>
+              <th className="px-4 py-3">{t("table.cultura")}</th>
+              <th className="px-4 py-3">{t("table.start")}</th>
+              <th className="px-4 py-3">{t("table.expectedCost")}</th>
+              <th className="px-4 py-3">{t("table.status")}</th>
+              <th className="px-4 py-3 text-right">{t("table.actions")}</th>
             </tr>
           </thead>
           <tbody>
             {safras.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-sm text-neutral-400">
-                  Nenhuma safra cadastrada ainda.
+                  {t("empty")}
                 </td>
               </tr>
             )}
@@ -65,11 +70,11 @@ export default async function SafraListPage() {
                   {s.cultura}
                   {s.variedade && <span className="block text-xs text-neutral-400">{s.variedade}</span>}
                 </td>
-                <td className="px-4 py-3 text-neutral-700">{formatDate(s.dataInicio)}</td>
-                <td className="px-4 py-3 text-neutral-700">{formatCurrency(s.custoPrevisto)}</td>
+                <td className="px-4 py-3 text-neutral-700">{formatDate(s.dataInicio, locale)}</td>
+                <td className="px-4 py-3 text-neutral-700">{formatCurrency(s.custoPrevisto, locale)}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[s.status]}`}>
-                    {safraStatusLabels[s.status]}
+                    {tStatus(s.status)}
                   </span>
                 </td>
                 <td className="px-4 py-3">
@@ -77,7 +82,7 @@ export default async function SafraListPage() {
                     <Link
                       href={`/agricultura/safra/${s.id}`}
                       className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
-                      title="Editar"
+                      title={t("edit")}
                     >
                       <Pencil size={16} />
                     </Link>

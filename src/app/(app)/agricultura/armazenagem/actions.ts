@@ -2,26 +2,40 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { storageFields, storageMovementFields } from "./fields";
+import { getStorageFields, getStorageMovementFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("agricultura.armazenagem.fields");
+  const tType = await getTranslations("labels.storageType");
+  return getStorageFields(tf, tType);
+}
+
+async function getMovementFields() {
+  const tf = await getTranslations("agricultura.armazenagem");
+  const tMovementType = await getTranslations("labels.storageMovementType");
+  return getStorageMovementFields(tf, tMovementType);
+}
 
 export async function createStorageAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(storageFields, formData);
-  if (!data.code) return { error: "Informe o código." };
+  const t = await getTranslations("agricultura.armazenagem.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.storage.create({
       data: data as Prisma.StorageUncheckedCreateInput,
     });
   } catch {
-    return { error: "Já existe um silo/armazém com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/agricultura/armazenagem");
@@ -33,8 +47,9 @@ export async function updateStorageAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(storageFields, formData);
-  if (!data.code) return { error: "Informe o código." };
+  const t = await getTranslations("agricultura.armazenagem.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.storage.update({
@@ -42,7 +57,7 @@ export async function updateStorageAction(
       data: data as Prisma.StorageUncheckedUpdateInput,
     });
   } catch {
-    return { error: "Já existe um silo/armazém com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/agricultura/armazenagem");
@@ -58,7 +73,7 @@ export async function createStorageMovementAction(
   storageId: string,
   formData: FormData
 ) {
-  const data = buildRecordData(storageMovementFields, formData);
+  const data = buildRecordData(await getMovementFields(), formData);
   if (!data.type || !data.date || !data.quantityTon) return;
 
   await prisma.storageMovement.create({
