@@ -49,6 +49,26 @@ export async function requireOrg() {
   };
 }
 
+// Non-redirecting variant of requireOrg(), for Route Handlers (redirect()
+// from next/navigation doesn't produce a usable HTTP response there).
+export async function getApiOrgContext() {
+  const session = await auth();
+  const user = session?.user as SessionUser | undefined;
+  if (!user?.id) return null;
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    include: { organization: true },
+  });
+  if (!dbUser?.organization || !dbUser.organization.active) return null;
+
+  return {
+    organizationId: dbUser.organization.id,
+    userId: dbUser.id,
+    userName: dbUser.name,
+  };
+}
+
 export async function requireModule(moduleKey: string) {
   const ctx = await requireOrg();
   if (!ctx.effectiveModules.includes(moduleKey)) redirect("/");

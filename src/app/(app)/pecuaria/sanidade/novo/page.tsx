@@ -23,6 +23,7 @@ export default async function NewHealthRecordPage() {
           animalId: animals.map((a) => ({ id: a.id, label: `${a.brinco}${a.name ? ` — ${a.name}` : ""}` })),
         }}
         backHref="/pecuaria/sanidade"
+        offline={{ moduleLabel: t("title"), syncEndpoint: "/api/sync/sanidade" }}
       />
     </div>
   );

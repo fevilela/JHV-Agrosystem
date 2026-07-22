@@ -5,7 +5,11 @@
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "confirmDelete": "Confirmar eliminación",
-    "select": "Seleccione"
+    "select": "Seleccione",
+    "savedOffline": "Guardado sin conexión — se enviará cuando vuelva la conexión.",
+    "online": "En línea",
+    "offline": "Sin conexión",
+    "pendingSync": "{count, plural, one {# pendiente de sincronización} other {# pendientes de sincronización}}"
   },
   "nav": {
     "cadastro": {

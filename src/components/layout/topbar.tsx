@@ -5,6 +5,7 @@ import { auth, signOut } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LocaleSwitcher } from "./locale-switcher";
 import { NotificationBell } from "./notification-bell";
+import { OfflineStatusBadge } from "./offline-status";
 
 export async function Topbar({
   isSuperAdmin,
@@ -42,6 +43,7 @@ export async function Topbar({
           Painel JHV
         </Link>
       )}
+      <OfflineStatusBadge />
       <NotificationBell notifications={notifications} unreadCount={unreadCount} />
       <div className="flex items-center gap-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-800">

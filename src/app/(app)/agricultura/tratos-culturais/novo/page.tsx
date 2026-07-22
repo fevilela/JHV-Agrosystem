@@ -27,6 +27,7 @@ export default async function NewTratoPage() {
           safraId: safras.map((s) => ({ id: s.id, label: `${s.name} (${s.talhao.code})` })),
         }}
         backHref="/agricultura/tratos-culturais"
+        offline={{ moduleLabel: t("title"), syncEndpoint: "/api/sync/tratos-culturais" }}
       />
     </div>
   );

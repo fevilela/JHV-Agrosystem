@@ -22,6 +22,7 @@ export default async function NewWeightPage() {
           animalId: animals.map((a) => ({ id: a.id, label: `${a.brinco}${a.name ? ` — ${a.name}` : ""}` })),
         }}
         backHref="/pecuaria/pesagens"
+        offline={{ moduleLabel: t("title"), syncEndpoint: "/api/sync/pesagens" }}
       />
     </div>
   );

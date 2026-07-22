@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
@@ -17,6 +17,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "JHV Agrosystem",
   description: "Sistema de gestão agropecuária JHV",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "JHV Agro",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#21374f",
 };
 
 export default async function RootLayout({

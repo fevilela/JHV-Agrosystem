@@ -6,7 +6,10 @@ export default auth((req) => {
   const isLoginPage = req.nextUrl.pathname.startsWith("/login");
   const isPublicPage =
     req.nextUrl.pathname.startsWith("/privacidade") ||
-    req.nextUrl.pathname.startsWith("/contrato-publico");
+    req.nextUrl.pathname.startsWith("/contrato-publico") ||
+    req.nextUrl.pathname === "/offline" ||
+    req.nextUrl.pathname === "/sw.js" ||
+    req.nextUrl.pathname === "/manifest.webmanifest";
 
   if (!isLoggedIn && !isLoginPage && !isPublicPage) {
     const loginUrl = new URL("/login", req.nextUrl.origin);

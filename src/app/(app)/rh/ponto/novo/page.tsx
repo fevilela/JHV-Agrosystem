@@ -24,6 +24,7 @@ export default async function NewAttendancePage() {
           employeeId: employees.map((e) => ({ id: e.id, label: e.name })),
         }}
         backHref="/rh/ponto"
+        offline={{ moduleLabel: t("title"), syncEndpoint: "/api/sync/ponto" }}
       />
     </div>
   );
