@@ -1,6 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { payableFields } from "../fields";
+import { getPayableFields } from "../fields";
 import { createPayableAction } from "../actions";
 
 export default async function NewPayablePage() {
@@ -9,11 +10,16 @@ export default async function NewPayablePage() {
     prisma.costCenter.findMany({ orderBy: { name: "asc" } }),
   ]);
 
+  const t = await getTranslations("financeiro.contasPagar");
+  const tf = await getTranslations("financeiro.contasPagar.fields");
+  const tStatus = await getTranslations("labels.financeEntryStatus");
+  const tPaymentMethod = await getTranslations("labels.paymentMethod");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Nova Conta a Pagar</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={payableFields}
+        fields={getPayableFields(tf, tStatus, tPaymentMethod)}
         action={createPayableAction}
         initialValues={{ status: "PENDENTE" }}
         relationOptions={{

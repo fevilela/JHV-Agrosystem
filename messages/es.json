@@ -1112,5 +1112,167 @@
       "profit": "Ganancia del Período",
       "loss": "Pérdida del Período"
     }
+  },
+  "financeiro": {
+    "centroCustos": {
+      "title": "Centros de Costo",
+      "count": "{count, plural, one {# centro registrado} other {# centros registrados}}",
+      "new": "Nuevo Centro de Costo",
+      "newTitle": "Nuevo Centro de Costo",
+      "editTitle": "Editar Centro de Costo",
+      "empty": "Aún no hay centros de costo registrados.",
+      "edit": "Editar",
+      "table": {
+        "code": "Código",
+        "name": "Nombre",
+        "description": "Descripción",
+        "entries": "Movimientos",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "code": "Código",
+        "name": "Nombre",
+        "description": "Descripción",
+        "notes": "Notas"
+      },
+      "errors": {
+        "codeRequired": "Indique el código.",
+        "nameRequired": "Indique el nombre.",
+        "duplicateCode": "Ya existe un centro de costo con ese código."
+      }
+    },
+    "contasPagar": {
+      "title": "Cuentas por Pagar",
+      "summary": "{count, plural, one {# movimiento} other {# movimientos}} · {amount} pendientes",
+      "new": "Nueva Cuenta por Pagar",
+      "newTitle": "Nueva Cuenta por Pagar",
+      "editTitle": "Editar Cuenta por Pagar",
+      "empty": "Aún no hay cuentas registradas.",
+      "markPaid": "Marcar como pagado",
+      "edit": "Editar",
+      "table": {
+        "dueDate": "Vencimiento",
+        "description": "Descripción",
+        "supplier": "Proveedor",
+        "costCenter": "Centro de Costo",
+        "amount": "Valor",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "description": "Descripción",
+        "amount": "Valor (R$)",
+        "dueDate": "Vencimiento",
+        "paymentDate": "Fecha de Pago",
+        "status": "Estado",
+        "paymentMethod": "Forma de Pago",
+        "supplierId": "Proveedor",
+        "costCenterId": "Centro de Costo",
+        "notes": "Notas"
+      },
+      "errors": {
+        "descriptionRequired": "Indique la descripción.",
+        "amountRequired": "Indique el valor.",
+        "dueDateRequired": "Indique el vencimiento."
+      }
+    },
+    "contasReceber": {
+      "title": "Cuentas por Cobrar",
+      "summary": "{count, plural, one {# movimiento} other {# movimientos}} · {amount} pendientes",
+      "new": "Nueva Cuenta",
+      "newTitle": "Nueva Cuenta por Cobrar",
+      "editTitle": "Editar Cuenta por Cobrar",
+      "empty": "Aún no hay cuentas registradas.",
+      "markReceived": "Marcar como recibido",
+      "edit": "Editar",
+      "viewBoleto": "Ver boleto",
+      "cancelBoleto": "Cancelar boleto",
+      "cancelBoletoConfirm": "Confirmar cancelación del boleto",
+      "generateBoleto": "Generar boleto",
+      "generating": "Generando...",
+      "originalAmount": "(original {amount} + interés)",
+      "table": {
+        "dueDate": "Vencimiento",
+        "description": "Descripción",
+        "client": "Cliente",
+        "costCenter": "Centro de Costo",
+        "amount": "Valor",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "description": "Descripción",
+        "amount": "Valor (R$)",
+        "dueDate": "Vencimiento",
+        "paymentDate": "Fecha de Cobro",
+        "status": "Estado",
+        "paymentMethod": "Forma de Cobro",
+        "clientId": "Cliente",
+        "costCenterId": "Centro de Costo",
+        "notes": "Notas"
+      },
+      "errors": {
+        "descriptionRequired": "Indique la descripción.",
+        "amountRequired": "Indique el valor.",
+        "dueDateRequired": "Indique el vencimiento.",
+        "notFound": "Cuenta por cobrar no encontrada."
+      }
+    },
+    "fluxoCaixa": {
+      "title": "Flujo de Caja",
+      "currentBalance": "Saldo Actual",
+      "pendingReceivable": "Por Cobrar (pendiente)",
+      "pendingPayable": "Por Pagar (pendiente)",
+      "projectedBalance": "Saldo Proyectado",
+      "movementsTitle": "Movimientos Realizados",
+      "empty": "Aún no hay movimientos realizados.",
+      "income": "Entrada",
+      "expense": "Salida",
+      "table": {
+        "date": "Fecha",
+        "description": "Descripción",
+        "type": "Tipo",
+        "amount": "Valor",
+        "runningBalance": "Saldo Acumulado"
+      }
+    },
+    "recorrentes": {
+      "title": "Cobros Recurrentes",
+      "count": "{count, plural, one {# cobro} other {# cobros}}",
+      "new": "Nuevo Cobro Recurrente",
+      "newTitle": "Nuevo Cobro Recurrente",
+      "editTitle": "Editar Cobro Recurrente",
+      "description": "Cada día de generación configurado abajo, el sistema crea automáticamente la cuenta por cobrar (con el vencimiento en el día definido) y genera el boleto para el cliente.",
+      "empty": "Aún no hay cobros recurrentes registrados.",
+      "edit": "Editar",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "day": "Día {day}",
+      "table": {
+        "generation": "Generación",
+        "dueDate": "Vencimiento",
+        "client": "Cliente",
+        "description": "Descripción",
+        "amount": "Valor",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "clientId": "Cliente",
+        "description": "Descripción",
+        "amount": "Valor (R$)",
+        "dayOfMonth": "Día de Generación del Boleto (1 a 28)",
+        "dueDay": "Día de Vencimiento (1 a 28, opcional — por defecto: mismo día de la generación)",
+        "active": "Activo",
+        "notes": "Notas"
+      },
+      "errors": {
+        "clientRequired": "Seleccione el cliente.",
+        "descriptionRequired": "Indique la descripción.",
+        "amountRequired": "Indique el valor.",
+        "dayOfMonthInvalid": "Indique un día de generación entre 1 y 28.",
+        "dueDayInvalid": "Indique un día de vencimiento entre 1 y 28."
+      }
+    }
   }
 }

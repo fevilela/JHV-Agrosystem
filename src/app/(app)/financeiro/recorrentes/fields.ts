@@ -1,20 +1,24 @@
 import type { RecordField } from "@/components/crud/record-form";
 
-export const recurringBillingFields: RecordField[] = [
-  { name: "clientId", label: "Cliente", type: "relation", required: true },
-  { name: "description", label: "Descrição", type: "text", required: true, colSpan: 2 },
-  { name: "amount", label: "Valor (R$)", type: "number", required: true },
-  {
-    name: "dayOfMonth",
-    label: "Dia de Geração do Boleto (1 a 28)",
-    type: "number",
-    required: true,
-  },
-  {
-    name: "dueDay",
-    label: "Dia de Vencimento (1 a 28, opcional — padrão: mesmo dia da geração)",
-    type: "number",
-  },
-  { name: "active", label: "Ativo", type: "checkbox" },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+type Translator = (key: string) => string;
+
+export function getRecurringBillingFields(t: Translator): RecordField[] {
+  return [
+    { name: "clientId", label: t("clientId"), type: "relation", required: true },
+    { name: "description", label: t("description"), type: "text", required: true, colSpan: 2 },
+    { name: "amount", label: t("amount"), type: "number", required: true },
+    {
+      name: "dayOfMonth",
+      label: t("dayOfMonth"),
+      type: "number",
+      required: true,
+    },
+    {
+      name: "dueDay",
+      label: t("dueDay"),
+      type: "number",
+    },
+    { name: "active", label: t("active"), type: "checkbox" },
+    { name: "notes", label: t("notes"), type: "textarea", colSpan: 2 },
+  ];
+}

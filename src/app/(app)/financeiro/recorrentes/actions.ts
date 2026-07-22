@@ -2,10 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { recurringBillingFields } from "./fields";
+import { getRecurringBillingFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,15 +14,17 @@ export async function createRecurringBillingAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(recurringBillingFields, formData);
-  if (!data.clientId) return { error: "Selecione o cliente." };
-  if (!data.description) return { error: "Informe a descrição." };
-  if (!data.amount) return { error: "Informe o valor." };
+  const t = await getTranslations("financeiro.recorrentes.errors");
+  const tf = await getTranslations("financeiro.recorrentes.fields");
+  const data = buildRecordData(getRecurringBillingFields(tf), formData);
+  if (!data.clientId) return { error: t("clientRequired") };
+  if (!data.description) return { error: t("descriptionRequired") };
+  if (!data.amount) return { error: t("amountRequired") };
   if (!data.dayOfMonth || Number(data.dayOfMonth) < 1 || Number(data.dayOfMonth) > 28) {
-    return { error: "Informe um dia de geração entre 1 e 28." };
+    return { error: t("dayOfMonthInvalid") };
   }
   if (data.dueDay && (Number(data.dueDay) < 1 || Number(data.dueDay) > 28)) {
-    return { error: "Informe um dia de vencimento entre 1 e 28." };
+    return { error: t("dueDayInvalid") };
   }
 
   await prisma.recurringBilling.create({
@@ -37,15 +40,17 @@ export async function updateRecurringBillingAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(recurringBillingFields, formData);
-  if (!data.clientId) return { error: "Selecione o cliente." };
-  if (!data.description) return { error: "Informe a descrição." };
-  if (!data.amount) return { error: "Informe o valor." };
+  const t = await getTranslations("financeiro.recorrentes.errors");
+  const tf = await getTranslations("financeiro.recorrentes.fields");
+  const data = buildRecordData(getRecurringBillingFields(tf), formData);
+  if (!data.clientId) return { error: t("clientRequired") };
+  if (!data.description) return { error: t("descriptionRequired") };
+  if (!data.amount) return { error: t("amountRequired") };
   if (!data.dayOfMonth || Number(data.dayOfMonth) < 1 || Number(data.dayOfMonth) > 28) {
-    return { error: "Informe um dia de geração entre 1 e 28." };
+    return { error: t("dayOfMonthInvalid") };
   }
   if (data.dueDay && (Number(data.dueDay) < 1 || Number(data.dueDay) > 28)) {
-    return { error: "Informe um dia de vencimento entre 1 e 28." };
+    return { error: t("dueDayInvalid") };
   }
 
   await prisma.recurringBilling.update({

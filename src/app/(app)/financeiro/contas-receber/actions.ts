@@ -2,22 +2,31 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
 import { gerarBoletoParaConta, cancelarBoletoParaConta } from "@/lib/boleto-service";
-import { receivableFields } from "./fields";
+import { getReceivableFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("financeiro.contasReceber.fields");
+  const tStatus = await getTranslations("labels.financeEntryStatus");
+  const tPaymentMethod = await getTranslations("labels.paymentMethod");
+  return getReceivableFields(tf, tStatus, tPaymentMethod);
+}
 
 export async function createReceivableAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(receivableFields, formData);
-  if (!data.description) return { error: "Informe a descrição." };
-  if (!data.amount) return { error: "Informe o valor." };
-  if (!data.dueDate) return { error: "Informe o vencimento." };
+  const t = await getTranslations("financeiro.contasReceber.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.description) return { error: t("descriptionRequired") };
+  if (!data.amount) return { error: t("amountRequired") };
+  if (!data.dueDate) return { error: t("dueDateRequired") };
 
   await prisma.financeEntry.create({
     data: { ...data, type: "RECEBER" } as Prisma.FinanceEntryUncheckedCreateInput,
@@ -32,10 +41,11 @@ export async function updateReceivableAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(receivableFields, formData);
-  if (!data.description) return { error: "Informe a descrição." };
-  if (!data.amount) return { error: "Informe o valor." };
-  if (!data.dueDate) return { error: "Informe o vencimento." };
+  const t = await getTranslations("financeiro.contasReceber.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.description) return { error: t("descriptionRequired") };
+  if (!data.amount) return { error: t("amountRequired") };
+  if (!data.dueDate) return { error: t("dueDateRequired") };
 
   await prisma.financeEntry.update({
     where: { id },
@@ -65,8 +75,9 @@ export async function gerarBoletoAction(
   id: string,
   _prevState: BoletoState
 ): Promise<BoletoState> {
+  const t = await getTranslations("financeiro.contasReceber.errors");
   const entry = await prisma.financeEntry.findUnique({ where: { id } });
-  if (!entry) return { error: "Conta a receber não encontrada." };
+  if (!entry) return { error: t("notFound") };
   if (entry.mpPaymentId) return undefined;
 
   const resultado = await gerarBoletoParaConta(id);

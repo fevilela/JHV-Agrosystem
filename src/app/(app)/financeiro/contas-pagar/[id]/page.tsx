@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { payableFields } from "../fields";
+import { getPayableFields } from "../fields";
 import { updatePayableAction } from "../actions";
 
 export default async function EditPayablePage({
@@ -19,11 +20,16 @@ export default async function EditPayablePage({
 
   if (!entry || entry.type !== "PAGAR") notFound();
 
+  const t = await getTranslations("financeiro.contasPagar");
+  const tf = await getTranslations("financeiro.contasPagar.fields");
+  const tStatus = await getTranslations("labels.financeEntryStatus");
+  const tPaymentMethod = await getTranslations("labels.paymentMethod");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Conta a Pagar</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={payableFields}
+        fields={getPayableFields(tf, tStatus, tPaymentMethod)}
         action={updatePayableAction.bind(null, id)}
         initialValues={entry}
         relationOptions={{

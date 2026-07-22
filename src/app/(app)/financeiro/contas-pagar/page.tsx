@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
-import { financeEntryStatusLabels, formatCurrency, formatDate } from "@/lib/labels";
+import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deletePayableAction, markPayablePaidAction } from "./actions";
 
@@ -24,13 +25,17 @@ export default async function PayableListPage() {
     .filter((e) => e.status === "PENDENTE" || e.status === "ATRASADO")
     .reduce((sum, e) => sum + Number(e.amount), 0);
 
+  const t = await getTranslations("financeiro.contasPagar");
+  const tStatus = await getTranslations("labels.financeEntryStatus");
+  const locale = await getLocale();
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-neutral-900">Contas a Pagar</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {entries.length} lançamentos · {formatCurrency(totalPendente)} em aberto
+            {t("summary", { count: entries.length, amount: formatCurrency(totalPendente, locale) })}
           </p>
         </div>
         <Link
@@ -38,7 +43,7 @@ export default async function PayableListPage() {
           className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
           <Plus size={16} />
-          Nova Conta
+          {t("new")}
         </Link>
       </div>
 
@@ -46,20 +51,20 @@ export default async function PayableListPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
-              <th className="px-4 py-3">Vencimento</th>
-              <th className="px-4 py-3">Descrição</th>
-              <th className="px-4 py-3">Fornecedor</th>
-              <th className="px-4 py-3">Centro de Custo</th>
-              <th className="px-4 py-3">Valor</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Ações</th>
+              <th className="px-4 py-3">{t("table.dueDate")}</th>
+              <th className="px-4 py-3">{t("table.description")}</th>
+              <th className="px-4 py-3">{t("table.supplier")}</th>
+              <th className="px-4 py-3">{t("table.costCenter")}</th>
+              <th className="px-4 py-3">{t("table.amount")}</th>
+              <th className="px-4 py-3">{t("table.status")}</th>
+              <th className="px-4 py-3 text-right">{t("table.actions")}</th>
             </tr>
           </thead>
           <tbody>
             {entries.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-sm text-neutral-400">
-                  Nenhuma conta cadastrada ainda.
+                  {t("empty")}
                 </td>
               </tr>
             )}
@@ -68,14 +73,14 @@ export default async function PayableListPage() {
                 e.status === "PENDENTE" && new Date(e.dueDate) < now ? "ATRASADO" : e.status;
               return (
                 <tr key={e.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                  <td className="px-4 py-3 text-neutral-700">{formatDate(e.dueDate)}</td>
+                  <td className="px-4 py-3 text-neutral-700">{formatDate(e.dueDate, locale)}</td>
                   <td className="px-4 py-3 text-neutral-700">{e.description}</td>
                   <td className="px-4 py-3 text-neutral-700">{e.supplier?.name || "—"}</td>
                   <td className="px-4 py-3 text-neutral-700">{e.costCenter?.name || "—"}</td>
-                  <td className="px-4 py-3 text-neutral-700">{formatCurrency(e.amount)}</td>
+                  <td className="px-4 py-3 text-neutral-700">{formatCurrency(e.amount, locale)}</td>
                   <td className="px-4 py-3">
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[displayStatus]}`}>
-                      {financeEntryStatusLabels[displayStatus]}
+                      {tStatus(displayStatus)}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -86,14 +91,14 @@ export default async function PayableListPage() {
                             type="submit"
                             className="rounded-md border border-neutral-200 px-2 py-1 text-xs text-neutral-600 hover:bg-neutral-100"
                           >
-                            Marcar pago
+                            {t("markPaid")}
                           </button>
                         </form>
                       )}
                       <Link
                         href={`/financeiro/contas-pagar/${e.id}`}
                         className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
-                        title="Editar"
+                        title={t("edit")}
                       >
                         <Pencil size={16} />
                       </Link>

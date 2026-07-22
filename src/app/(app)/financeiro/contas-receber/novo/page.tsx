@@ -1,6 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { receivableFields } from "../fields";
+import { getReceivableFields } from "../fields";
 import { createReceivableAction } from "../actions";
 
 export default async function NewReceivablePage() {
@@ -9,11 +10,16 @@ export default async function NewReceivablePage() {
     prisma.costCenter.findMany({ orderBy: { name: "asc" } }),
   ]);
 
+  const t = await getTranslations("financeiro.contasReceber");
+  const tf = await getTranslations("financeiro.contasReceber.fields");
+  const tStatus = await getTranslations("labels.financeEntryStatus");
+  const tPaymentMethod = await getTranslations("labels.paymentMethod");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Nova Conta a Receber</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={receivableFields}
+        fields={getReceivableFields(tf, tStatus, tPaymentMethod)}
         action={createReceivableAction}
         initialValues={{ status: "PENDENTE" }}
         relationOptions={{

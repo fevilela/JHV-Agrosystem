@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { costCenterFields } from "../fields";
+import { getCostCenterFields } from "../fields";
 import { updateCostCenterAction } from "../actions";
 
 export default async function EditCostCenterPage({
@@ -14,11 +15,14 @@ export default async function EditCostCenterPage({
   const center = await prisma.costCenter.findUnique({ where: { id } });
   if (!center) notFound();
 
+  const t = await getTranslations("financeiro.centroCustos");
+  const tf = await getTranslations("financeiro.centroCustos.fields");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Centro de Custo</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={costCenterFields}
+        fields={getCostCenterFields(tf)}
         action={updateCostCenterAction.bind(null, id)}
         initialValues={center}
         backHref="/financeiro/centro-custos"

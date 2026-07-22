@@ -1112,5 +1112,167 @@
       "profit": "Period Profit",
       "loss": "Period Loss"
     }
+  },
+  "financeiro": {
+    "centroCustos": {
+      "title": "Cost Centers",
+      "count": "{count, plural, one {# cost center} other {# cost centers}}",
+      "new": "New Cost Center",
+      "newTitle": "New Cost Center",
+      "editTitle": "Edit Cost Center",
+      "empty": "No cost centers registered yet.",
+      "edit": "Edit",
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "description": "Description",
+        "entries": "Entries",
+        "actions": "Actions"
+      },
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "description": "Description",
+        "notes": "Notes"
+      },
+      "errors": {
+        "codeRequired": "Enter the code.",
+        "nameRequired": "Enter the name.",
+        "duplicateCode": "A cost center with this code already exists."
+      }
+    },
+    "contasPagar": {
+      "title": "Accounts Payable",
+      "summary": "{count, plural, one {# entry} other {# entries}} · {amount} outstanding",
+      "new": "New Payable",
+      "newTitle": "New Payable",
+      "editTitle": "Edit Payable",
+      "empty": "No entries registered yet.",
+      "markPaid": "Mark as paid",
+      "edit": "Edit",
+      "table": {
+        "dueDate": "Due Date",
+        "description": "Description",
+        "supplier": "Supplier",
+        "costCenter": "Cost Center",
+        "amount": "Amount",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "description": "Description",
+        "amount": "Amount (R$)",
+        "dueDate": "Due Date",
+        "paymentDate": "Payment Date",
+        "status": "Status",
+        "paymentMethod": "Payment Method",
+        "supplierId": "Supplier",
+        "costCenterId": "Cost Center",
+        "notes": "Notes"
+      },
+      "errors": {
+        "descriptionRequired": "Enter the description.",
+        "amountRequired": "Enter the amount.",
+        "dueDateRequired": "Enter the due date."
+      }
+    },
+    "contasReceber": {
+      "title": "Accounts Receivable",
+      "summary": "{count, plural, one {# entry} other {# entries}} · {amount} outstanding",
+      "new": "New Entry",
+      "newTitle": "New Receivable",
+      "editTitle": "Edit Receivable",
+      "empty": "No entries registered yet.",
+      "markReceived": "Mark as received",
+      "edit": "Edit",
+      "viewBoleto": "View bank slip",
+      "cancelBoleto": "Cancel bank slip",
+      "cancelBoletoConfirm": "Confirm bank slip cancellation",
+      "generateBoleto": "Generate bank slip",
+      "generating": "Generating...",
+      "originalAmount": "(original {amount} + interest)",
+      "table": {
+        "dueDate": "Due Date",
+        "description": "Description",
+        "client": "Client",
+        "costCenter": "Cost Center",
+        "amount": "Amount",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "description": "Description",
+        "amount": "Amount (R$)",
+        "dueDate": "Due Date",
+        "paymentDate": "Receipt Date",
+        "status": "Status",
+        "paymentMethod": "Receipt Method",
+        "clientId": "Client",
+        "costCenterId": "Cost Center",
+        "notes": "Notes"
+      },
+      "errors": {
+        "descriptionRequired": "Enter the description.",
+        "amountRequired": "Enter the amount.",
+        "dueDateRequired": "Enter the due date.",
+        "notFound": "Receivable not found."
+      }
+    },
+    "fluxoCaixa": {
+      "title": "Cash Flow",
+      "currentBalance": "Current Balance",
+      "pendingReceivable": "Receivable (pending)",
+      "pendingPayable": "Payable (pending)",
+      "projectedBalance": "Projected Balance",
+      "movementsTitle": "Completed Movements",
+      "empty": "No movements completed yet.",
+      "income": "Income",
+      "expense": "Expense",
+      "table": {
+        "date": "Date",
+        "description": "Description",
+        "type": "Type",
+        "amount": "Amount",
+        "runningBalance": "Running Balance"
+      }
+    },
+    "recorrentes": {
+      "title": "Recurring Billing",
+      "count": "{count, plural, one {# billing} other {# billings}}",
+      "new": "New Recurring Billing",
+      "newTitle": "New Recurring Billing",
+      "editTitle": "Edit Recurring Billing",
+      "description": "On each generation day configured below, the system automatically creates the receivable (due on the defined day) and generates the bank slip for the client.",
+      "empty": "No recurring billing registered yet.",
+      "edit": "Edit",
+      "active": "Active",
+      "inactive": "Inactive",
+      "day": "Day {day}",
+      "table": {
+        "generation": "Generation",
+        "dueDate": "Due Date",
+        "client": "Client",
+        "description": "Description",
+        "amount": "Amount",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "clientId": "Client",
+        "description": "Description",
+        "amount": "Amount (R$)",
+        "dayOfMonth": "Bank Slip Generation Day (1 to 28)",
+        "dueDay": "Due Day (1 to 28, optional — default: same day as generation)",
+        "active": "Active",
+        "notes": "Notes"
+      },
+      "errors": {
+        "clientRequired": "Select the client.",
+        "descriptionRequired": "Enter the description.",
+        "amountRequired": "Enter the amount.",
+        "dayOfMonthInvalid": "Enter a generation day between 1 and 28.",
+        "dueDayInvalid": "Enter a due day between 1 and 28."
+      }
+    }
   }
 }
