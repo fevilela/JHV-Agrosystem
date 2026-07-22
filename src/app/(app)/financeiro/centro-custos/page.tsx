@@ -2,11 +2,14 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteCostCenterAction } from "./actions";
 
 export default async function CostCenterListPage() {
+  const { organizationId } = await requireOrg();
   const centers = await prisma.costCenter.findMany({
+    where: { organizationId },
     orderBy: { code: "asc" },
     include: { _count: { select: { entries: true } } },
   });

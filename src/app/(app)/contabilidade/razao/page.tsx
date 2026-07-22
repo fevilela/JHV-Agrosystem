@@ -1,5 +1,6 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { calcularSaldo } from "@/lib/contabilidade";
 
@@ -9,9 +10,10 @@ export default async function LivroRazaoPage({
   searchParams: Promise<{ accountId?: string }>;
 }) {
   const { accountId } = await searchParams;
+  const { organizationId } = await requireOrg();
 
   const accounts = await prisma.chartAccount.findMany({
-    where: { analytic: true },
+    where: { analytic: true, organizationId },
     orderBy: { code: "asc" },
   });
   const t = await getTranslations("contabilidade.razao");
@@ -21,7 +23,7 @@ export default async function LivroRazaoPage({
 
   const lines = selected
     ? await prisma.journalEntryLine.findMany({
-        where: { accountId: selected.id },
+        where: { accountId: selected.id, journalEntry: { organizationId } },
         include: { journalEntry: true },
         orderBy: { journalEntry: { date: "asc" } },
       })

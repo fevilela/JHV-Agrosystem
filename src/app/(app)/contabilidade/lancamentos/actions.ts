@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 
 type FormState = { error?: string } | undefined;
 
@@ -43,10 +44,18 @@ async function parseAndValidateLines(
   return lines;
 }
 
+async function accountsBelongToOrg(accountIds: string[], organizationId: string) {
+  const count = await prisma.chartAccount.count({
+    where: { id: { in: accountIds }, organizationId },
+  });
+  return count === accountIds.length;
+}
+
 export async function createJournalEntryAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("contabilidade.lancamentos.errors");
   const date = formData.get("date") as string;
   const description = formData.get("description") as string;
@@ -58,10 +67,16 @@ export async function createJournalEntryAction(
   const result = await parseAndValidateLines(linesJson, t);
   if ("error" in result) return { error: result.error };
 
+  const accountIds = [...new Set(result.map((l) => l.accountId))];
+  if (!(await accountsBelongToOrg(accountIds, organizationId))) {
+    return { error: t("accountRequired") };
+  }
+
   await prisma.journalEntry.create({
     data: {
       date: new Date(date),
       description,
+      organizationId,
       lines: {
         create: result.map((l) => ({
           accountId: l.accountId,
@@ -81,6 +96,7 @@ export async function updateJournalEntryAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("contabilidade.lancamentos.errors");
   const date = formData.get("date") as string;
   const description = formData.get("description") as string;
@@ -91,6 +107,14 @@ export async function updateJournalEntryAction(
 
   const result = await parseAndValidateLines(linesJson, t);
   if ("error" in result) return { error: result.error };
+
+  const accountIds = [...new Set(result.map((l) => l.accountId))];
+  if (!(await accountsBelongToOrg(accountIds, organizationId))) {
+    return { error: t("accountRequired") };
+  }
+
+  const existing = await prisma.journalEntry.findFirst({ where: { id, organizationId } });
+  if (!existing) return { error: t("notFound") };
 
   await prisma.$transaction([
     prisma.journalEntryLine.deleteMany({ where: { journalEntryId: id } }),
@@ -115,6 +139,7 @@ export async function updateJournalEntryAction(
 }
 
 export async function deleteJournalEntryAction(id: string) {
-  await prisma.journalEntry.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.journalEntry.deleteMany({ where: { id, organizationId } });
   revalidatePath("/contabilidade/lancamentos");
 }

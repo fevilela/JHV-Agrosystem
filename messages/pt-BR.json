@@ -1053,7 +1053,8 @@
         "positiveAmountRequired": "Informe um valor maior que zero em todas as partidas.",
         "unbalanced": "O lançamento não fecha: o total de débito precisa ser igual ao total de crédito.",
         "dateRequired": "Informe a data.",
-        "descriptionRequired": "Informe a descrição."
+        "descriptionRequired": "Informe a descrição.",
+        "notFound": "Lançamento não encontrado."
       }
     },
     "razao": {

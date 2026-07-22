@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteJournalEntryAction } from "./actions";
 
 export default async function JournalEntryListPage() {
+  const { organizationId } = await requireOrg();
   const entries = await prisma.journalEntry.findMany({
+    where: { organizationId },
     orderBy: { date: "desc" },
     include: { lines: true },
   });

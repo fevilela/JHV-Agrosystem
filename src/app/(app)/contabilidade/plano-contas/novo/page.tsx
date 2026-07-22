@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getChartAccountFields } from "../fields";
 import { createChartAccountAction } from "../actions";
 
 export default async function NewChartAccountPage() {
-  const accounts = await prisma.chartAccount.findMany({ orderBy: { code: "asc" } });
+  const { organizationId } = await requireOrg();
+  const accounts = await prisma.chartAccount.findMany({ where: { organizationId }, orderBy: { code: "asc" } });
   const t = await getTranslations("contabilidade.planoContas");
   const tType = await getTranslations("labels.chartAccountType");
   const tNature = await getTranslations("labels.chartAccountNature");

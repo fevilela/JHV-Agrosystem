@@ -86,6 +86,10 @@ model Organization {
   quotations       Quotation[]
   purchaseOrders   PurchaseOrder[]
 
+  costCenters   CostCenter[]
+  chartAccounts ChartAccount[]
+  journalEntries JournalEntry[]
+
   @@map("organizations")
 }
 
@@ -1273,13 +1277,15 @@ model PurchaseOrder {
 // ---------- Financeiro ----------
 
 model CostCenter {
-  id          String   @id @default(cuid())
-  code        String   @unique
-  name        String
-  description String?
-  notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String        @id @default(cuid())
+  code           String        @unique
+  name           String
+  description    String?
+  notes          String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   entries FinanceEntry[]
 
@@ -1550,7 +1556,7 @@ enum ChartAccountNature {
 
 model ChartAccount {
   id       String             @id @default(cuid())
-  code     String             @unique
+  code     String
   name     String
   type     ChartAccountType
   nature   ChartAccountNature
@@ -1564,9 +1570,13 @@ model ChartAccount {
 
   lines JournalEntryLine[]
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, code])
   @@map("chart_accounts")
 }
 
@@ -1577,6 +1587,9 @@ model JournalEntry {
   description String
 
   lines JournalEntryLine[]
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -2,11 +2,14 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteChartAccountAction } from "./actions";
 
 export default async function ChartAccountListPage() {
+  const { organizationId } = await requireOrg();
   const accounts = await prisma.chartAccount.findMany({
+    where: { organizationId },
     orderBy: { code: "asc" },
   });
   const t = await getTranslations("contabilidade.planoContas");

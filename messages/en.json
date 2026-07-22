@@ -1053,7 +1053,8 @@
         "positiveAmountRequired": "Enter a value greater than zero on every line.",
         "unbalanced": "The entry doesn't balance: total debit must equal total credit.",
         "dateRequired": "Enter the date.",
-        "descriptionRequired": "Enter the description."
+        "descriptionRequired": "Enter the description.",
+        "notFound": "Entry not found."
       }
     },
     "razao": {

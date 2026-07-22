@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getChartAccountFields } from "../fields";
 import { updateChartAccountAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditChartAccountPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [account, accounts] = await Promise.all([
-    prisma.chartAccount.findUnique({ where: { id } }),
-    prisma.chartAccount.findMany({ orderBy: { code: "asc" } }),
+    prisma.chartAccount.findFirst({ where: { id, organizationId } }),
+    prisma.chartAccount.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
   ]);
 
   if (!account) notFound();

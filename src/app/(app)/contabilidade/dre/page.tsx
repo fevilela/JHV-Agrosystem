@@ -1,13 +1,15 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency } from "@/lib/labels";
 import { calcularSaldo } from "@/lib/contabilidade";
 
 export default async function DrePage() {
+  const { organizationId } = await requireOrg();
   const accounts = await prisma.chartAccount.findMany({
-    where: { analytic: true, type: { in: ["RECEITA", "CUSTO", "DESPESA"] } },
+    where: { analytic: true, type: { in: ["RECEITA", "CUSTO", "DESPESA"] }, organizationId },
     orderBy: { code: "asc" },
-    include: { lines: true },
+    include: { lines: { where: { journalEntry: { organizationId } } } },
   });
   const t = await getTranslations("contabilidade.dre");
   const locale = await getLocale();

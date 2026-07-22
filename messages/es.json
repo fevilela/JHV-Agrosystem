@@ -1053,7 +1053,8 @@
         "positiveAmountRequired": "Indique un valor mayor que cero en todas las partidas.",
         "unbalanced": "El asiento no cierra: el total de débito debe ser igual al total de crédito.",
         "dateRequired": "Indique la fecha.",
-        "descriptionRequired": "Indique la descripción."
+        "descriptionRequired": "Indique la descripción.",
+        "notFound": "Asiento no encontrado."
       }
     },
     "razao": {

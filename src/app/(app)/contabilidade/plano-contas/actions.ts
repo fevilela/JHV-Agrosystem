@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getChartAccountFields } from "./fields";
 
@@ -21,6 +22,7 @@ export async function createChartAccountAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const { t, fields } = await getFieldsAndT();
   const data = buildRecordData(fields, formData);
   if (!data.code) return { error: t("errors.codeRequired") };
@@ -30,7 +32,7 @@ export async function createChartAccountAction(
 
   try {
     await prisma.chartAccount.create({
-      data: data as Prisma.ChartAccountUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.ChartAccountUncheckedCreateInput,
     });
   } catch {
     return { error: t("errors.duplicateCode") };
@@ -45,6 +47,7 @@ export async function updateChartAccountAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const { t, fields } = await getFieldsAndT();
   const data = buildRecordData(fields, formData);
   if (!data.code) return { error: t("errors.codeRequired") };
@@ -57,8 +60,8 @@ export async function updateChartAccountAction(
   }
 
   try {
-    await prisma.chartAccount.update({
-      where: { id },
+    await prisma.chartAccount.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.ChartAccountUncheckedUpdateInput,
     });
   } catch {
@@ -70,6 +73,7 @@ export async function updateChartAccountAction(
 }
 
 export async function deleteChartAccountAction(id: string) {
-  await prisma.chartAccount.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.chartAccount.deleteMany({ where: { id, organizationId } });
   revalidatePath("/contabilidade/plano-contas");
 }

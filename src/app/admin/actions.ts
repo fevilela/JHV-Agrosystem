@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { RETROFITTED_MODULES, navGroups } from "@/lib/nav";
+import { seedChartOfAccounts } from "@/lib/chart-of-accounts";
 
 type FormState = { error?: string } | undefined;
 
@@ -53,6 +54,8 @@ export async function createOrganizationAction(
       active: true,
     },
   });
+
+  await seedChartOfAccounts(prisma, org.id);
 
   revalidatePath("/admin");
   redirect(`/admin/${org.id}`);

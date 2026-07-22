@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getCostCenterFields } from "./fields";
 
@@ -14,6 +15,7 @@ export async function createCostCenterAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("financeiro.centroCustos.errors");
   const tf = await getTranslations("financeiro.centroCustos.fields");
   const data = buildRecordData(getCostCenterFields(tf), formData);
@@ -22,7 +24,7 @@ export async function createCostCenterAction(
 
   try {
     await prisma.costCenter.create({
-      data: data as Prisma.CostCenterUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.CostCenterUncheckedCreateInput,
     });
   } catch {
     return { error: t("duplicateCode") };
@@ -37,6 +39,7 @@ export async function updateCostCenterAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("financeiro.centroCustos.errors");
   const tf = await getTranslations("financeiro.centroCustos.fields");
   const data = buildRecordData(getCostCenterFields(tf), formData);
@@ -44,8 +47,8 @@ export async function updateCostCenterAction(
   if (!data.name) return { error: t("nameRequired") };
 
   try {
-    await prisma.costCenter.update({
-      where: { id },
+    await prisma.costCenter.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.CostCenterUncheckedUpdateInput,
     });
   } catch {
@@ -57,6 +60,7 @@ export async function updateCostCenterAction(
 }
 
 export async function deleteCostCenterAction(id: string) {
-  await prisma.costCenter.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.costCenter.deleteMany({ where: { id, organizationId } });
   revalidatePath("/financeiro/centro-custos");
 }
