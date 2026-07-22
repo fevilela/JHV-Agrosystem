@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getUsageLogFields } from "../fields";
 import { updateUsageLogAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditUsageLogPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [log, machines, talhoes] = await Promise.all([
-    prisma.usageLog.findUnique({ where: { id } }),
-    prisma.machine.findMany({ orderBy: { type: "asc" } }),
+    prisma.usageLog.findFirst({ where: { id, machine: { organizationId } } }),
+    prisma.machine.findMany({ where: { organizationId }, orderBy: { type: "asc" } }),
     prisma.talhao.findMany({ orderBy: { code: "asc" } }),
   ]);
 

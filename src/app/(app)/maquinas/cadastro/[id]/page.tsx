@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getMachineFields } from "../fields";
 import { updateMachineAction } from "../actions";
@@ -11,8 +12,9 @@ export default async function EditMachinePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
-  const machine = await prisma.machine.findUnique({ where: { id } });
+  const machine = await prisma.machine.findFirst({ where: { id, organizationId } });
   if (!machine) notFound();
 
   const t = await getTranslations("maquinas.cadastro");

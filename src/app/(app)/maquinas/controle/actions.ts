@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getUsageLogFields } from "./fields";
 
@@ -14,18 +15,24 @@ export async function createUsageLogAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("maquinas.controle");
   const data = buildRecordData(getUsageLogFields(t), formData);
   if (!data.machineId) return { error: t("errors.machineRequired") };
   if (!data.date) return { error: t("errors.dateRequired") };
   if (!data.horimetro) return { error: t("errors.horimeterRequired") };
 
+  const machine = await prisma.machine.findFirst({
+    where: { id: data.machineId as string, organizationId },
+  });
+  if (!machine) return { error: t("errors.machineRequired") };
+
   await prisma.$transaction([
     prisma.usageLog.create({
       data: data as Prisma.UsageLogUncheckedCreateInput,
     }),
     prisma.machine.update({
-      where: { id: data.machineId as string },
+      where: { id: machine.id },
       data: { horimetroAtual: data.horimetro as Prisma.Decimal | number },
     }),
   ]);
@@ -40,14 +47,15 @@ export async function updateUsageLogAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("maquinas.controle");
   const data = buildRecordData(getUsageLogFields(t), formData);
   if (!data.machineId) return { error: t("errors.machineRequired") };
   if (!data.date) return { error: t("errors.dateRequired") };
   if (!data.horimetro) return { error: t("errors.horimeterRequired") };
 
-  await prisma.usageLog.update({
-    where: { id },
+  await prisma.usageLog.updateMany({
+    where: { id, machine: { organizationId } },
     data: data as Prisma.UsageLogUncheckedUpdateInput,
   });
 
@@ -56,6 +64,7 @@ export async function updateUsageLogAction(
 }
 
 export async function deleteUsageLogAction(id: string) {
-  await prisma.usageLog.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.usageLog.deleteMany({ where: { id, machine: { organizationId } } });
   revalidatePath("/maquinas/controle");
 }

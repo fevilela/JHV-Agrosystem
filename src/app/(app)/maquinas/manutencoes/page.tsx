@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil, AlertTriangle } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteMaintenanceAction } from "./actions";
 
 export default async function MaintenanceListPage() {
+  const { organizationId } = await requireOrg();
   const maintenances = await prisma.maintenance.findMany({
+    where: { machine: { organizationId } },
     orderBy: { date: "desc" },
     include: { machine: true },
   });

@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteUsageLogAction } from "./actions";
 
 export default async function UsageLogListPage() {
+  const { organizationId } = await requireOrg();
   const logs = await prisma.usageLog.findMany({
+    where: { machine: { organizationId } },
     orderBy: { date: "desc" },
     include: { machine: true, talhao: true },
   });
