@@ -44,7 +44,10 @@ export async function enqueueWrite(item: {
   const record = { id: crypto.randomUUID(), createdAt: Date.now(), ...item };
   await db.add(STORE, record);
   notifyQueueChanged();
-  await registerBackgroundSync();
+  // Best-effort only: intentionally not awaited. navigator.serviceWorker.ready
+  // never resolves nor rejects if no service worker ever activates for this
+  // scope, which would otherwise hang the whole save indefinitely.
+  registerBackgroundSync().catch(() => {});
   return record.id;
 }
 
