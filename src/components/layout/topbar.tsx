@@ -2,11 +2,27 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { auth, signOut } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { LocaleSwitcher } from "./locale-switcher";
+import { NotificationBell } from "./notification-bell";
 
-export async function Topbar({ isSuperAdmin }: { isSuperAdmin?: boolean }) {
+export async function Topbar({
+  isSuperAdmin,
+  organizationId,
+}: {
+  isSuperAdmin?: boolean;
+  organizationId: string;
+}) {
   const session = await auth();
   const locale = await getLocale();
+  const notifications = await prisma.notification.findMany({
+    where: { organizationId, read: false },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+  });
+  const unreadCount = await prisma.notification.count({
+    where: { organizationId, read: false },
+  });
   const name = session?.user?.name || "";
   const initials =
     name
@@ -26,6 +42,7 @@ export async function Topbar({ isSuperAdmin }: { isSuperAdmin?: boolean }) {
           Painel JHV
         </Link>
       )}
+      <NotificationBell notifications={notifications} unreadCount={unreadCount} />
       <div className="flex items-center gap-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-800">
           {initials}

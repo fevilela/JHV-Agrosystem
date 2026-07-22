@@ -1,0 +1,15 @@
+name: Notificações diárias
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  gerar-notificacoes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar endpoint de notificações
+        run: |
+          curl -sf -X POST "${{ vars.APP_URL }}/api/cron/notificacoes" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"

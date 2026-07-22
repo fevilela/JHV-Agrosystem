@@ -101,7 +101,8 @@ model Organization {
   livestockAnimals    LivestockAnimal[]
   managementMovements ManagementMovement[]
 
-  auditLogs AuditLog[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
 
   @@map("organizations")
 }
@@ -1770,4 +1771,30 @@ model AuditLog {
 
   @@index([organizationId, createdAt])
   @@map("audit_logs")
+}
+
+// ---------- Notificações ----------
+
+enum NotificationSeverity {
+  VENCIDO
+  VENCENDO
+}
+
+model Notification {
+  id         String               @id @default(cuid())
+  category   String
+  title      String
+  detail     String?
+  href       String?
+  severity   NotificationSeverity
+  sourceKey  String
+  read       Boolean              @default(false)
+  createdAt  DateTime             @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([organizationId, sourceKey])
+  @@index([organizationId, read, createdAt])
+  @@map("notifications")
 }
