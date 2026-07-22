@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Plus, Pencil, CalendarClock } from "lucide-react";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
-import { attendanceStatusLabels, formatDate } from "@/lib/labels";
+import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteAttendanceAction } from "./actions";
 
@@ -19,13 +20,17 @@ export default async function AttendanceListPage() {
     include: { employee: true },
   });
 
+  const t = await getTranslations("rh.ponto");
+  const tStatus = await getTranslations("labels.attendanceStatus");
+  const locale = await getLocale();
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-neutral-900">Ponto e Escalas</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {records.length} {records.length === 1 ? "registro de ponto" : "registros de ponto"}
+            {t("count", { count: records.length })}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -34,14 +39,14 @@ export default async function AttendanceListPage() {
             className="flex items-center gap-1.5 rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
           >
             <CalendarClock size={16} />
-            Escalas
+            {t("schedulesLink")}
           </Link>
           <Link
             href="/rh/ponto/novo"
             className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
           >
             <Plus size={16} />
-            Novo Registro
+            {t("new")}
           </Link>
         </div>
       </div>
@@ -50,39 +55,39 @@ export default async function AttendanceListPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
-              <th className="px-4 py-3">Data</th>
-              <th className="px-4 py-3">Funcionário</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Horas</th>
-              <th className="px-4 py-3 text-right">Ações</th>
+              <th className="px-4 py-3">{t("table.date")}</th>
+              <th className="px-4 py-3">{t("table.employee")}</th>
+              <th className="px-4 py-3">{t("table.status")}</th>
+              <th className="px-4 py-3">{t("table.hours")}</th>
+              <th className="px-4 py-3 text-right">{t("table.actions")}</th>
             </tr>
           </thead>
           <tbody>
             {records.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-10 text-center text-sm text-neutral-400">
-                  Nenhum registro de ponto cadastrado ainda.
+                  {t("empty")}
                 </td>
               </tr>
             )}
             {records.map((r) => (
               <tr key={r.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                <td className="px-4 py-3 text-neutral-700">{formatDate(r.date)}</td>
+                <td className="px-4 py-3 text-neutral-700">{formatDate(r.date, locale)}</td>
                 <td className="px-4 py-3 text-neutral-700">{r.employee.name}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[r.status]}`}>
-                    {attendanceStatusLabels[r.status]}
+                    {tStatus(r.status)}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-neutral-700">
-                  {r.hoursWorked ? `${r.hoursWorked} h` : "—"}
+                  {r.hoursWorked ? t("hours", { hours: Number(r.hoursWorked) }) : "—"}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1">
                     <Link
                       href={`/rh/ponto/${r.id}`}
                       className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
-                      title="Editar"
+                      title={t("edit")}
                     >
                       <Pencil size={16} />
                     </Link>

@@ -1274,5 +1274,124 @@
         "dueDayInvalid": "Informe um dia de vencimento entre 1 e 28."
       }
     }
+  },
+  "rh": {
+    "ponto": {
+      "title": "Ponto e Escalas",
+      "count": "{count, plural, one {# registro de ponto} other {# registros de ponto}}",
+      "schedulesLink": "Escalas",
+      "new": "Novo Registro",
+      "newTitle": "Novo Registro de Ponto",
+      "editTitle": "Editar Registro de Ponto",
+      "empty": "Nenhum registro de ponto cadastrado ainda.",
+      "edit": "Editar",
+      "hours": "{hours} h",
+      "table": {
+        "date": "Data",
+        "employee": "Funcionário",
+        "status": "Status",
+        "hours": "Horas",
+        "actions": "Ações"
+      },
+      "fields": {
+        "employeeId": "Funcionário",
+        "date": "Data",
+        "status": "Status",
+        "hoursWorked": "Horas Trabalhadas",
+        "notes": "Observações"
+      },
+      "errors": {
+        "employeeRequired": "Selecione o funcionário.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "escalas": {
+      "backLink": "Ponto e Escalas",
+      "title": "Escalas",
+      "count": "{count, plural, one {# escala cadastrada} other {# escalas cadastradas}}",
+      "new": "Nova Escala",
+      "newTitle": "Nova Escala",
+      "editTitle": "Editar Escala",
+      "empty": "Nenhuma escala cadastrada ainda.",
+      "edit": "Editar",
+      "table": {
+        "employee": "Funcionário",
+        "shift": "Turno",
+        "startDate": "Início",
+        "endDate": "Fim",
+        "actions": "Ações"
+      },
+      "fields": {
+        "employeeId": "Funcionário",
+        "shift": "Turno",
+        "startDate": "Início",
+        "endDate": "Fim",
+        "notes": "Observações"
+      },
+      "errors": {
+        "employeeRequired": "Selecione o funcionário.",
+        "startDateRequired": "Informe a data de início."
+      }
+    },
+    "treinamentos": {
+      "title": "Treinamentos e EPIs",
+      "count": "{count, plural, one {# treinamento} other {# treinamentos}}",
+      "episLink": "EPIs",
+      "new": "Novo Treinamento",
+      "newTitle": "Novo Treinamento",
+      "editTitle": "Editar Treinamento",
+      "empty": "Nenhum treinamento cadastrado ainda.",
+      "edit": "Editar",
+      "table": {
+        "date": "Data",
+        "employee": "Funcionário",
+        "training": "Treinamento",
+        "provider": "Instituição",
+        "validUntil": "Válido até",
+        "actions": "Ações"
+      },
+      "fields": {
+        "employeeId": "Funcionário",
+        "name": "Treinamento",
+        "date": "Data",
+        "provider": "Instituição/Fornecedor",
+        "validUntil": "Válido até",
+        "notes": "Observações"
+      },
+      "errors": {
+        "employeeRequired": "Selecione o funcionário.",
+        "nameRequired": "Informe o nome do treinamento.",
+        "dateRequired": "Informe a data."
+      }
+    },
+    "epis": {
+      "backLink": "Treinamentos e EPIs",
+      "title": "EPIs",
+      "count": "{count, plural, one {# entrega registrada} other {# entregas registradas}}",
+      "new": "Nova Entrega",
+      "newTitle": "Nova Entrega de EPI",
+      "editTitle": "Editar Entrega de EPI",
+      "empty": "Nenhuma entrega de EPI cadastrada ainda.",
+      "edit": "Editar",
+      "table": {
+        "employee": "Funcionário",
+        "item": "EPI",
+        "issueDate": "Entrega",
+        "validUntil": "Válido até",
+        "actions": "Ações"
+      },
+      "fields": {
+        "employeeId": "Funcionário",
+        "itemName": "EPI (capacete, luvas, botas...)",
+        "issueDate": "Data de Entrega",
+        "validUntil": "Válido até",
+        "notes": "Observações"
+      },
+      "errors": {
+        "employeeRequired": "Selecione o funcionário.",
+        "itemRequired": "Informe o EPI.",
+        "issueDateRequired": "Informe a data de entrega."
+      }
+    }
   }
 }

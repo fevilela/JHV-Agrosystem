@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { epiFields } from "../../epi-fields";
+import { getEpiFields } from "../../epi-fields";
 import { updateEpiAction } from "../../epi-actions";
 
 export default async function EditEpiPage({
@@ -18,11 +19,14 @@ export default async function EditEpiPage({
 
   if (!issuance) notFound();
 
+  const t = await getTranslations("rh.epis");
+  const tf = await getTranslations("rh.epis.fields");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Entrega de EPI</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={epiFields}
+        fields={getEpiFields(tf)}
         action={updateEpiAction.bind(null, id)}
         initialValues={issuance}
         relationOptions={{

@@ -1274,5 +1274,124 @@
         "dueDayInvalid": "Indique un día de vencimiento entre 1 y 28."
       }
     }
+  },
+  "rh": {
+    "ponto": {
+      "title": "Asistencia y Turnos",
+      "count": "{count, plural, one {# registro de asistencia} other {# registros de asistencia}}",
+      "schedulesLink": "Turnos",
+      "new": "Nuevo Registro",
+      "newTitle": "Nuevo Registro de Asistencia",
+      "editTitle": "Editar Registro de Asistencia",
+      "empty": "Aún no hay registros de asistencia.",
+      "edit": "Editar",
+      "hours": "{hours} h",
+      "table": {
+        "date": "Fecha",
+        "employee": "Empleado",
+        "status": "Estado",
+        "hours": "Horas",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "employeeId": "Empleado",
+        "date": "Fecha",
+        "status": "Estado",
+        "hoursWorked": "Horas Trabajadas",
+        "notes": "Notas"
+      },
+      "errors": {
+        "employeeRequired": "Seleccione el empleado.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "escalas": {
+      "backLink": "Asistencia y Turnos",
+      "title": "Turnos",
+      "count": "{count, plural, one {# turno registrado} other {# turnos registrados}}",
+      "new": "Nuevo Turno",
+      "newTitle": "Nuevo Turno",
+      "editTitle": "Editar Turno",
+      "empty": "Aún no hay turnos registrados.",
+      "edit": "Editar",
+      "table": {
+        "employee": "Empleado",
+        "shift": "Turno",
+        "startDate": "Inicio",
+        "endDate": "Fin",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "employeeId": "Empleado",
+        "shift": "Turno",
+        "startDate": "Inicio",
+        "endDate": "Fin",
+        "notes": "Notas"
+      },
+      "errors": {
+        "employeeRequired": "Seleccione el empleado.",
+        "startDateRequired": "Indique la fecha de inicio."
+      }
+    },
+    "treinamentos": {
+      "title": "Capacitaciones y EPP",
+      "count": "{count, plural, one {# capacitación} other {# capacitaciones}}",
+      "episLink": "EPP",
+      "new": "Nueva Capacitación",
+      "newTitle": "Nueva Capacitación",
+      "editTitle": "Editar Capacitación",
+      "empty": "Aún no hay capacitaciones registradas.",
+      "edit": "Editar",
+      "table": {
+        "date": "Fecha",
+        "employee": "Empleado",
+        "training": "Capacitación",
+        "provider": "Institución",
+        "validUntil": "Válido hasta",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "employeeId": "Empleado",
+        "name": "Capacitación",
+        "date": "Fecha",
+        "provider": "Institución/Proveedor",
+        "validUntil": "Válido hasta",
+        "notes": "Notas"
+      },
+      "errors": {
+        "employeeRequired": "Seleccione el empleado.",
+        "nameRequired": "Indique el nombre de la capacitación.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "epis": {
+      "backLink": "Capacitaciones y EPP",
+      "title": "EPP",
+      "count": "{count, plural, one {# entrega registrada} other {# entregas registradas}}",
+      "new": "Nueva Entrega",
+      "newTitle": "Nueva Entrega de EPP",
+      "editTitle": "Editar Entrega de EPP",
+      "empty": "Aún no hay entregas de EPP registradas.",
+      "edit": "Editar",
+      "table": {
+        "employee": "Empleado",
+        "item": "EPP",
+        "issueDate": "Entrega",
+        "validUntil": "Válido hasta",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "employeeId": "Empleado",
+        "itemName": "EPP (casco, guantes, botas...)",
+        "issueDate": "Fecha de Entrega",
+        "validUntil": "Válido hasta",
+        "notes": "Notas"
+      },
+      "errors": {
+        "employeeRequired": "Seleccione el empleado.",
+        "itemRequired": "Indique el EPP.",
+        "issueDateRequired": "Indique la fecha de entrega."
+      }
+    }
   }
 }

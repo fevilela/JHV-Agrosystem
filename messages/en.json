@@ -1274,5 +1274,124 @@
         "dueDayInvalid": "Enter a due day between 1 and 28."
       }
     }
+  },
+  "rh": {
+    "ponto": {
+      "title": "Attendance & Schedules",
+      "count": "{count, plural, one {# attendance record} other {# attendance records}}",
+      "schedulesLink": "Schedules",
+      "new": "New Record",
+      "newTitle": "New Attendance Record",
+      "editTitle": "Edit Attendance Record",
+      "empty": "No attendance records yet.",
+      "edit": "Edit",
+      "hours": "{hours} h",
+      "table": {
+        "date": "Date",
+        "employee": "Employee",
+        "status": "Status",
+        "hours": "Hours",
+        "actions": "Actions"
+      },
+      "fields": {
+        "employeeId": "Employee",
+        "date": "Date",
+        "status": "Status",
+        "hoursWorked": "Hours Worked",
+        "notes": "Notes"
+      },
+      "errors": {
+        "employeeRequired": "Select the employee.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "escalas": {
+      "backLink": "Attendance & Schedules",
+      "title": "Schedules",
+      "count": "{count, plural, one {# schedule registered} other {# schedules registered}}",
+      "new": "New Schedule",
+      "newTitle": "New Schedule",
+      "editTitle": "Edit Schedule",
+      "empty": "No schedules registered yet.",
+      "edit": "Edit",
+      "table": {
+        "employee": "Employee",
+        "shift": "Shift",
+        "startDate": "Start",
+        "endDate": "End",
+        "actions": "Actions"
+      },
+      "fields": {
+        "employeeId": "Employee",
+        "shift": "Shift",
+        "startDate": "Start",
+        "endDate": "End",
+        "notes": "Notes"
+      },
+      "errors": {
+        "employeeRequired": "Select the employee.",
+        "startDateRequired": "Enter the start date."
+      }
+    },
+    "treinamentos": {
+      "title": "Training & PPE",
+      "count": "{count, plural, one {# training} other {# trainings}}",
+      "episLink": "PPE",
+      "new": "New Training",
+      "newTitle": "New Training",
+      "editTitle": "Edit Training",
+      "empty": "No trainings registered yet.",
+      "edit": "Edit",
+      "table": {
+        "date": "Date",
+        "employee": "Employee",
+        "training": "Training",
+        "provider": "Institution",
+        "validUntil": "Valid Until",
+        "actions": "Actions"
+      },
+      "fields": {
+        "employeeId": "Employee",
+        "name": "Training",
+        "date": "Date",
+        "provider": "Institution/Provider",
+        "validUntil": "Valid Until",
+        "notes": "Notes"
+      },
+      "errors": {
+        "employeeRequired": "Select the employee.",
+        "nameRequired": "Enter the training name.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "epis": {
+      "backLink": "Training & PPE",
+      "title": "PPE",
+      "count": "{count, plural, one {# issuance registered} other {# issuances registered}}",
+      "new": "New Issuance",
+      "newTitle": "New PPE Issuance",
+      "editTitle": "Edit PPE Issuance",
+      "empty": "No PPE issuances registered yet.",
+      "edit": "Edit",
+      "table": {
+        "employee": "Employee",
+        "item": "PPE",
+        "issueDate": "Issued",
+        "validUntil": "Valid Until",
+        "actions": "Actions"
+      },
+      "fields": {
+        "employeeId": "Employee",
+        "itemName": "PPE (helmet, gloves, boots...)",
+        "issueDate": "Issue Date",
+        "validUntil": "Valid Until",
+        "notes": "Notes"
+      },
+      "errors": {
+        "employeeRequired": "Select the employee.",
+        "itemRequired": "Enter the PPE item.",
+        "issueDateRequired": "Enter the issue date."
+      }
+    }
   }
 }

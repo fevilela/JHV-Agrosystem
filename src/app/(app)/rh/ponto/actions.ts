@@ -2,20 +2,28 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { attendanceFields } from "./fields";
+import { getAttendanceFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("rh.ponto.fields");
+  const tStatus = await getTranslations("labels.attendanceStatus");
+  return getAttendanceFields(tf, tStatus);
+}
 
 export async function createAttendanceAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(attendanceFields, formData);
-  if (!data.employeeId) return { error: "Selecione o funcionário." };
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("rh.ponto.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.employeeId) return { error: t("employeeRequired") };
+  if (!data.date) return { error: t("dateRequired") };
 
   await prisma.attendance.create({
     data: data as Prisma.AttendanceUncheckedCreateInput,
@@ -30,9 +38,10 @@ export async function updateAttendanceAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(attendanceFields, formData);
-  if (!data.employeeId) return { error: "Selecione o funcionário." };
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("rh.ponto.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.employeeId) return { error: t("employeeRequired") };
+  if (!data.date) return { error: t("dateRequired") };
 
   await prisma.attendance.update({
     where: { id },

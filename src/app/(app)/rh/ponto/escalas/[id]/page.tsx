@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { scheduleFields } from "../../schedule-fields";
+import { getScheduleFields } from "../../schedule-fields";
 import { updateScheduleAction } from "../../schedule-actions";
 
 export default async function EditSchedulePage({
@@ -18,11 +19,15 @@ export default async function EditSchedulePage({
 
   if (!schedule) notFound();
 
+  const t = await getTranslations("rh.escalas");
+  const tf = await getTranslations("rh.escalas.fields");
+  const tShift = await getTranslations("labels.scheduleShift");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Escala</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={scheduleFields}
+        fields={getScheduleFields(tf, tShift)}
         action={updateScheduleAction.bind(null, id)}
         initialValues={schedule}
         relationOptions={{
