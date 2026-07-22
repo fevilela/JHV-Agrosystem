@@ -66,3 +66,17 @@ export async function deletePastureAction(id: string) {
   await prisma.pasture.deleteMany({ where: { id, organizationId } });
   revalidatePath("/pecuaria/pastagens");
 }
+
+export async function updatePastureBoundaryAction(
+  id: string,
+  boundary: Prisma.InputJsonValue,
+  areaHa: number
+) {
+  const { organizationId } = await requireOrg();
+  await prisma.pasture.updateMany({
+    where: { id, organizationId },
+    data: { boundary, areaHectares: areaHa },
+  });
+  revalidatePath(`/pecuaria/pastagens/${id}`);
+  revalidatePath("/pecuaria/pastagens/mapa");
+}

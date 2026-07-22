@@ -702,6 +702,7 @@ model Pasture {
   capacityHead   Int?
   rotationStatus PastureRotationStatus @default(EM_USO)
   grassHeightCm  Decimal?              @db.Decimal(5, 2)
+  boundary       Json?
   notes          String?
 
   organizationId String
@@ -892,6 +893,7 @@ model Talhao {
   areaHectares Decimal? @db.Decimal(10, 2)
   soilType     String?
   coordinates  String?
+  boundary     Json?
   notes        String?
 
   organizationId String
@@ -1673,6 +1675,7 @@ model Piquete {
   location  String?
   capacity  Int           @default(1)
   status    PiqueteStatus @default(LIVRE)
+  boundary  Json?
   notes     String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt

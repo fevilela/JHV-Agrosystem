@@ -5,6 +5,7 @@ import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getTalhaoFields } from "../fields";
 import { updateTalhaoAction } from "../actions";
+import { TalhaoBoundarySection } from "./talhao-boundary-section";
 
 export default async function EditTalhaoPage({
   params,
@@ -29,6 +30,9 @@ export default async function EditTalhaoPage({
         initialValues={talhao}
         backHref="/agricultura/talhoes"
       />
+      <div className="mt-6">
+        <TalhaoBoundarySection talhaoId={id} boundary={talhao.boundary} />
+      </div>
     </div>
   );
 }

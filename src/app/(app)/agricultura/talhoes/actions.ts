@@ -62,3 +62,17 @@ export async function deleteTalhaoAction(id: string) {
   await prisma.talhao.deleteMany({ where: { id, organizationId } });
   revalidatePath("/agricultura/talhoes");
 }
+
+export async function updateTalhaoBoundaryAction(
+  id: string,
+  boundary: Prisma.InputJsonValue,
+  areaHa: number
+) {
+  const { organizationId } = await requireOrg();
+  await prisma.talhao.updateMany({
+    where: { id, organizationId },
+    data: { boundary, areaHectares: areaHa },
+  });
+  revalidatePath(`/agricultura/talhoes/${id}`);
+  revalidatePath("/agricultura/talhoes/mapa");
+}

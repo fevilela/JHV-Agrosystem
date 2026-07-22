@@ -5,6 +5,7 @@ import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getPastureFields } from "../fields";
 import { updatePastureAction } from "../actions";
+import { PastureBoundarySection } from "./pasture-boundary-section";
 
 export default async function EditPasturePage({
   params,
@@ -30,6 +31,9 @@ export default async function EditPasturePage({
         initialValues={pasture}
         backHref="/pecuaria/pastagens"
       />
+      <div className="mt-6">
+        <PastureBoundarySection pastureId={id} boundary={pasture.boundary} />
+      </div>
     </div>
   );
 }
