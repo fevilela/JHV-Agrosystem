@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getPurchaseOrderFields } from "../fields";
 import { updatePurchaseOrderAction } from "../actions";
@@ -11,11 +12,12 @@ export default async function EditPurchaseOrderPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [order, suppliers, quotations] = await Promise.all([
-    prisma.purchaseOrder.findUnique({ where: { id } }),
-    prisma.supplier.findMany({ orderBy: { name: "asc" } }),
-    prisma.quotation.findMany({ orderBy: { createdAt: "desc" }, include: { supplier: true } }),
+    prisma.purchaseOrder.findFirst({ where: { id, organizationId } }),
+    prisma.supplier.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.quotation.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" }, include: { supplier: true } }),
   ]);
 
   if (!order) notFound();

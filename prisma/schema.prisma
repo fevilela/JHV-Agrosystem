@@ -82,6 +82,10 @@ model Organization {
   machines   Machine[]
   mechanics  Mechanic[]
 
+  purchaseRequests PurchaseRequest[]
+  quotations       Quotation[]
+  purchaseOrders   PurchaseOrder[]
+
   @@map("organizations")
 }
 
@@ -1200,6 +1204,9 @@ model PurchaseRequest {
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   quotations Quotation[]
 
   @@map("purchase_requests")
@@ -1225,6 +1232,9 @@ model Quotation {
   status            QuotationStatus  @default(PENDENTE)
   notes             String?
   createdAt         DateTime         @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   purchaseOrders PurchaseOrder[]
 
@@ -1253,6 +1263,9 @@ model PurchaseOrder {
   notes                String?
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("purchase_orders")
 }

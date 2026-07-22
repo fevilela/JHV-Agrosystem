@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deletePurchaseRequestAction, setPurchaseRequestStatusAction } from "./actions";
@@ -14,7 +15,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function PurchaseRequestListPage() {
+  const { organizationId } = await requireOrg();
   const requests = await prisma.purchaseRequest.findMany({
+    where: { organizationId },
     orderBy: { date: "desc" },
   });
   const t = await getTranslations("compras.solicitacoes");

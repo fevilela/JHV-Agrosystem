@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma, PurchaseRequestStatus } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getPurchaseRequestFields } from "./fields";
 
@@ -20,6 +21,7 @@ export async function createPurchaseRequestAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const { t, fields } = await getFieldsAndT();
   const data = buildRecordData(fields, formData);
   if (!data.description) return { error: t("errors.descriptionRequired") };
@@ -27,7 +29,7 @@ export async function createPurchaseRequestAction(
   if (!data.date) return { error: t("errors.dateRequired") };
 
   await prisma.purchaseRequest.create({
-    data: data as Prisma.PurchaseRequestUncheckedCreateInput,
+    data: { ...data, organizationId } as Prisma.PurchaseRequestUncheckedCreateInput,
   });
 
   revalidatePath("/compras/solicitacoes");
@@ -39,14 +41,15 @@ export async function updatePurchaseRequestAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const { t, fields } = await getFieldsAndT();
   const data = buildRecordData(fields, formData);
   if (!data.description) return { error: t("errors.descriptionRequired") };
   if (!data.quantity) return { error: t("errors.quantityRequired") };
   if (!data.date) return { error: t("errors.dateRequired") };
 
-  await prisma.purchaseRequest.update({
-    where: { id },
+  await prisma.purchaseRequest.updateMany({
+    where: { id, organizationId },
     data: data as Prisma.PurchaseRequestUncheckedUpdateInput,
   });
 
@@ -55,7 +58,8 @@ export async function updatePurchaseRequestAction(
 }
 
 export async function deletePurchaseRequestAction(id: string) {
-  await prisma.purchaseRequest.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.purchaseRequest.deleteMany({ where: { id, organizationId } });
   revalidatePath("/compras/solicitacoes");
 }
 
@@ -63,6 +67,7 @@ export async function setPurchaseRequestStatusAction(
   id: string,
   status: PurchaseRequestStatus
 ) {
-  await prisma.purchaseRequest.update({ where: { id }, data: { status } });
+  const { organizationId } = await requireOrg();
+  await prisma.purchaseRequest.updateMany({ where: { id, organizationId }, data: { status } });
   revalidatePath("/compras/solicitacoes");
 }

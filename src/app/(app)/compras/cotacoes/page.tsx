@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteQuotationAction } from "./actions";
@@ -13,7 +14,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function QuotationListPage() {
+  const { organizationId } = await requireOrg();
   const quotations = await prisma.quotation.findMany({
+    where: { organizationId },
     orderBy: { createdAt: "desc" },
     include: { supplier: true, purchaseRequest: true },
   });

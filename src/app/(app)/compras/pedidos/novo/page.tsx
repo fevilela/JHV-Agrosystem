@@ -1,13 +1,15 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getPurchaseOrderFields } from "../fields";
 import { createPurchaseOrderAction } from "../actions";
 
 export default async function NewPurchaseOrderPage() {
+  const { organizationId } = await requireOrg();
   const [suppliers, quotations] = await Promise.all([
-    prisma.supplier.findMany({ orderBy: { name: "asc" } }),
-    prisma.quotation.findMany({ orderBy: { createdAt: "desc" }, include: { supplier: true } }),
+    prisma.supplier.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.quotation.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" }, include: { supplier: true } }),
   ]);
   const t = await getTranslations("compras.pedidos");
   const tStatus = await getTranslations("labels.purchaseOrderStatus");

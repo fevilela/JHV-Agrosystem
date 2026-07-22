@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getQuotationFields } from "../fields";
 import { updateQuotationAction } from "../actions";
@@ -11,11 +12,12 @@ export default async function EditQuotationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [quotation, suppliers, requests] = await Promise.all([
-    prisma.quotation.findUnique({ where: { id } }),
-    prisma.supplier.findMany({ orderBy: { name: "asc" } }),
-    prisma.purchaseRequest.findMany({ orderBy: { date: "desc" } }),
+    prisma.quotation.findFirst({ where: { id, organizationId } }),
+    prisma.supplier.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.purchaseRequest.findMany({ where: { organizationId }, orderBy: { date: "desc" } }),
   ]);
 
   if (!quotation) notFound();
