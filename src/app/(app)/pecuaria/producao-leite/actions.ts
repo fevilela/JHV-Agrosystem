@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getMilkFields } from "./fields";
 
@@ -20,11 +21,17 @@ export async function createMilkAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.producaoLeite.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.animalId) return { error: t("animalRequired") };
   if (!data.date) return { error: t("dateRequired") };
   if (!data.liters) return { error: t("litersRequired") };
+
+  const animal = await prisma.livestockAnimal.findFirst({
+    where: { id: data.animalId as string, organizationId },
+  });
+  if (!animal) return { error: t("animalRequired") };
 
   await prisma.milkProduction.create({
     data: data as Prisma.MilkProductionUncheckedCreateInput,
@@ -39,14 +46,15 @@ export async function updateMilkAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.producaoLeite.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.animalId) return { error: t("animalRequired") };
   if (!data.date) return { error: t("dateRequired") };
   if (!data.liters) return { error: t("litersRequired") };
 
-  await prisma.milkProduction.update({
-    where: { id },
+  await prisma.milkProduction.updateMany({
+    where: { id, animal: { organizationId } },
     data: data as Prisma.MilkProductionUncheckedUpdateInput,
   });
 
@@ -55,6 +63,7 @@ export async function updateMilkAction(
 }
 
 export async function deleteMilkAction(id: string) {
-  await prisma.milkProduction.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.milkProduction.deleteMany({ where: { id, animal: { organizationId } } });
   revalidatePath("/pecuaria/producao-leite");
 }

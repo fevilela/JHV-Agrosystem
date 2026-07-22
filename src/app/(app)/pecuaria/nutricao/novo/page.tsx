@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getFeedingFields } from "../fields";
 import { createFeedingAction } from "../actions";
 
 export default async function NewFeedingPage() {
-  const lotes = await prisma.lote.findMany({ orderBy: { code: "asc" } });
+  const { organizationId } = await requireOrg();
+  const lotes = await prisma.lote.findMany({ where: { organizationId }, orderBy: { code: "asc" } });
 
   const t = await getTranslations("pecuaria.nutricao");
   const tf = await getTranslations("pecuaria.nutricao.fields");

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteReproductionAction } from "./actions";
@@ -13,7 +14,9 @@ const diagnosisColor: Record<string, string> = {
 };
 
 export default async function ReproducaoListPage() {
+  const { organizationId } = await requireOrg();
   const records = await prisma.reproduction.findMany({
+    where: { animal: { organizationId } },
     orderBy: { date: "desc" },
     include: { animal: true },
   });

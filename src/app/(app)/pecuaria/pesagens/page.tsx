@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteWeightAction } from "./actions";
 
 export default async function PesagensListPage() {
+  const { organizationId } = await requireOrg();
   const records = await prisma.weightRecord.findMany({
+    where: { animal: { organizationId } },
     orderBy: [{ animalId: "asc" }, { date: "asc" }],
     include: { animal: true },
   });

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getReproductionFields } from "./fields";
 
@@ -21,10 +22,16 @@ export async function createReproductionAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.reproducao.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.animalId) return { error: t("animalRequired") };
   if (!data.date) return { error: t("dateRequired") };
+
+  const animal = await prisma.livestockAnimal.findFirst({
+    where: { id: data.animalId as string, organizationId },
+  });
+  if (!animal) return { error: t("animalRequired") };
 
   await prisma.reproduction.create({
     data: data as Prisma.ReproductionUncheckedCreateInput,
@@ -39,13 +46,14 @@ export async function updateReproductionAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.reproducao.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.animalId) return { error: t("animalRequired") };
   if (!data.date) return { error: t("dateRequired") };
 
-  await prisma.reproduction.update({
-    where: { id },
+  await prisma.reproduction.updateMany({
+    where: { id, animal: { organizationId } },
     data: data as Prisma.ReproductionUncheckedUpdateInput,
   });
 
@@ -54,6 +62,7 @@ export async function updateReproductionAction(
 }
 
 export async function deleteReproductionAction(id: string) {
-  await prisma.reproduction.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.reproduction.deleteMany({ where: { id, animal: { organizationId } } });
   revalidatePath("/pecuaria/reproducao");
 }

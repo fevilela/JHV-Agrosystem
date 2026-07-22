@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getFeedingFields } from "../fields";
 import { updateFeedingAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditFeedingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [feeding, lotes] = await Promise.all([
-    prisma.livestockFeeding.findUnique({ where: { id } }),
-    prisma.lote.findMany({ orderBy: { code: "asc" } }),
+    prisma.livestockFeeding.findFirst({ where: { id, lote: { organizationId } } }),
+    prisma.lote.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
   ]);
 
   if (!feeding) notFound();

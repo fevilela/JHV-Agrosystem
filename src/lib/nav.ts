@@ -25,6 +25,7 @@ export const RETROFITTED_MODULES = [
   "contabilidade",
   "financeiro",
   "agricultura",
+  "pecuaria",
 ];
 
 export const navGroups: NavGroup[] = [

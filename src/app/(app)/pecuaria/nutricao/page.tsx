@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteFeedingAction } from "./actions";
 
 export default async function NutricaoListPage() {
+  const { organizationId } = await requireOrg();
   const feedings = await prisma.livestockFeeding.findMany({
+    where: { lote: { organizationId } },
     orderBy: { date: "desc" },
     include: { lote: true },
   });

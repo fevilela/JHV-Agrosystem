@@ -1,13 +1,15 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getLivestockAnimalFields } from "../fields";
 import { createLivestockAnimalAction } from "../actions";
 
 export default async function NewLivestockAnimalPage() {
+  const { organizationId } = await requireOrg();
   const [lotes, pastures] = await Promise.all([
-    prisma.lote.findMany({ orderBy: { code: "asc" } }),
-    prisma.pasture.findMany({ orderBy: { code: "asc" } }),
+    prisma.lote.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
+    prisma.pasture.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
   ]);
 
   const t = await getTranslations("pecuaria.cadastroAnimal");

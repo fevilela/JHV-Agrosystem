@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteLivestockAnimalAction } from "./actions";
 
@@ -14,7 +15,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function LivestockAnimalListPage() {
+  const { organizationId } = await requireOrg();
   const animals = await prisma.livestockAnimal.findMany({
+    where: { organizationId },
     orderBy: { brinco: "asc" },
     include: { lote: true, pasture: true },
   });

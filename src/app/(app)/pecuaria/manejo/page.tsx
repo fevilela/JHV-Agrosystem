@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil, Layers } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteMovementAction } from "./actions";
@@ -14,7 +15,9 @@ const typeColor: Record<string, string> = {
 };
 
 export default async function ManejoListPage() {
+  const { organizationId } = await requireOrg();
   const movements = await prisma.managementMovement.findMany({
+    where: { organizationId },
     orderBy: { date: "desc" },
     include: { animal: true, lote: true },
   });

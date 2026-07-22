@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getLoteFields } from "../../lote-fields";
 import { updateLoteAction } from "../../lote-actions";
@@ -11,8 +12,9 @@ export default async function EditLotePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
-  const lote = await prisma.lote.findUnique({ where: { id } });
+  const lote = await prisma.lote.findFirst({ where: { id, organizationId } });
   if (!lote) notFound();
 
   const t = await getTranslations("pecuaria.lotes");

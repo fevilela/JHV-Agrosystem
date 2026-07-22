@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getPastureFields } from "./fields";
 
@@ -20,13 +21,14 @@ export async function createPastureAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.pastagens.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.pasture.create({
-      data: data as Prisma.PastureUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.PastureUncheckedCreateInput,
     });
   } catch {
     return { error: t("duplicateCode") };
@@ -41,13 +43,14 @@ export async function updatePastureAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.pastagens.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.code) return { error: t("codeRequired") };
 
   try {
-    await prisma.pasture.update({
-      where: { id },
+    await prisma.pasture.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.PastureUncheckedUpdateInput,
     });
   } catch {
@@ -59,6 +62,7 @@ export async function updatePastureAction(
 }
 
 export async function deletePastureAction(id: string) {
-  await prisma.pasture.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.pasture.deleteMany({ where: { id, organizationId } });
   revalidatePath("/pecuaria/pastagens");
 }

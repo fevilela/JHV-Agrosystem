@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getLivestockAnimalFields } from "./fields";
 
@@ -22,6 +23,7 @@ export async function createLivestockAnimalAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.cadastroAnimal.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.brinco) return { error: t("brincoRequired") };
@@ -29,7 +31,7 @@ export async function createLivestockAnimalAction(
 
   try {
     await prisma.livestockAnimal.create({
-      data: data as Prisma.LivestockAnimalUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.LivestockAnimalUncheckedCreateInput,
     });
   } catch {
     return { error: t("duplicateBrinco") };
@@ -44,14 +46,15 @@ export async function updateLivestockAnimalAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.cadastroAnimal.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.brinco) return { error: t("brincoRequired") };
   if (!data.category) return { error: t("categoryRequired") };
 
   try {
-    await prisma.livestockAnimal.update({
-      where: { id },
+    await prisma.livestockAnimal.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.LivestockAnimalUncheckedUpdateInput,
     });
   } catch {
@@ -63,6 +66,7 @@ export async function updateLivestockAnimalAction(
 }
 
 export async function deleteLivestockAnimalAction(id: string) {
-  await prisma.livestockAnimal.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.livestockAnimal.deleteMany({ where: { id, organizationId } });
   revalidatePath("/pecuaria/cadastro-animal");
 }

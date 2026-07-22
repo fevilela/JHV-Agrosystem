@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getWeightFields } from "../fields";
 import { createWeightAction } from "../actions";
 
 export default async function NewWeightPage() {
-  const animals = await prisma.livestockAnimal.findMany({ orderBy: { brinco: "asc" } });
+  const { organizationId } = await requireOrg();
+  const animals = await prisma.livestockAnimal.findMany({ where: { organizationId }, orderBy: { brinco: "asc" } });
 
   const t = await getTranslations("pecuaria.pesagens");
   const tf = await getTranslations("pecuaria.pesagens.fields");

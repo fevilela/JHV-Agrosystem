@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deletePastureAction } from "./actions";
 
@@ -11,7 +12,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function PastagensListPage() {
+  const { organizationId } = await requireOrg();
   const pastures = await prisma.pasture.findMany({
+    where: { organizationId },
     orderBy: { code: "asc" },
     include: { _count: { select: { animals: true } } },
   });

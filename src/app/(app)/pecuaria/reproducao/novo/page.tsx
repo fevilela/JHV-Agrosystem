@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getReproductionFields } from "../fields";
 import { createReproductionAction } from "../actions";
 
 export default async function NewReproductionPage() {
-  const animals = await prisma.livestockAnimal.findMany({ orderBy: { brinco: "asc" } });
+  const { organizationId } = await requireOrg();
+  const animals = await prisma.livestockAnimal.findMany({ where: { organizationId }, orderBy: { brinco: "asc" } });
 
   const t = await getTranslations("pecuaria.reproducao");
   const tf = await getTranslations("pecuaria.reproducao.fields");

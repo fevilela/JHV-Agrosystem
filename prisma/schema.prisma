@@ -96,6 +96,11 @@ model Organization {
   talhoes  Talhao[]
   storages Storage[]
 
+  lotes               Lote[]
+  pastures            Pasture[]
+  livestockAnimals    LivestockAnimal[]
+  managementMovements ManagementMovement[]
+
   @@map("organizations")
 }
 
@@ -670,6 +675,10 @@ model Lote {
   name        String?
   category    LivestockCategory?
   description String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
@@ -694,6 +703,10 @@ model Pasture {
   rotationStatus PastureRotationStatus @default(EM_USO)
   grassHeightCm  Decimal?              @db.Decimal(5, 2)
   notes          String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
 
@@ -714,6 +727,10 @@ model LivestockAnimal {
   pesoAtual      Decimal?          @db.Decimal(8, 2)
   status         LivestockStatus   @default(ATIVO)
   notes          String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
@@ -857,6 +874,10 @@ model ManagementMovement {
   value            Decimal?               @db.Decimal(12, 2)
   counterpartyName String?
   notes            String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   createdAt        DateTime               @default(now())
 
   @@map("management_movements")

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getMilkFields } from "../fields";
 import { updateMilkAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditMilkPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [record, animals] = await Promise.all([
-    prisma.milkProduction.findUnique({ where: { id } }),
-    prisma.livestockAnimal.findMany({ orderBy: { brinco: "asc" } }),
+    prisma.milkProduction.findFirst({ where: { id, animal: { organizationId } } }),
+    prisma.livestockAnimal.findMany({ where: { organizationId }, orderBy: { brinco: "asc" } }),
   ]);
 
   if (!record) notFound();

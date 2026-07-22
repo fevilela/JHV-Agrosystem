@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getLoteFields } from "./lote-fields";
 
@@ -20,13 +21,14 @@ export async function createLoteAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.lotes.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.lote.create({
-      data: data as Prisma.LoteUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.LoteUncheckedCreateInput,
     });
   } catch {
     return { error: t("duplicateCode") };
@@ -41,13 +43,14 @@ export async function updateLoteAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("pecuaria.lotes.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.code) return { error: t("codeRequired") };
 
   try {
-    await prisma.lote.update({
-      where: { id },
+    await prisma.lote.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.LoteUncheckedUpdateInput,
     });
   } catch {
@@ -59,6 +62,7 @@ export async function updateLoteAction(
 }
 
 export async function deleteLoteAction(id: string) {
-  await prisma.lote.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.lote.deleteMany({ where: { id, organizationId } });
   revalidatePath("/pecuaria/manejo/lotes");
 }
