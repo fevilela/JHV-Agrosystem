@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getFertilityFields } from "../fields";
 import { createFertilityAction } from "../actions";
 
 export default async function NewFertilityPage() {
-  const talhoes = await prisma.talhao.findMany({ orderBy: { code: "asc" } });
+  const { organizationId } = await requireOrg();
+  const talhoes = await prisma.talhao.findMany({ where: { organizationId }, orderBy: { code: "asc" } });
 
   const t = await getTranslations("agricultura.fertilidade");
   const tf = await getTranslations("agricultura.fertilidade.fields");

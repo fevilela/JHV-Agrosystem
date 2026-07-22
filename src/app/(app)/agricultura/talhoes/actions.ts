@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getTalhaoFields } from "./fields";
 
@@ -14,6 +15,7 @@ export async function createTalhaoAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.talhoes.errors");
   const tf = await getTranslations("agricultura.talhoes.fields");
   const data = buildRecordData(getTalhaoFields(tf), formData);
@@ -21,7 +23,7 @@ export async function createTalhaoAction(
 
   try {
     await prisma.talhao.create({
-      data: data as Prisma.TalhaoUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.TalhaoUncheckedCreateInput,
     });
   } catch {
     return { error: t("duplicateCode") };
@@ -36,14 +38,15 @@ export async function updateTalhaoAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.talhoes.errors");
   const tf = await getTranslations("agricultura.talhoes.fields");
   const data = buildRecordData(getTalhaoFields(tf), formData);
   if (!data.code) return { error: t("codeRequired") };
 
   try {
-    await prisma.talhao.update({
-      where: { id },
+    await prisma.talhao.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.TalhaoUncheckedUpdateInput,
     });
   } catch {
@@ -55,6 +58,7 @@ export async function updateTalhaoAction(
 }
 
 export async function deleteTalhaoAction(id: string) {
-  await prisma.talhao.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.talhao.deleteMany({ where: { id, organizationId } });
   revalidatePath("/agricultura/talhoes");
 }

@@ -9,7 +9,7 @@ export default async function NewUsageLogPage() {
   const { organizationId } = await requireOrg();
   const [machines, talhoes] = await Promise.all([
     prisma.machine.findMany({ where: { organizationId }, orderBy: { type: "asc" } }),
-    prisma.talhao.findMany({ orderBy: { code: "asc" } }),
+    prisma.talhao.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
   ]);
   const t = await getTranslations("maquinas.controle");
 

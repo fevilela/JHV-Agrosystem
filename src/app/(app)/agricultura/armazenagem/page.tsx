@@ -2,9 +2,12 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 
 export default async function ArmazenagemListPage() {
+  const { organizationId } = await requireOrg();
   const storages = await prisma.storage.findMany({
+    where: { organizationId },
     orderBy: { code: "asc" },
     include: { movements: true },
   });

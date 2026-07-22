@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getStorageFields } from "../fields";
 import { updateStorageAction, createStorageMovementAction, deleteStorageMovementAction } from "../actions";
@@ -14,15 +15,16 @@ export default async function StorageDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [storage, safras] = await Promise.all([
-    prisma.storage.findUnique({
-      where: { id },
+    prisma.storage.findFirst({
+      where: { id, organizationId },
       include: {
         movements: { orderBy: { date: "desc" }, include: { safra: true } },
       },
     }),
-    prisma.safra.findMany({ orderBy: { name: "asc" } }),
+    prisma.safra.findMany({ where: { talhao: { organizationId } }, orderBy: { name: "asc" } }),
   ]);
 
   if (!storage) notFound();

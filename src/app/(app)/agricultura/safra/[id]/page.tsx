@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getSafraFields } from "../fields";
 import { updateSafraAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditSafraPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [safra, talhoes] = await Promise.all([
-    prisma.safra.findUnique({ where: { id } }),
-    prisma.talhao.findMany({ orderBy: { code: "asc" } }),
+    prisma.safra.findFirst({ where: { id, talhao: { organizationId } } }),
+    prisma.talhao.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
   ]);
 
   if (!safra) notFound();

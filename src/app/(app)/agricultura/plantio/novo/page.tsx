@@ -1,11 +1,14 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getPlantioFields } from "../fields";
 import { createPlantioAction } from "../actions";
 
 export default async function NewPlantioPage() {
+  const { organizationId } = await requireOrg();
   const safras = await prisma.safra.findMany({
+    where: { talhao: { organizationId } },
     orderBy: { name: "asc" },
     include: { talhao: true },
   });

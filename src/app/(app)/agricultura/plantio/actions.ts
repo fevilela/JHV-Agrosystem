@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getPlantioFields } from "./fields";
 
@@ -14,11 +15,17 @@ export async function createPlantioAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.plantio.errors");
   const tf = await getTranslations("agricultura.plantio.fields");
   const data = buildRecordData(getPlantioFields(tf), formData);
   if (!data.safraId) return { error: t("safraRequired") };
   if (!data.date) return { error: t("dateRequired") };
+
+  const safra = await prisma.safra.findFirst({
+    where: { id: data.safraId as string, talhao: { organizationId } },
+  });
+  if (!safra) return { error: t("safraRequired") };
 
   await prisma.plantio.create({
     data: data as Prisma.PlantioUncheckedCreateInput,
@@ -33,14 +40,15 @@ export async function updatePlantioAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.plantio.errors");
   const tf = await getTranslations("agricultura.plantio.fields");
   const data = buildRecordData(getPlantioFields(tf), formData);
   if (!data.safraId) return { error: t("safraRequired") };
   if (!data.date) return { error: t("dateRequired") };
 
-  await prisma.plantio.update({
-    where: { id },
+  await prisma.plantio.updateMany({
+    where: { id, safra: { talhao: { organizationId } } },
     data: data as Prisma.PlantioUncheckedUpdateInput,
   });
 
@@ -49,6 +57,7 @@ export async function updatePlantioAction(
 }
 
 export async function deletePlantioAction(id: string) {
-  await prisma.plantio.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.plantio.deleteMany({ where: { id, safra: { talhao: { organizationId } } } });
   revalidatePath("/agricultura/plantio");
 }

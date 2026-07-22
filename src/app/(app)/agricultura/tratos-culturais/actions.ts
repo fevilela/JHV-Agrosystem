@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getTratoFields } from "./fields";
 
@@ -20,10 +21,16 @@ export async function createTratoAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.tratosCulturais.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.safraId) return { error: t("safraRequired") };
   if (!data.date) return { error: t("dateRequired") };
+
+  const safra = await prisma.safra.findFirst({
+    where: { id: data.safraId as string, talhao: { organizationId } },
+  });
+  if (!safra) return { error: t("safraRequired") };
 
   await prisma.tratoCultural.create({
     data: data as Prisma.TratoCulturalUncheckedCreateInput,
@@ -38,13 +45,14 @@ export async function updateTratoAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.tratosCulturais.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.safraId) return { error: t("safraRequired") };
   if (!data.date) return { error: t("dateRequired") };
 
-  await prisma.tratoCultural.update({
-    where: { id },
+  await prisma.tratoCultural.updateMany({
+    where: { id, safra: { talhao: { organizationId } } },
     data: data as Prisma.TratoCulturalUncheckedUpdateInput,
   });
 
@@ -53,6 +61,7 @@ export async function updateTratoAction(
 }
 
 export async function deleteTratoAction(id: string) {
-  await prisma.tratoCultural.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.tratoCultural.deleteMany({ where: { id, safra: { talhao: { organizationId } } } });
   revalidatePath("/agricultura/tratos-culturais");
 }

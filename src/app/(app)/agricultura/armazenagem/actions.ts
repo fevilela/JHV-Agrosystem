@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getStorageFields, getStorageMovementFields } from "./fields";
 
@@ -26,13 +27,14 @@ export async function createStorageAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.armazenagem.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.storage.create({
-      data: data as Prisma.StorageUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.StorageUncheckedCreateInput,
     });
   } catch {
     return { error: t("duplicateCode") };
@@ -47,13 +49,14 @@ export async function updateStorageAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("agricultura.armazenagem.errors");
   const data = buildRecordData(await getFields(), formData);
   if (!data.code) return { error: t("codeRequired") };
 
   try {
-    await prisma.storage.update({
-      where: { id },
+    await prisma.storage.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.StorageUncheckedUpdateInput,
     });
   } catch {
@@ -65,7 +68,8 @@ export async function updateStorageAction(
 }
 
 export async function deleteStorageAction(id: string) {
-  await prisma.storage.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.storage.deleteMany({ where: { id, organizationId } });
   revalidatePath("/agricultura/armazenagem");
 }
 
@@ -73,6 +77,10 @@ export async function createStorageMovementAction(
   storageId: string,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
+  const storage = await prisma.storage.findFirst({ where: { id: storageId, organizationId } });
+  if (!storage) return;
+
   const data = buildRecordData(await getMovementFields(), formData);
   if (!data.type || !data.date || !data.quantityTon) return;
 
@@ -90,6 +98,7 @@ export async function deleteStorageMovementAction(
   storageId: string,
   id: string
 ) {
-  await prisma.storageMovement.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.storageMovement.deleteMany({ where: { id, storage: { id: storageId, organizationId } } });
   revalidatePath(`/agricultura/armazenagem/${storageId}`);
 }

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getTratoFields } from "../fields";
 import { updateTratoAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditTratoPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [trato, safras] = await Promise.all([
-    prisma.tratoCultural.findUnique({ where: { id } }),
-    prisma.safra.findMany({ orderBy: { name: "asc" }, include: { talhao: true } }),
+    prisma.tratoCultural.findFirst({ where: { id, safra: { talhao: { organizationId } } } }),
+    prisma.safra.findMany({ where: { talhao: { organizationId } }, orderBy: { name: "asc" }, include: { talhao: true } }),
   ]);
 
   if (!trato) notFound();

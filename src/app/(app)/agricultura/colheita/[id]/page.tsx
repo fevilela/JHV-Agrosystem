@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getHarvestFields } from "../fields";
 import { updateHarvestAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditHarvestPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [harvest, safras] = await Promise.all([
-    prisma.harvest.findUnique({ where: { id } }),
-    prisma.safra.findMany({ orderBy: { name: "asc" }, include: { talhao: true } }),
+    prisma.harvest.findFirst({ where: { id, safra: { talhao: { organizationId } } } }),
+    prisma.safra.findMany({ where: { talhao: { organizationId } }, orderBy: { name: "asc" }, include: { talhao: true } }),
   ]);
 
   if (!harvest) notFound();

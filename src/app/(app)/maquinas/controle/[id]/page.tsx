@@ -17,7 +17,7 @@ export default async function EditUsageLogPage({
   const [log, machines, talhoes] = await Promise.all([
     prisma.usageLog.findFirst({ where: { id, machine: { organizationId } } }),
     prisma.machine.findMany({ where: { organizationId }, orderBy: { type: "asc" } }),
-    prisma.talhao.findMany({ orderBy: { code: "asc" } }),
+    prisma.talhao.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
   ]);
 
   if (!log) notFound();

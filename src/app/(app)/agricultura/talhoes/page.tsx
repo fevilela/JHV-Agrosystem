@@ -2,11 +2,14 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteTalhaoAction } from "./actions";
 
 export default async function TalhoesListPage() {
+  const { organizationId } = await requireOrg();
   const talhoes = await prisma.talhao.findMany({
+    where: { organizationId },
     orderBy: { code: "asc" },
     include: { _count: { select: { safras: true } } },
   });

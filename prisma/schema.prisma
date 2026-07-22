@@ -93,6 +93,9 @@ model Organization {
   financeEntries    FinanceEntry[]
   recurringBillings RecurringBilling[]
 
+  talhoes  Talhao[]
+  storages Storage[]
+
   @@map("organizations")
 }
 
@@ -869,6 +872,10 @@ model Talhao {
   soilType     String?
   coordinates  String?
   notes        String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -1014,6 +1021,10 @@ model Storage {
   type        StorageType @default(SILO)
   capacityTon Decimal?    @db.Decimal(10, 2)
   notes       String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 

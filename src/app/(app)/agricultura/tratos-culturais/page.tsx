@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteTratoAction } from "./actions";
 
 export default async function TratosCulturaisListPage() {
+  const { organizationId } = await requireOrg();
   const tratos = await prisma.tratoCultural.findMany({
+    where: { safra: { talhao: { organizationId } } },
     orderBy: { date: "desc" },
     include: { safra: true },
   });

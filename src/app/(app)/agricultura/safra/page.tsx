@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteSafraAction } from "./actions";
@@ -14,7 +15,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function SafraListPage() {
+  const { organizationId } = await requireOrg();
   const safras = await prisma.safra.findMany({
+    where: { talhao: { organizationId } },
     orderBy: { dataInicio: "desc" },
     include: { talhao: true },
   });
