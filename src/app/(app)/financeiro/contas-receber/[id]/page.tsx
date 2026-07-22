@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getReceivableFields } from "../fields";
 import { updateReceivableAction } from "../actions";
@@ -11,11 +12,12 @@ export default async function EditReceivablePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [entry, clients, costCenters] = await Promise.all([
-    prisma.financeEntry.findUnique({ where: { id } }),
-    prisma.client.findMany({ orderBy: { name: "asc" } }),
-    prisma.costCenter.findMany({ orderBy: { name: "asc" } }),
+    prisma.financeEntry.findFirst({ where: { id, organizationId } }),
+    prisma.client.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.costCenter.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!entry || entry.type !== "RECEBER") notFound();

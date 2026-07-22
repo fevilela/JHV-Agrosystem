@@ -1,13 +1,15 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getPayableFields } from "../fields";
 import { createPayableAction } from "../actions";
 
 export default async function NewPayablePage() {
+  const { organizationId } = await requireOrg();
   const [suppliers, costCenters] = await Promise.all([
-    prisma.supplier.findMany({ orderBy: { name: "asc" } }),
-    prisma.costCenter.findMany({ orderBy: { name: "asc" } }),
+    prisma.supplier.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.costCenter.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   const t = await getTranslations("financeiro.contasPagar");

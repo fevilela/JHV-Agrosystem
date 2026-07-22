@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteRecurringBillingAction } from "./actions";
 
 export default async function RecurringBillingListPage() {
+  const { organizationId } = await requireOrg();
   const templates = await prisma.recurringBilling.findMany({
+    where: { organizationId },
     orderBy: { dayOfMonth: "asc" },
     include: { client: true },
   });

@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getRecurringBillingFields } from "../fields";
 import { createRecurringBillingAction } from "../actions";
 
 export default async function NewRecurringBillingPage() {
-  const clients = await prisma.client.findMany({ orderBy: { name: "asc" } });
+  const { organizationId } = await requireOrg();
+  const clients = await prisma.client.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
 
   const t = await getTranslations("financeiro.recorrentes");
   const tf = await getTranslations("financeiro.recorrentes.fields");

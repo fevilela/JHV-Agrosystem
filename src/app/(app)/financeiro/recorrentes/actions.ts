@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getRecurringBillingFields } from "./fields";
 
@@ -14,6 +15,7 @@ export async function createRecurringBillingAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("financeiro.recorrentes.errors");
   const tf = await getTranslations("financeiro.recorrentes.fields");
   const data = buildRecordData(getRecurringBillingFields(tf), formData);
@@ -27,8 +29,13 @@ export async function createRecurringBillingAction(
     return { error: t("dueDayInvalid") };
   }
 
+  const client = await prisma.client.findFirst({
+    where: { id: data.clientId as string, organizationId },
+  });
+  if (!client) return { error: t("clientRequired") };
+
   await prisma.recurringBilling.create({
-    data: data as Prisma.RecurringBillingUncheckedCreateInput,
+    data: { ...data, organizationId } as Prisma.RecurringBillingUncheckedCreateInput,
   });
 
   revalidatePath("/financeiro/recorrentes");
@@ -40,6 +47,7 @@ export async function updateRecurringBillingAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("financeiro.recorrentes.errors");
   const tf = await getTranslations("financeiro.recorrentes.fields");
   const data = buildRecordData(getRecurringBillingFields(tf), formData);
@@ -53,8 +61,8 @@ export async function updateRecurringBillingAction(
     return { error: t("dueDayInvalid") };
   }
 
-  await prisma.recurringBilling.update({
-    where: { id },
+  await prisma.recurringBilling.updateMany({
+    where: { id, organizationId },
     data: data as Prisma.RecurringBillingUncheckedUpdateInput,
   });
 
@@ -63,6 +71,7 @@ export async function updateRecurringBillingAction(
 }
 
 export async function deleteRecurringBillingAction(id: string) {
-  await prisma.recurringBilling.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.recurringBilling.deleteMany({ where: { id, organizationId } });
   revalidatePath("/financeiro/recorrentes");
 }

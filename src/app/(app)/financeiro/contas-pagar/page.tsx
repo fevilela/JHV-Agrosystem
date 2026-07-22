@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deletePayableAction, markPayablePaidAction } from "./actions";
@@ -14,8 +15,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function PayableListPage() {
+  const { organizationId } = await requireOrg();
   const entries = await prisma.financeEntry.findMany({
-    where: { type: "PAGAR" },
+    where: { type: "PAGAR", organizationId },
     orderBy: { dueDate: "asc" },
     include: { supplier: true, costCenter: true },
   });

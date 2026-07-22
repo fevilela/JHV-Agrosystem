@@ -1,10 +1,13 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft } from "lucide-react";
 
 export default async function FluxoCaixaPage() {
+  const { organizationId } = await requireOrg();
   const entries = await prisma.financeEntry.findMany({
+    where: { organizationId },
     orderBy: { dueDate: "asc" },
   });
 

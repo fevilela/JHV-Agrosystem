@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getRecurringBillingFields } from "../fields";
 import { updateRecurringBillingAction } from "../actions";
@@ -11,10 +12,11 @@ export default async function EditRecurringBillingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [template, clients] = await Promise.all([
-    prisma.recurringBilling.findUnique({ where: { id } }),
-    prisma.client.findMany({ orderBy: { name: "asc" } }),
+    prisma.recurringBilling.findFirst({ where: { id, organizationId } }),
+    prisma.client.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!template) notFound();

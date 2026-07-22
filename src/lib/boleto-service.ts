@@ -231,12 +231,12 @@ export async function cancelarBoletoParaConta(entryId: string): Promise<{ error?
   return {};
 }
 
-export async function processarRecorrencias(hoje = new Date()) {
+export async function processarRecorrencias(organizationId: string, hoje = new Date()) {
   const dia = hoje.getDate();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
   const templates = await prisma.recurringBilling.findMany({
-    where: { active: true, dayOfMonth: dia },
+    where: { active: true, dayOfMonth: dia, organizationId },
     include: { client: true },
   });
 
@@ -263,6 +263,7 @@ export async function processarRecorrencias(hoje = new Date()) {
         paymentMethod: "BOLETO",
         clientId: t.clientId,
         recurringBillingId: t.id,
+        organizationId,
       },
     });
 
@@ -274,7 +275,20 @@ export async function processarRecorrencias(hoje = new Date()) {
   return resultado;
 }
 
-export async function reemitirBoletosAtrasados(hoje = new Date()) {
+export async function processarRecorrenciasTodasOrganizacoes(hoje = new Date()) {
+  const organizacoes = await prisma.organization.findMany({ where: { active: true } });
+  const resultado = { criadas: 0, erros: [] as string[] };
+
+  for (const org of organizacoes) {
+    const r = await processarRecorrencias(org.id, hoje);
+    resultado.criadas += r.criadas;
+    resultado.erros.push(...r.erros);
+  }
+
+  return resultado;
+}
+
+export async function reemitirBoletosAtrasados(organizationId: string, hoje = new Date()) {
   const entradas = await prisma.financeEntry.findMany({
     where: {
       type: "RECEBER",
@@ -282,6 +296,7 @@ export async function reemitirBoletosAtrasados(hoje = new Date()) {
       paymentMethod: "BOLETO",
       mpPaymentId: { not: null },
       dueDate: { lt: hoje },
+      organizationId,
     },
     include: { client: true },
   });
@@ -322,6 +337,19 @@ export async function reemitirBoletosAtrasados(hoje = new Date()) {
     const boleto = await gerarBoletoParaConta(e.id);
     if (boleto.error) resultado.erros.push(`${e.description}: ${boleto.error}`);
     else resultado.reemitidas++;
+  }
+
+  return resultado;
+}
+
+export async function reemitirBoletosAtrasadosTodasOrganizacoes(hoje = new Date()) {
+  const organizacoes = await prisma.organization.findMany({ where: { active: true } });
+  const resultado = { reemitidas: 0, erros: [] as string[] };
+
+  for (const org of organizacoes) {
+    const r = await reemitirBoletosAtrasados(org.id, hoje);
+    resultado.reemitidas += r.reemitidas;
+    resultado.erros.push(...r.erros);
   }
 
   return resultado;

@@ -1,13 +1,15 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getReceivableFields } from "../fields";
 import { createReceivableAction } from "../actions";
 
 export default async function NewReceivablePage() {
+  const { organizationId } = await requireOrg();
   const [clients, costCenters] = await Promise.all([
-    prisma.client.findMany({ orderBy: { name: "asc" } }),
-    prisma.costCenter.findMany({ orderBy: { name: "asc" } }),
+    prisma.client.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.costCenter.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   const t = await getTranslations("financeiro.contasReceber");

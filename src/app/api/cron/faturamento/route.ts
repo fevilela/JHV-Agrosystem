@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { processarRecorrencias, reemitirBoletosAtrasados } from "@/lib/boleto-service";
+import {
+  processarRecorrenciasTodasOrganizacoes,
+  reemitirBoletosAtrasadosTodasOrganizacoes,
+} from "@/lib/boleto-service";
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret");
@@ -7,8 +10,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const recorrencias = await processarRecorrencias();
-  const reemissoes = await reemitirBoletosAtrasados();
+  const recorrencias = await processarRecorrenciasTodasOrganizacoes();
+  const reemissoes = await reemitirBoletosAtrasadosTodasOrganizacoes();
 
   return NextResponse.json({ recorrencias, reemissoes });
 }

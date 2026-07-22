@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Pencil, FileCheck } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { GerarBoletoButton } from "./gerar-boleto-button";
@@ -15,8 +16,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function ReceivableListPage() {
+  const { organizationId } = await requireOrg();
   const entries = await prisma.financeEntry.findMany({
-    where: { type: "RECEBER" },
+    where: { type: "RECEBER", organizationId },
     orderBy: { dueDate: "asc" },
     include: { client: true, costCenter: true },
   });
