@@ -42,28 +42,30 @@ export default async function DashboardPage() {
   // Consultas sequenciais (não Promise.all) para não estourar o pool de
   // conexões do Supabase quando várias sessões usam o mesmo banco.
   const contasPagar = await prisma.financeEntry.findMany({
-    where: { type: "PAGAR", status: "PENDENTE", dueDate: { lte: in7 } },
+    where: { type: "PAGAR", status: "PENDENTE", dueDate: { lte: in7 }, organizationId },
     include: { supplier: true },
   });
   const contasReceber = await prisma.financeEntry.findMany({
-    where: { type: "RECEBER", status: "PENDENTE", dueDate: { lte: in7 } },
+    where: { type: "RECEBER", status: "PENDENTE", dueDate: { lte: in7 }, organizationId },
     include: { client: true },
   });
-  const materiais = await prisma.stockItem.findMany({ where: { minQuantity: { not: null } } });
+  const materiais = await prisma.stockItem.findMany({
+    where: { minQuantity: { not: null }, organizationId },
+  });
   const lotes = await prisma.stockBatch.findMany({
-    where: { status: "DISPONIVEL", expiryDate: { lte: in30 } },
+    where: { status: "DISPONIVEL", expiryDate: { lte: in30 }, stockItem: { organizationId } },
     include: { stockItem: true },
   });
   const manutencoes = await prisma.maintenance.findMany({
-    where: { nextDueDate: { lte: in7 } },
+    where: { nextDueDate: { lte: in7 }, machine: { organizationId } },
     include: { machine: true },
   });
   const treinamentos = await prisma.training.findMany({
-    where: { validUntil: { lte: in30 } },
+    where: { validUntil: { lte: in30 }, employee: { organizationId } },
     include: { employee: true },
   });
   const epis = await prisma.epiIssuance.findMany({
-    where: { validUntil: { lte: in30 } },
+    where: { validUntil: { lte: in30 }, employee: { organizationId } },
     include: { employee: true },
   });
   const sanidadeHipica = await prisma.equineHealthRecord.findMany({
@@ -71,7 +73,7 @@ export default async function DashboardPage() {
     include: { animal: true },
   });
   const sanidadePecuaria = await prisma.healthRecord.findMany({
-    where: { nextDoseDate: { lte: in30 } },
+    where: { nextDoseDate: { lte: in30 }, animal: { organizationId } },
     include: { animal: true },
   });
 
