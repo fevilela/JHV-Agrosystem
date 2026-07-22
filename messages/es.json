@@ -410,6 +410,73 @@
     "journalEntryLineType": {
       "DEBITO": "Débito",
       "CREDITO": "Crédito"
+    },
+    "whatsappMessageStatus": {
+      "ENVIADO": "Enviado",
+      "ENTREGUE": "Entregado",
+      "LIDO": "Leído",
+      "FALHOU": "Falló"
+    }
+  },
+  "configuracoes": {
+    "empresa": {
+      "title": "Datos de la Empresa",
+      "description": "Esta información identifica a la contratada en los contratos generados por el sistema (clases, alquiler de potrero y alquiler de establo).",
+      "errorRequiredName": "Indique la razón social/nombre de la empresa.",
+      "fields": {
+        "name": "Razón Social / Nombre",
+        "cpfCnpj": "CPF/CNPJ",
+        "phone": "Teléfono",
+        "email": "Correo electrónico",
+        "zipCode": "Código Postal",
+        "address": "Dirección",
+        "streetNumber": "Número",
+        "neighborhood": "Barrio",
+        "city": "Ciudad",
+        "state": "Provincia/Estado"
+      }
+    },
+    "whatsapp": {
+      "title": "Conectar WhatsApp",
+      "description": "Conecte un número de WhatsApp Business dedicado a este sistema para enviar automáticamente el enlace del comprobante de pago al cliente (cada vez que se genere o reemita uno) y ver las conversaciones recibidas, con opción de responder desde aquí.",
+      "connected": "WhatsApp conectado",
+      "phoneNumberIdLabel": "Phone Number ID",
+      "wabaIdLabel": "WABA ID",
+      "connectedAtLabel": "Conectado el",
+      "disconnect": "Desconectar",
+      "notConnected": "Ningún WhatsApp conectado",
+      "howToTitle": "Cómo obtener estos datos",
+      "step1": "Acceda a <b>business.facebook.com</b> → Configuración del Negocio → Usuarios → Usuarios del sistema.",
+      "step2": "Haga clic en <b>Agregar</b>, ponga un nombre (ej: \"JHV Agrosystem\") y defina el rol como Admin.",
+      "step3": "Seleccione el usuario del sistema recién creado → Agregar activos → elija la Cuenta de WhatsApp Business (WABA) → conceda control total.",
+      "step4": "Haga clic en <b>Generar nuevo token</b>, seleccione la app usada para esta integración y marque los permisos <code>whatsapp_business_messaging</code> y <code>whatsapp_business_management</code>.",
+      "step5": "Copie el token generado (solo aparece una vez) y péguelo en el campo <b>Token de Acceso Permanente</b> al lado.",
+      "step6": "El <b>Phone Number ID</b> y el <b>WABA ID</b> están en WhatsApp Manager → Configuración de la API (son códigos, no el número en sí ni el nombre de la cuenta). El WABA ID es obligatorio — es el que vincula la cuenta al envío automático de los mensajes recibidos al sistema.",
+      "form": {
+        "phoneNumberIdLabel": "Phone Number ID",
+        "accessTokenLabel": "Token de Acceso Permanente (Usuario del Sistema)",
+        "wabaIdLabel": "WABA ID (ID de la Cuenta de WhatsApp Business)",
+        "success": "¡Conectado con éxito!",
+        "save": "Guardar conexión"
+      },
+      "errors": {
+        "missingFields": "Indique el Phone Number ID, el WABA ID y el Token de Acceso.",
+        "metaRejected": "Meta no aceptó estos datos: {message}",
+        "metaValidation": "Error al validar con Meta.",
+        "subscribeFailed": "Número validado, pero no fue posible suscribirlo para recibir mensajes: {message}",
+        "subscribeError": "Número validado, pero hubo un error al suscribirlo para recibir mensajes: {message}",
+        "subscribeErrorGeneric": "Error al suscribir para recibir mensajes."
+      },
+      "conversas": {
+        "title": "Conversaciones de WhatsApp",
+        "description": "Mensajes recibidos y enviados por el número conectado de esta organización.",
+        "empty": "Aún no hay conversaciones. Los mensajes aparecen aquí en cuanto se envíen o reciban por el número conectado.",
+        "backLink": "Conversaciones",
+        "sendTitle": "Enviar",
+        "placeholder": "Escriba un mensaje...",
+        "helperText": "El mensaje de texto libre solo funciona hasta 24h después del último mensaje del cliente. Fuera de ese plazo, es necesario usar una plantilla aprobada por Meta.",
+        "errorEmpty": "Escriba un mensaje."
+      }
     }
   }
 }

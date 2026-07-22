@@ -1,15 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { ReplyForm } from "./reply-form";
-
-const statusLabels: Record<string, string> = {
-  ENVIADO: "Enviado",
-  ENTREGUE: "Entregue",
-  LIDO: "Lido",
-  FALHOU: "Falhou",
-};
 
 export default async function WhatsappConversaPage({
   params,
@@ -18,6 +12,9 @@ export default async function WhatsappConversaPage({
 }) {
   const { phone } = await params;
   const { organizationId } = await requireOrg();
+  const t = await getTranslations("configuracoes.whatsapp.conversas");
+  const tl = await getTranslations("labels.whatsappMessageStatus");
+  const locale = await getLocale();
 
   const mensagens = await prisma.whatsappMessage.findMany({
     where: { organizationId, phone },
@@ -36,7 +33,7 @@ export default async function WhatsappConversaPage({
           href="/configuracoes/whatsapp/conversas"
           className="text-sm text-neutral-500 hover:text-neutral-800"
         >
-          ← Conversas
+          ← {t("backLink")}
         </Link>
         <h1 className="mt-1 text-xl font-semibold text-neutral-900">{nomeCliente ?? phone}</h1>
         {nomeCliente && <p className="text-xs text-neutral-400">{phone}</p>}
@@ -62,13 +59,13 @@ export default async function WhatsappConversaPage({
                     m.direction === "SAIDA" ? "text-brand-100" : "text-neutral-400"
                   }`}
                 >
-                  {m.createdAt.toLocaleString("pt-BR", {
+                  {m.createdAt.toLocaleString(locale, {
                     day: "2-digit",
                     month: "2-digit",
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                  {m.direction === "SAIDA" && ` · ${statusLabels[m.status] ?? m.status}`}
+                  {m.direction === "SAIDA" && ` · ${tl(m.status)}`}
                 </p>
               </div>
             </div>

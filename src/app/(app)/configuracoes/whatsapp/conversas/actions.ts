@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireOrg } from "@/lib/tenant";
 import { enviarMensagemLivreWhatsapp } from "@/lib/whatsapp";
 
@@ -15,7 +16,8 @@ export async function enviarMensagemAction(
 
   const texto = formData.get("texto");
   if (typeof texto !== "string" || !texto.trim()) {
-    return { error: "Escreva uma mensagem." };
+    const t = await getTranslations("configuracoes.whatsapp.conversas");
+    return { error: t("errorEmpty") };
   }
 
   const resultado = await enviarMensagemLivreWhatsapp({

@@ -2,6 +2,7 @@
 
 import { useActionState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { enviarMensagemAction } from "../actions";
 
 export function ReplyForm({ phone }: { phone: string }) {
@@ -10,6 +11,7 @@ export function ReplyForm({ phone }: { phone: string }) {
     undefined
   );
   const formRef = useRef<HTMLFormElement>(null);
+  const t = useTranslations("configuracoes.whatsapp.conversas");
 
   useEffect(() => {
     if (!isPending && !state?.error) {
@@ -27,22 +29,19 @@ export function ReplyForm({ phone }: { phone: string }) {
           name="texto"
           required
           rows={2}
-          placeholder="Escreva uma mensagem..."
+          placeholder={t("placeholder")}
           className="flex-1 resize-none rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
         />
         <button
           type="submit"
           disabled={isPending}
           className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white transition hover:bg-brand-800 disabled:opacity-50"
-          title="Enviar"
+          title={t("sendTitle")}
         >
           <Send size={16} />
         </button>
       </div>
-      <p className="mt-1.5 text-xs text-neutral-400">
-        Mensagem de texto livre só funciona até 24h depois da última mensagem do cliente. Fora
-        desse prazo, é preciso usar um modelo aprovado pela Meta.
-      </p>
+      <p className="mt-1.5 text-xs text-neutral-400">{t("helperText")}</p>
     </form>
   );
 }

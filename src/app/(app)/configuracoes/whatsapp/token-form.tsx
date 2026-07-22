@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { salvarWhatsappTokenAction } from "./actions";
 
 const inputClass =
@@ -12,19 +13,21 @@ export function WhatsappTokenForm({ organizationId }: { organizationId: string }
     salvarWhatsappTokenAction.bind(null, organizationId),
     undefined
   );
+  const t = useTranslations("configuracoes.whatsapp.form");
+  const tc = useTranslations("common");
 
   return (
     <form action={formAction} className="space-y-4">
       <div>
-        <label className={labelClass}>Phone Number ID</label>
+        <label className={labelClass}>{t("phoneNumberIdLabel")}</label>
         <input type="text" name="phoneNumberId" required className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Token de Acesso Permanente (Usuário do Sistema)</label>
+        <label className={labelClass}>{t("accessTokenLabel")}</label>
         <input type="password" name="accessToken" required className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>WABA ID (ID da Conta do WhatsApp Business)</label>
+        <label className={labelClass}>{t("wabaIdLabel")}</label>
         <input type="text" name="wabaId" required className={inputClass} />
       </div>
 
@@ -33,7 +36,7 @@ export function WhatsappTokenForm({ organizationId }: { organizationId: string }
       )}
       {state?.success && (
         <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          Conectado com sucesso!
+          {t("success")}
         </p>
       )}
 
@@ -42,7 +45,7 @@ export function WhatsappTokenForm({ organizationId }: { organizationId: string }
         disabled={isPending}
         className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800 disabled:opacity-60"
       >
-        {isPending ? "Salvando..." : "Salvar conexão"}
+        {isPending ? tc("saving") : t("save")}
       </button>
     </form>
   );

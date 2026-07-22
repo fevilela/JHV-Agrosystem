@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 
 const GRAPH_API_VERSION = "v21.0";
@@ -20,9 +21,10 @@ export async function salvarWhatsappTokenAction(
   const phoneNumberId = str(formData, "phoneNumberId");
   const accessToken = str(formData, "accessToken");
   const wabaId = str(formData, "wabaId");
+  const t = await getTranslations("configuracoes.whatsapp.errors");
 
   if (!phoneNumberId || !accessToken || !wabaId) {
-    return { error: "Informe o Phone Number ID, o WABA ID e o Token de Acesso." };
+    return { error: t("missingFields") };
   }
 
   let businessName: string | undefined;
@@ -34,12 +36,12 @@ export async function salvarWhatsappTokenAction(
     const data = await res.json();
     if (!res.ok) {
       return {
-        error: `A Meta não aceitou esses dados: ${data?.error?.message || JSON.stringify(data)}`,
+        error: t("metaRejected", { message: data?.error?.message || JSON.stringify(data) }),
       };
     }
     businessName = data?.verified_name || data?.display_phone_number;
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Erro ao validar com a Meta." };
+    return { error: err instanceof Error ? err.message : t("metaValidation") };
   }
 
   // Sem isso, o número fica conectado mas a Meta nunca avisa nosso webhook quando
@@ -52,15 +54,15 @@ export async function salvarWhatsappTokenAction(
     const subData = await subRes.json();
     if (!subRes.ok) {
       return {
-        error: `Número validado, mas não foi possível inscrever pro recebimento de mensagens: ${subData?.error?.message || JSON.stringify(subData)}`,
+        error: t("subscribeFailed", { message: subData?.error?.message || JSON.stringify(subData) }),
       };
     }
   } catch (err) {
     return {
       error:
         err instanceof Error
-          ? `Número validado, mas houve erro ao inscrever pro recebimento de mensagens: ${err.message}`
-          : "Erro ao inscrever pro recebimento de mensagens.",
+          ? t("subscribeError", { message: err.message })
+          : t("subscribeErrorGeneric"),
     };
   }
 

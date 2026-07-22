@@ -410,6 +410,73 @@
     "journalEntryLineType": {
       "DEBITO": "Débito",
       "CREDITO": "Crédito"
+    },
+    "whatsappMessageStatus": {
+      "ENVIADO": "Enviado",
+      "ENTREGUE": "Entregue",
+      "LIDO": "Lido",
+      "FALHOU": "Falhou"
+    }
+  },
+  "configuracoes": {
+    "empresa": {
+      "title": "Dados da Empresa",
+      "description": "Essas informações identificam a contratada nos contratos gerados pelo sistema (aulas, aluguel de piquete e aluguel de baia).",
+      "errorRequiredName": "Informe a razão social/nome da empresa.",
+      "fields": {
+        "name": "Razão Social / Nome",
+        "cpfCnpj": "CPF/CNPJ",
+        "phone": "Telefone",
+        "email": "E-mail",
+        "zipCode": "CEP",
+        "address": "Endereço",
+        "streetNumber": "Número",
+        "neighborhood": "Bairro",
+        "city": "Cidade",
+        "state": "UF"
+      }
+    },
+    "whatsapp": {
+      "title": "Conectar WhatsApp",
+      "description": "Conecte um número de WhatsApp Business dedicado a este sistema pra enviar automaticamente o link do boleto pro cliente (sempre que um boleto for gerado ou reemitido) e ver as conversas recebidas, com opção de responder por aqui.",
+      "connected": "WhatsApp conectado",
+      "phoneNumberIdLabel": "Phone Number ID",
+      "wabaIdLabel": "WABA ID",
+      "connectedAtLabel": "Conectado em",
+      "disconnect": "Desconectar",
+      "notConnected": "Nenhum WhatsApp conectado",
+      "howToTitle": "Como conseguir esses dados",
+      "step1": "Acesse <b>business.facebook.com</b> → Configurações do Negócio → Usuários → Usuários do sistema.",
+      "step2": "Clique em <b>Adicionar</b>, dê um nome (ex: \"JHV Agrosystem\") e defina a função como Admin.",
+      "step3": "Selecione o usuário do sistema recém-criado → Adicionar ativos → escolha a Conta do WhatsApp Business (WABA) → conceda controle total.",
+      "step4": "Clique em <b>Gerar novo token</b>, selecione o app usado pra essa integração e marque as permissões <code>whatsapp_business_messaging</code> e <code>whatsapp_business_management</code>.",
+      "step5": "Copie o token gerado (ele só aparece uma vez) e cole no campo <b>Token de Acesso Permanente</b> ao lado.",
+      "step6": "O <b>Phone Number ID</b> e o <b>WABA ID</b> ficam em WhatsApp Manager → Configuração da API (são códigos, não o número em si nem o nome da conta). O WABA ID é obrigatório — é ele que liga a conta ao envio automático das mensagens recebidas pro sistema.",
+      "form": {
+        "phoneNumberIdLabel": "Phone Number ID",
+        "accessTokenLabel": "Token de Acesso Permanente (Usuário do Sistema)",
+        "wabaIdLabel": "WABA ID (ID da Conta do WhatsApp Business)",
+        "success": "Conectado com sucesso!",
+        "save": "Salvar conexão"
+      },
+      "errors": {
+        "missingFields": "Informe o Phone Number ID, o WABA ID e o Token de Acesso.",
+        "metaRejected": "A Meta não aceitou esses dados: {message}",
+        "metaValidation": "Erro ao validar com a Meta.",
+        "subscribeFailed": "Número validado, mas não foi possível inscrever pro recebimento de mensagens: {message}",
+        "subscribeError": "Número validado, mas houve erro ao inscrever pro recebimento de mensagens: {message}",
+        "subscribeErrorGeneric": "Erro ao inscrever pro recebimento de mensagens."
+      },
+      "conversas": {
+        "title": "Conversas do WhatsApp",
+        "description": "Mensagens recebidas e enviadas pelo número conectado dessa organização.",
+        "empty": "Nenhuma conversa ainda. As mensagens aparecem aqui assim que forem enviadas ou recebidas pelo número conectado.",
+        "backLink": "Conversas",
+        "sendTitle": "Enviar",
+        "placeholder": "Escreva uma mensagem...",
+        "helperText": "Mensagem de texto livre só funciona até 24h depois da última mensagem do cliente. Fora desse prazo, é preciso usar um modelo aprovado pela Meta.",
+        "errorEmpty": "Escreva uma mensagem."
+      }
     }
   }
 }

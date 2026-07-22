@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 
 export default async function WhatsappConversasPage() {
   const { organizationId } = await requireOrg();
+  const t = await getTranslations("configuracoes.whatsapp.conversas");
+  const locale = await getLocale();
 
   const mensagens = await prisma.whatsappMessage.findMany({
     where: { organizationId },
@@ -33,17 +36,12 @@ export default async function WhatsappConversasPage() {
 
   return (
     <div>
-      <h1 className="mb-2 text-xl font-semibold text-neutral-900">Conversas do WhatsApp</h1>
-      <p className="mb-6 text-sm text-neutral-500">
-        Mensagens recebidas e enviadas pelo número conectado dessa organização.
-      </p>
+      <h1 className="mb-2 text-xl font-semibold text-neutral-900">{t("title")}</h1>
+      <p className="mb-6 text-sm text-neutral-500">{t("description")}</p>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         {lista.length === 0 ? (
-          <p className="px-4 py-10 text-center text-sm text-neutral-400">
-            Nenhuma conversa ainda. As mensagens aparecem aqui assim que forem enviadas ou
-            recebidas pelo número conectado.
-          </p>
+          <p className="px-4 py-10 text-center text-sm text-neutral-400">{t("empty")}</p>
         ) : (
           <ul className="divide-y divide-neutral-100">
             {lista.map((c) => (
@@ -62,7 +60,7 @@ export default async function WhatsappConversasPage() {
                     <p className="truncate text-xs text-neutral-500">{c.ultimaMensagem}</p>
                   </div>
                   <span className="flex-shrink-0 text-xs text-neutral-400">
-                    {c.data.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                    {c.data.toLocaleString(locale, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </Link>
               </li>
