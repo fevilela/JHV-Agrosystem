@@ -692,5 +692,87 @@
         "quantityRequired": "Indique la cantidad."
       }
     }
+  },
+  "oficina": {
+    "ordensServico": {
+      "title": "Órdenes de Servicio",
+      "new": "Nueva Orden",
+      "newDetail": "Nueva Orden de Servicio",
+      "recordCount": "{count, plural, one {# orden} other {# órdenes}}",
+      "noRecords": "Aún no hay órdenes de servicio registradas.",
+      "table": {
+        "open": "Apertura",
+        "machine": "Máquina",
+        "description": "Descripción",
+        "mechanic": "Mecánico",
+        "parts": "Repuestos",
+        "status": "Estado"
+      },
+      "fields": {
+        "machineId": "Máquina",
+        "mechanicId": "Mecánico",
+        "description": "Descripción del Servicio",
+        "openDate": "Fecha de Apertura",
+        "closeDate": "Fecha de Cierre",
+        "status": "Estado",
+        "laborCost": "Mano de Obra ($)",
+        "notes": "Observaciones"
+      },
+      "errors": {
+        "machineRequired": "Seleccione la máquina.",
+        "descriptionRequired": "Indique la descripción del servicio.",
+        "openDateRequired": "Indique la fecha de apertura."
+      },
+      "detail": {
+        "backLink": "Órdenes de Servicio",
+        "totalCost": "Costo total",
+        "markCompleted": "Marcar concluida",
+        "addPart": "Agregar Repuesto",
+        "selectItem": "Seleccione el ítem",
+        "stockSuffix": "en stock",
+        "quantity": "Cantidad",
+        "unitCost": "Costo Unitario ($)",
+        "add": "Agregar",
+        "partsUsed": "Repuestos Utilizados",
+        "noParts": "Aún no se agregó ningún repuesto.",
+        "perUnit": "/ un",
+        "subtotal": "Subtotal"
+      }
+    },
+    "pecas": {
+      "title": "Mecánicos",
+      "new": "Nuevo Mecánico",
+      "editTitle": "Editar Mecánico",
+      "recordCount": "{count, plural, one {# mecánico registrado} other {# mecánicos registrados}}",
+      "noRecords": "Aún no hay mecánicos registrados.",
+      "table": {
+        "name": "Nombre",
+        "specialty": "Especialidad",
+        "phone": "Teléfono",
+        "active": "Activo",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "fields": {
+        "name": "Nombre",
+        "cpf": "CPF",
+        "phone": "Teléfono",
+        "specialty": "Especialidad",
+        "active": "Activo",
+        "notes": "Observaciones"
+      },
+      "errors": {
+        "nameRequired": "Indique el nombre del mecánico.",
+        "duplicateCpf": "Ya existe un mecánico con ese CPF."
+      },
+      "partsSection": {
+        "title": "Repuestos en Stock",
+        "manageLink": "Gestionar en Inventario →",
+        "noParts": "Aún no hay repuestos registrados en el inventario.",
+        "code": "Código",
+        "name": "Nombre",
+        "currentStock": "Stock Actual"
+      }
+    }
   }
 }

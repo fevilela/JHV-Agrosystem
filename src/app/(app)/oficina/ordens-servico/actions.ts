@@ -3,20 +3,28 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { serviceOrderFields } from "./fields";
+import { getServiceOrderFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFieldsAndT() {
+  const t = await getTranslations("oficina.ordensServico");
+  const tStatus = await getTranslations("labels.serviceOrderStatus");
+  return { t, fields: getServiceOrderFields(t, tStatus) };
+}
 
 export async function createServiceOrderAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(serviceOrderFields, formData);
-  if (!data.machineId) return { error: "Selecione a máquina." };
-  if (!data.description) return { error: "Informe a descrição do serviço." };
-  if (!data.openDate) return { error: "Informe a data de abertura." };
+  const { t, fields } = await getFieldsAndT();
+  const data = buildRecordData(fields, formData);
+  if (!data.machineId) return { error: t("errors.machineRequired") };
+  if (!data.description) return { error: t("errors.descriptionRequired") };
+  if (!data.openDate) return { error: t("errors.openDateRequired") };
 
   const order = await prisma.serviceOrder.create({
     data: data as Prisma.ServiceOrderUncheckedCreateInput,
@@ -31,10 +39,11 @@ export async function updateServiceOrderAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(serviceOrderFields, formData);
-  if (!data.machineId) return { error: "Selecione a máquina." };
-  if (!data.description) return { error: "Informe a descrição do serviço." };
-  if (!data.openDate) return { error: "Informe a data de abertura." };
+  const { t, fields } = await getFieldsAndT();
+  const data = buildRecordData(fields, formData);
+  if (!data.machineId) return { error: t("errors.machineRequired") };
+  if (!data.description) return { error: t("errors.descriptionRequired") };
+  if (!data.openDate) return { error: t("errors.openDateRequired") };
 
   await prisma.serviceOrder.update({
     where: { id },

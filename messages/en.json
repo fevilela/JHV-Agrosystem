@@ -692,5 +692,87 @@
         "quantityRequired": "Enter the quantity."
       }
     }
+  },
+  "oficina": {
+    "ordensServico": {
+      "title": "Service Orders",
+      "new": "New Order",
+      "newDetail": "New Service Order",
+      "recordCount": "{count, plural, one {# order} other {# orders}}",
+      "noRecords": "No service orders registered yet.",
+      "table": {
+        "open": "Opened",
+        "machine": "Machine",
+        "description": "Description",
+        "mechanic": "Mechanic",
+        "parts": "Parts",
+        "status": "Status"
+      },
+      "fields": {
+        "machineId": "Machine",
+        "mechanicId": "Mechanic",
+        "description": "Service Description",
+        "openDate": "Open Date",
+        "closeDate": "Close Date",
+        "status": "Status",
+        "laborCost": "Labor Cost ($)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "machineRequired": "Select the machine.",
+        "descriptionRequired": "Enter the service description.",
+        "openDateRequired": "Enter the open date."
+      },
+      "detail": {
+        "backLink": "Service Orders",
+        "totalCost": "Total cost",
+        "markCompleted": "Mark completed",
+        "addPart": "Add Part",
+        "selectItem": "Select the item",
+        "stockSuffix": "in stock",
+        "quantity": "Quantity",
+        "unitCost": "Unit Cost ($)",
+        "add": "Add",
+        "partsUsed": "Parts Used",
+        "noParts": "No parts added yet.",
+        "perUnit": "/ unit",
+        "subtotal": "Subtotal"
+      }
+    },
+    "pecas": {
+      "title": "Mechanics",
+      "new": "New Mechanic",
+      "editTitle": "Edit Mechanic",
+      "recordCount": "{count, plural, one {# mechanic registered} other {# mechanics registered}}",
+      "noRecords": "No mechanics registered yet.",
+      "table": {
+        "name": "Name",
+        "specialty": "Specialty",
+        "phone": "Phone",
+        "active": "Active",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "fields": {
+        "name": "Name",
+        "cpf": "Tax ID",
+        "phone": "Phone",
+        "specialty": "Specialty",
+        "active": "Active",
+        "notes": "Notes"
+      },
+      "errors": {
+        "nameRequired": "Enter the mechanic's name.",
+        "duplicateCpf": "A mechanic with this Tax ID already exists."
+      },
+      "partsSection": {
+        "title": "Parts in Stock",
+        "manageLink": "Manage in Inventory →",
+        "noParts": "No parts registered in stock yet.",
+        "code": "Code",
+        "name": "Name",
+        "currentStock": "Current Stock"
+      }
+    }
   }
 }

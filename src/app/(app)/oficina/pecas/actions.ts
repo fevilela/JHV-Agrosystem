@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { mechanicFields } from "./fields";
+import { getMechanicFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,15 +14,16 @@ export async function createMechanicAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(mechanicFields, formData);
-  if (!data.name) return { error: "Informe o nome do mecânico." };
+  const t = await getTranslations("oficina.pecas");
+  const data = buildRecordData(getMechanicFields(t), formData);
+  if (!data.name) return { error: t("errors.nameRequired") };
 
   try {
     await prisma.mechanic.create({
       data: data as Prisma.MechanicUncheckedCreateInput,
     });
   } catch {
-    return { error: "Já existe um mecânico com esse CPF." };
+    return { error: t("errors.duplicateCpf") };
   }
 
   revalidatePath("/oficina/pecas");
@@ -33,8 +35,9 @@ export async function updateMechanicAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(mechanicFields, formData);
-  if (!data.name) return { error: "Informe o nome do mecânico." };
+  const t = await getTranslations("oficina.pecas");
+  const data = buildRecordData(getMechanicFields(t), formData);
+  if (!data.name) return { error: t("errors.nameRequired") };
 
   try {
     await prisma.mechanic.update({
@@ -42,7 +45,7 @@ export async function updateMechanicAction(
       data: data as Prisma.MechanicUncheckedUpdateInput,
     });
   } catch {
-    return { error: "Já existe um mecânico com esse CPF." };
+    return { error: t("errors.duplicateCpf") };
   }
 
   revalidatePath("/oficina/pecas");

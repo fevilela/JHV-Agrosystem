@@ -692,5 +692,87 @@
         "quantityRequired": "Informe a quantidade."
       }
     }
+  },
+  "oficina": {
+    "ordensServico": {
+      "title": "Ordens de Serviço",
+      "new": "Nova Ordem",
+      "newDetail": "Nova Ordem de Serviço",
+      "recordCount": "{count, plural, one {# ordem} other {# ordens}}",
+      "noRecords": "Nenhuma ordem de serviço cadastrada ainda.",
+      "table": {
+        "open": "Abertura",
+        "machine": "Máquina",
+        "description": "Descrição",
+        "mechanic": "Mecânico",
+        "parts": "Peças",
+        "status": "Status"
+      },
+      "fields": {
+        "machineId": "Máquina",
+        "mechanicId": "Mecânico",
+        "description": "Descrição do Serviço",
+        "openDate": "Data de Abertura",
+        "closeDate": "Data de Fechamento",
+        "status": "Status",
+        "laborCost": "Mão de Obra (R$)",
+        "notes": "Observações"
+      },
+      "errors": {
+        "machineRequired": "Selecione a máquina.",
+        "descriptionRequired": "Informe a descrição do serviço.",
+        "openDateRequired": "Informe a data de abertura."
+      },
+      "detail": {
+        "backLink": "Ordens de Serviço",
+        "totalCost": "Custo total",
+        "markCompleted": "Marcar concluída",
+        "addPart": "Adicionar Peça",
+        "selectItem": "Selecione o item",
+        "stockSuffix": "em estoque",
+        "quantity": "Quantidade",
+        "unitCost": "Custo Unitário (R$)",
+        "add": "Adicionar",
+        "partsUsed": "Peças Utilizadas",
+        "noParts": "Nenhuma peça adicionada ainda.",
+        "perUnit": "/ un",
+        "subtotal": "Subtotal"
+      }
+    },
+    "pecas": {
+      "title": "Mecânicos",
+      "new": "Novo Mecânico",
+      "editTitle": "Editar Mecânico",
+      "recordCount": "{count, plural, one {# mecânico cadastrado} other {# mecânicos cadastrados}}",
+      "noRecords": "Nenhum mecânico cadastrado ainda.",
+      "table": {
+        "name": "Nome",
+        "specialty": "Especialidade",
+        "phone": "Telefone",
+        "active": "Ativo",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "fields": {
+        "name": "Nome",
+        "cpf": "CPF",
+        "phone": "Telefone",
+        "specialty": "Especialidade",
+        "active": "Ativo",
+        "notes": "Observações"
+      },
+      "errors": {
+        "nameRequired": "Informe o nome do mecânico.",
+        "duplicateCpf": "Já existe um mecânico com esse CPF."
+      },
+      "partsSection": {
+        "title": "Peças em Estoque",
+        "manageLink": "Gerenciar no Estoque →",
+        "noParts": "Nenhuma peça cadastrada no estoque ainda.",
+        "code": "Código",
+        "name": "Nome",
+        "currentStock": "Estoque Atual"
+      }
+    }
   }
 }

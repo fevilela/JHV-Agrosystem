@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { serviceOrderFields } from "../fields";
+import { getServiceOrderFields } from "../fields";
 import {
   updateServiceOrderAction,
   deleteServiceOrderAction,
@@ -32,6 +33,10 @@ export default async function ServiceOrderDetailPage({
 
   if (!order) notFound();
 
+  const t = await getTranslations("oficina.ordensServico");
+  const tStatus = await getTranslations("labels.serviceOrderStatus");
+  const locale = await getLocale();
+
   const partsCost = order.parts.reduce(
     (sum, p) => sum + Number(p.quantity) * Number(p.unitCost ?? 0),
     0
@@ -43,10 +48,10 @@ export default async function ServiceOrderDetailPage({
       <div className="mb-6 flex items-center justify-between">
         <div>
           <Link href="/oficina/ordens-servico" className="text-sm text-neutral-500 hover:text-neutral-800">
-            ← Ordens de Serviço
+            ← {t("detail.backLink")}
           </Link>
           <h1 className="mt-1 text-xl font-semibold text-neutral-900">
-            {order.description} — Custo total: {formatCurrency(totalCost)}
+            {order.description} — {t("detail.totalCost")}: {formatCurrency(totalCost, locale)}
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -56,7 +61,7 @@ export default async function ServiceOrderDetailPage({
                 type="submit"
                 className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
               >
-                Marcar concluída
+                {t("detail.markCompleted")}
               </button>
             </form>
           )}
@@ -66,7 +71,7 @@ export default async function ServiceOrderDetailPage({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecordForm
-          fields={serviceOrderFields}
+          fields={getServiceOrderFields(t, tStatus)}
           action={updateServiceOrderAction.bind(null, id)}
           initialValues={order}
           relationOptions={{
@@ -85,7 +90,7 @@ export default async function ServiceOrderDetailPage({
             className="space-y-3 rounded-2xl border border-neutral-200 bg-white p-4"
           >
             <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
-              Adicionar Peça
+              {t("detail.addPart")}
             </h2>
             <div className="grid grid-cols-2 gap-3">
               <select
@@ -93,10 +98,10 @@ export default async function ServiceOrderDetailPage({
                 required
                 className="col-span-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600"
               >
-                <option value="">Selecione o item</option>
+                <option value="">{t("detail.selectItem")}</option>
                 {stockItems.map((i) => (
                   <option key={i.id} value={i.id}>
-                    {i.code} — {i.name} ({String(i.currentQuantity)} {i.unit || ""} em estoque)
+                    {i.code} — {i.name} ({String(i.currentQuantity)} {i.unit || ""} {t("detail.stockSuffix")})
                   </option>
                 ))}
               </select>
@@ -104,7 +109,7 @@ export default async function ServiceOrderDetailPage({
                 type="number"
                 step="0.01"
                 name="quantity"
-                placeholder="Quantidade"
+                placeholder={t("detail.quantity")}
                 required
                 className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600"
               />
@@ -112,7 +117,7 @@ export default async function ServiceOrderDetailPage({
                 type="number"
                 step="0.01"
                 name="unitCost"
-                placeholder="Custo Unitário (R$)"
+                placeholder={t("detail.unitCost")}
                 className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600"
               />
             </div>
@@ -120,16 +125,16 @@ export default async function ServiceOrderDetailPage({
               type="submit"
               className="w-full rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
             >
-              Adicionar
+              {t("detail.add")}
             </button>
           </form>
 
           <div className="rounded-2xl border border-neutral-200 bg-white p-4">
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-neutral-500">
-              Peças Utilizadas
+              {t("detail.partsUsed")}
             </h2>
             {order.parts.length === 0 ? (
-              <p className="text-sm text-neutral-400">Nenhuma peça adicionada ainda.</p>
+              <p className="text-sm text-neutral-400">{t("detail.noParts")}</p>
             ) : (
               <ul className="space-y-2">
                 {order.parts.map((p) => (
@@ -141,8 +146,8 @@ export default async function ServiceOrderDetailPage({
                       </span>
                       {p.unitCost && (
                         <span className="block text-xs text-neutral-400">
-                          {formatCurrency(p.unitCost)} / un — Subtotal:{" "}
-                          {formatCurrency(Number(p.quantity) * Number(p.unitCost))}
+                          {formatCurrency(p.unitCost, locale)} {t("detail.perUnit")} — {t("detail.subtotal")}:{" "}
+                          {formatCurrency(Number(p.quantity) * Number(p.unitCost), locale)}
                         </span>
                       )}
                     </div>

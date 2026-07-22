@@ -1,6 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { serviceOrderFields } from "../fields";
+import { getServiceOrderFields } from "../fields";
 import { createServiceOrderAction } from "../actions";
 
 export default async function NewServiceOrderPage() {
@@ -8,12 +9,14 @@ export default async function NewServiceOrderPage() {
     prisma.machine.findMany({ orderBy: { type: "asc" } }),
     prisma.mechanic.findMany({ orderBy: { name: "asc" } }),
   ]);
+  const t = await getTranslations("oficina.ordensServico");
+  const tStatus = await getTranslations("labels.serviceOrderStatus");
 
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Nova Ordem de Serviço</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newDetail")}</h1>
       <RecordForm
-        fields={serviceOrderFields}
+        fields={getServiceOrderFields(t, tStatus)}
         action={createServiceOrderAction}
         initialValues={{ status: "ABERTA" }}
         relationOptions={{

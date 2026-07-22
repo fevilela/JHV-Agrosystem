@@ -1,13 +1,16 @@
+import { getTranslations } from "next-intl/server";
 import { RecordForm } from "@/components/crud/record-form";
-import { mechanicFields } from "../fields";
+import { getMechanicFields } from "../fields";
 import { createMechanicAction } from "../actions";
 
-export default function NewMechanicPage() {
+export default async function NewMechanicPage() {
+  const t = await getTranslations("oficina.pecas");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Mecânico</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("new")}</h1>
       <RecordForm
-        fields={mechanicFields}
+        fields={getMechanicFields(t)}
         action={createMechanicAction}
         initialValues={{ active: true }}
         backHref="/oficina/pecas"
