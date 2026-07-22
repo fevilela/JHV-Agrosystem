@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getStockItemFields } from "./fields";
 
@@ -14,6 +15,7 @@ export async function createStockItemAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("estoque.materiais");
   const tCategory = await getTranslations("labels.stockCategory");
   const data = buildRecordData(getStockItemFields(t, tCategory), formData);
@@ -22,7 +24,7 @@ export async function createStockItemAction(
 
   try {
     await prisma.stockItem.create({
-      data: data as Prisma.StockItemUncheckedCreateInput,
+      data: { ...data, organizationId } as Prisma.StockItemUncheckedCreateInput,
     });
   } catch {
     return { error: t("errors.duplicateCode") };
@@ -37,6 +39,7 @@ export async function updateStockItemAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("estoque.materiais");
   const tCategory = await getTranslations("labels.stockCategory");
   const data = buildRecordData(getStockItemFields(t, tCategory), formData);
@@ -44,8 +47,8 @@ export async function updateStockItemAction(
   if (!data.name) return { error: t("errors.nameRequired") };
 
   try {
-    await prisma.stockItem.update({
-      where: { id },
+    await prisma.stockItem.updateMany({
+      where: { id, organizationId },
       data: data as Prisma.StockItemUncheckedUpdateInput,
     });
   } catch {
@@ -57,6 +60,7 @@ export async function updateStockItemAction(
 }
 
 export async function deleteStockItemAction(id: string) {
-  await prisma.stockItem.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.stockItem.deleteMany({ where: { id, organizationId } });
   revalidatePath("/estoque/materiais");
 }

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getStockItemFields } from "../fields";
 import { updateStockItemAction } from "../actions";
@@ -16,9 +17,10 @@ export default async function StockItemDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
-  const item = await prisma.stockItem.findUnique({
-    where: { id },
+  const item = await prisma.stockItem.findFirst({
+    where: { id, organizationId },
     include: { batches: { orderBy: { expiryDate: "asc" } } },
   });
 

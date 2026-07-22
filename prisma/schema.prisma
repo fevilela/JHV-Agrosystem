@@ -78,6 +78,8 @@ model Organization {
   piquetes            Piquete[]
   contracts           Contract[]
 
+  stockItems StockItem[]
+
   @@map("organizations")
 }
 
@@ -1137,6 +1139,9 @@ model StockItem {
   notes           String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   batches           StockBatch[]
   purchaseRequests  PurchaseRequest[]

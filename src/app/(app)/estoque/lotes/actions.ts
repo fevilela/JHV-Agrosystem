@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getStockBatchFields } from "./fields";
 
@@ -14,17 +15,23 @@ export async function createStockBatchAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const t = await getTranslations("estoque.lotes");
   const data = buildRecordData(getStockBatchFields(t), formData);
   if (!data.stockItemId) return { error: t("errors.itemRequired") };
   if (!data.quantity) return { error: t("errors.quantityRequired") };
+
+  const stockItem = await prisma.stockItem.findFirst({
+    where: { id: data.stockItemId as string, organizationId },
+  });
+  if (!stockItem) return { error: t("errors.itemRequired") };
 
   await prisma.$transaction([
     prisma.stockBatch.create({
       data: data as Prisma.StockBatchUncheckedCreateInput,
     }),
     prisma.stockItem.update({
-      where: { id: data.stockItemId as string },
+      where: { id: stockItem.id },
       data: { currentQuantity: { increment: data.quantity as Prisma.Decimal | number } },
     }),
   ]);
@@ -35,7 +42,10 @@ export async function createStockBatchAction(
 }
 
 export async function consumeStockBatchAction(id: string) {
-  const batch = await prisma.stockBatch.findUnique({ where: { id } });
+  const { organizationId } = await requireOrg();
+  const batch = await prisma.stockBatch.findFirst({
+    where: { id, stockItem: { organizationId } },
+  });
   if (!batch || batch.status === "CONSUMIDO") return;
 
   await prisma.$transaction([
@@ -54,7 +64,10 @@ export async function consumeStockBatchAction(id: string) {
 }
 
 export async function deleteStockBatchAction(id: string) {
-  const batch = await prisma.stockBatch.findUnique({ where: { id } });
+  const { organizationId } = await requireOrg();
+  const batch = await prisma.stockBatch.findFirst({
+    where: { id, stockItem: { organizationId } },
+  });
   if (!batch) return;
 
   const ops: Prisma.PrismaPromise<unknown>[] = [];

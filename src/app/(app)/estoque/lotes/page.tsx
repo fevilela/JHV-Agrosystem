@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Plus, AlertTriangle, Check } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { consumeStockBatchAction, deleteStockBatchAction } from "./actions";
 
 export default async function StockBatchListPage() {
+  const { organizationId } = await requireOrg();
   const batches = await prisma.stockBatch.findMany({
+    where: { stockItem: { organizationId } },
     orderBy: { expiryDate: "asc" },
     include: { stockItem: true },
   });

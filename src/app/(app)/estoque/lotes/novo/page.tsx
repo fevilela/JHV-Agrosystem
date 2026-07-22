@@ -1,11 +1,16 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getStockBatchFields } from "../fields";
 import { createStockBatchAction } from "../actions";
 
 export default async function NewStockBatchPage() {
-  const items = await prisma.stockItem.findMany({ orderBy: { name: "asc" } });
+  const { organizationId } = await requireOrg();
+  const items = await prisma.stockItem.findMany({
+    where: { organizationId },
+    orderBy: { name: "asc" },
+  });
   const t = await getTranslations("estoque.lotes");
 
   return (

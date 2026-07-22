@@ -2,11 +2,14 @@ import Link from "next/link";
 import { Plus, Pencil, AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteStockItemAction } from "./actions";
 
 export default async function StockItemListPage() {
+  const { organizationId } = await requireOrg();
   const items = await prisma.stockItem.findMany({
+    where: { organizationId },
     orderBy: { name: "asc" },
   });
   const t = await getTranslations("estoque.materiais");
