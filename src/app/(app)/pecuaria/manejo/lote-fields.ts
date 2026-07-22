@@ -1,14 +1,18 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, livestockCategoryLabels } from "@/lib/labels";
+import { toOptionsFromKeys, livestockCategoryLabels } from "@/lib/labels";
 
-export const loteFields: RecordField[] = [
-  { name: "code", label: "Código", type: "text", required: true },
-  { name: "name", label: "Nome", type: "text" },
-  {
-    name: "category",
-    label: "Categoria",
-    type: "select",
-    options: toOptions(livestockCategoryLabels),
-  },
-  { name: "description", label: "Descrição", type: "textarea", colSpan: 2 },
-];
+type Translator = (key: string) => string;
+
+export function getLoteFields(t: Translator, tCategory: Translator): RecordField[] {
+  return [
+    { name: "code", label: t("code"), type: "text", required: true },
+    { name: "name", label: t("name"), type: "text" },
+    {
+      name: "category",
+      label: t("category"),
+      type: "select",
+      options: toOptionsFromKeys(livestockCategoryLabels, tCategory),
+    },
+    { name: "description", label: t("description"), type: "textarea", colSpan: 2 },
+  ];
+}

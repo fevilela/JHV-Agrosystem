@@ -1,25 +1,33 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, reproductionMethodLabels, diagnosisResultLabels } from "@/lib/labels";
+import { toOptionsFromKeys, reproductionMethodLabels, diagnosisResultLabels } from "@/lib/labels";
 
-export const reproductionFields: RecordField[] = [
-  { name: "animalId", label: "Animal (Fêmea)", type: "relation", required: true },
-  {
-    name: "method",
-    label: "Método",
-    type: "select",
-    required: true,
-    options: toOptions(reproductionMethodLabels),
-  },
-  { name: "date", label: "Data", type: "date", required: true },
-  { name: "diagnosisDate", label: "Data do Diagnóstico", type: "date" },
-  {
-    name: "diagnosisResult",
-    label: "Resultado do Diagnóstico",
-    type: "select",
-    options: toOptions(diagnosisResultLabels),
-  },
-  { name: "expectedBirthDate", label: "Previsão de Parto", type: "date" },
-  { name: "birthDate", label: "Data de Parição", type: "date" },
-  { name: "weaningDate", label: "Data de Desmama", type: "date" },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+type Translator = (key: string) => string;
+
+export function getReproductionFields(
+  t: Translator,
+  tMethod: Translator,
+  tDiagnosis: Translator
+): RecordField[] {
+  return [
+    { name: "animalId", label: t("animalId"), type: "relation", required: true },
+    {
+      name: "method",
+      label: t("method"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(reproductionMethodLabels, tMethod),
+    },
+    { name: "date", label: t("date"), type: "date", required: true },
+    { name: "diagnosisDate", label: t("diagnosisDate"), type: "date" },
+    {
+      name: "diagnosisResult",
+      label: t("diagnosisResult"),
+      type: "select",
+      options: toOptionsFromKeys(diagnosisResultLabels, tDiagnosis),
+    },
+    { name: "expectedBirthDate", label: t("expectedBirthDate"), type: "date" },
+    { name: "birthDate", label: t("birthDate"), type: "date" },
+    { name: "weaningDate", label: t("weaningDate"), type: "date" },
+    { name: "notes", label: t("notes"), type: "textarea", colSpan: 2 },
+  ];
+}

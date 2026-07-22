@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { milkFields } from "../fields";
+import { getMilkFields } from "../fields";
 import { updateMilkAction } from "../actions";
 
 export default async function EditMilkPage({
@@ -18,11 +19,15 @@ export default async function EditMilkPage({
 
   if (!record) notFound();
 
+  const t = await getTranslations("pecuaria.producaoLeite");
+  const tf = await getTranslations("pecuaria.producaoLeite.fields");
+  const tShift = await getTranslations("labels.milkShift");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Ordenha</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={milkFields}
+        fields={getMilkFields(tf, tShift)}
         action={updateMilkAction.bind(null, id)}
         initialValues={record}
         relationOptions={{

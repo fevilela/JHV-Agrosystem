@@ -1646,5 +1646,296 @@
         "duplicateCode": "Ya existe un silo/almacén con ese código."
       }
     }
+  },
+  "pecuaria": {
+    "cadastroAnimal": {
+      "title": "Registro Animal",
+      "count": "{count, plural, one {# animal registrado} other {# animales registrados}}",
+      "new": "Nuevo Animal",
+      "newTitle": "Nuevo Animal",
+      "editTitle": "Editar Animal",
+      "empty": "Aún no hay animales registrados.",
+      "edit": "Editar",
+      "weightUnit": "{value} kg",
+      "table": {
+        "brinco": "Arete",
+        "name": "Nombre",
+        "sexo": "Sexo",
+        "category": "Categoría",
+        "lote": "Lote",
+        "pasture": "Potrero",
+        "weight": "Peso",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "brinco": "Arete",
+        "rfid": "RFID",
+        "name": "Nombre",
+        "sexo": "Sexo",
+        "raca": "Raza",
+        "category": "Categoría",
+        "dataNascimento": "Fecha de Nacimiento",
+        "pesoAtual": "Peso Actual (kg)",
+        "status": "Estado",
+        "loteId": "Lote",
+        "pastureId": "Potrero",
+        "notes": "Notas"
+      },
+      "errors": {
+        "brincoRequired": "Indique el arete del animal.",
+        "categoryRequired": "Seleccione la categoría.",
+        "duplicateBrinco": "Ya existe un animal con ese arete o RFID."
+      }
+    },
+    "reproducao": {
+      "title": "Reproducción",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Nuevo Registro",
+      "newTitle": "Nuevo Registro de Reproducción",
+      "editTitle": "Editar Registro de Reproducción",
+      "empty": "Aún no hay registros.",
+      "edit": "Editar",
+      "table": {
+        "date": "Fecha",
+        "animal": "Animal",
+        "method": "Método",
+        "diagnosis": "Diagnóstico",
+        "expectedBirth": "Previsión de Parto",
+        "birth": "Parto",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "animalId": "Animal (Hembra)",
+        "method": "Método",
+        "date": "Fecha",
+        "diagnosisDate": "Fecha del Diagnóstico",
+        "diagnosisResult": "Resultado del Diagnóstico",
+        "expectedBirthDate": "Previsión de Parto",
+        "birthDate": "Fecha de Parto",
+        "weaningDate": "Fecha de Destete",
+        "notes": "Notas"
+      },
+      "errors": {
+        "animalRequired": "Seleccione el animal.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "sanidade": {
+      "title": "Sanidad",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Nuevo Registro",
+      "newTitle": "Nuevo Registro de Sanidad",
+      "editTitle": "Editar Registro de Sanidad",
+      "empty": "Aún no hay registros.",
+      "edit": "Editar",
+      "table": {
+        "date": "Fecha",
+        "animal": "Animal",
+        "type": "Tipo",
+        "product": "Producto",
+        "nextDose": "Próxima Dosis",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "animalId": "Animal",
+        "type": "Tipo",
+        "date": "Fecha",
+        "product": "Producto Aplicado",
+        "nextDoseDate": "Próxima Dosis",
+        "notes": "Notas"
+      },
+      "errors": {
+        "animalRequired": "Seleccione el animal.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "pesagens": {
+      "title": "Pesajes",
+      "count": "{count, plural, one {# pesaje registrado} other {# pesajes registrados}}",
+      "new": "Nuevo Pesaje",
+      "newTitle": "Nuevo Pesaje",
+      "editTitle": "Editar Pesaje",
+      "empty": "Aún no hay pesajes registrados.",
+      "edit": "Editar",
+      "weightUnit": "{value} kg",
+      "gmdUnit": "{value} kg/día",
+      "table": {
+        "date": "Fecha",
+        "animal": "Animal",
+        "weight": "Peso",
+        "gmd": "GDP (kg/día)",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "animalId": "Animal",
+        "date": "Fecha",
+        "weightKg": "Peso (kg)",
+        "notes": "Notas"
+      },
+      "errors": {
+        "animalRequired": "Seleccione el animal.",
+        "dateRequired": "Indique la fecha.",
+        "weightRequired": "Indique el peso."
+      }
+    },
+    "pastagens": {
+      "title": "Potreros",
+      "count": "{count, plural, one {# potrero registrado} other {# potreros registrados}}",
+      "new": "Nuevo Potrero",
+      "newTitle": "Nuevo Potrero",
+      "editTitle": "Editar Potrero",
+      "empty": "Aún no hay potreros registrados.",
+      "edit": "Editar",
+      "areaUnit": "{value} ha",
+      "heightUnit": "{value} cm",
+      "table": {
+        "code": "Código",
+        "name": "Nombre",
+        "area": "Área",
+        "stocking": "Carga",
+        "grassHeight": "Altura del Pasto",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "code": "Código",
+        "name": "Nombre",
+        "areaHectares": "Área (ha)",
+        "capacityHead": "Capacidad (cabezas)",
+        "rotationStatus": "Estado de Rotación",
+        "grassHeightCm": "Altura del Pasto (cm)",
+        "notes": "Notas"
+      },
+      "errors": {
+        "codeRequired": "Indique el código del potrero.",
+        "duplicateCode": "Ya existe un potrero con ese código."
+      }
+    },
+    "nutricao": {
+      "title": "Nutrición / Confinamiento",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "new": "Nuevo Registro",
+      "newTitle": "Nuevo Registro de Nutrición",
+      "editTitle": "Editar Registro de Nutrición",
+      "empty": "Aún no hay registros.",
+      "edit": "Editar",
+      "weightUnit": "{value} kg",
+      "table": {
+        "date": "Fecha",
+        "lote": "Lote",
+        "type": "Tipo",
+        "consumption": "Consumo",
+        "dailyCost": "Costo Diario",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "loteId": "Lote",
+        "type": "Tipo",
+        "date": "Fecha",
+        "silagemKg": "Ensilaje (kg)",
+        "suplementacaoKg": "Suplementación (kg)",
+        "consumoKg": "Consumo Total (kg)",
+        "custoDiario": "Costo Diario (R$)",
+        "notes": "Notas"
+      },
+      "errors": {
+        "loteRequired": "Seleccione el lote.",
+        "dateRequired": "Indique la fecha."
+      }
+    },
+    "manejo": {
+      "title": "Manejo",
+      "count": "{count, plural, one {# movimiento} other {# movimientos}}",
+      "lotesLink": "Lotes",
+      "new": "Nuevo Movimiento",
+      "newTitle": "Nuevo Movimiento",
+      "editTitle": "Editar Movimiento",
+      "empty": "Aún no hay movimientos registrados.",
+      "edit": "Editar",
+      "table": {
+        "date": "Fecha",
+        "type": "Tipo",
+        "animalOrLote": "Animal/Lote",
+        "route": "Origen → Destino",
+        "value": "Valor",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "type": "Tipo",
+        "date": "Fecha",
+        "animalId": "Animal",
+        "loteId": "Lote",
+        "origin": "Origen",
+        "destination": "Destino",
+        "value": "Valor (R$)",
+        "counterpartyName": "Contraparte",
+        "notes": "Notas"
+      },
+      "errors": {
+        "dateRequired": "Indique la fecha.",
+        "animalOrLoteRequired": "Seleccione un animal o un lote."
+      }
+    },
+    "lotes": {
+      "backLink": "Manejo",
+      "title": "Lotes",
+      "count": "{count, plural, one {# lote registrado} other {# lotes registrados}}",
+      "new": "Nuevo Lote",
+      "newTitle": "Nuevo Lote",
+      "editTitle": "Editar Lote",
+      "empty": "Aún no hay lotes registrados.",
+      "edit": "Editar",
+      "table": {
+        "code": "Código",
+        "name": "Nombre",
+        "category": "Categoría",
+        "animals": "Animales",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "code": "Código",
+        "name": "Nombre",
+        "category": "Categoría",
+        "description": "Descripción"
+      },
+      "errors": {
+        "codeRequired": "Indique el código del lote.",
+        "duplicateCode": "Ya existe un lote con ese código."
+      }
+    },
+    "producaoLeite": {
+      "title": "Producción de Leche",
+      "summary": "{count, plural, one {# ordeño} other {# ordeños}} · {total} L en total",
+      "new": "Nuevo Ordeño",
+      "newTitle": "Nuevo Ordeño",
+      "editTitle": "Editar Ordeño",
+      "empty": "Aún no hay ordeños registrados.",
+      "edit": "Editar",
+      "litersUnit": "{value} L",
+      "table": {
+        "date": "Fecha",
+        "animal": "Animal",
+        "shift": "Turno",
+        "liters": "Litros",
+        "ccs": "CCS",
+        "cbt": "CBT",
+        "actions": "Acciones"
+      },
+      "fields": {
+        "animalId": "Animal",
+        "date": "Fecha",
+        "shift": "Turno",
+        "liters": "Litros",
+        "ccs": "CCS (Conteo de Células Somáticas)",
+        "cbt": "CBT (Conteo Bacteriano Total)",
+        "notes": "Notas"
+      },
+      "errors": {
+        "animalRequired": "Seleccione el animal.",
+        "dateRequired": "Indique la fecha.",
+        "litersRequired": "Indique la cantidad de litros."
+      }
+    }
   }
 }

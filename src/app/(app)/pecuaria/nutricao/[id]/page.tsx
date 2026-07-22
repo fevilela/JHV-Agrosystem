@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { feedingFields } from "../fields";
+import { getFeedingFields } from "../fields";
 import { updateFeedingAction } from "../actions";
 
 export default async function EditFeedingPage({
@@ -18,11 +19,15 @@ export default async function EditFeedingPage({
 
   if (!feeding) notFound();
 
+  const t = await getTranslations("pecuaria.nutricao");
+  const tf = await getTranslations("pecuaria.nutricao.fields");
+  const tType = await getTranslations("labels.feedingType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Registro de Nutrição</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={feedingFields}
+        fields={getFeedingFields(tf, tType)}
         action={updateFeedingAction.bind(null, id)}
         initialValues={feeding}
         relationOptions={{

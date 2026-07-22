@@ -1,6 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { livestockAnimalFields } from "../fields";
+import { getLivestockAnimalFields } from "../fields";
 import { createLivestockAnimalAction } from "../actions";
 
 export default async function NewLivestockAnimalPage() {
@@ -9,11 +10,17 @@ export default async function NewLivestockAnimalPage() {
     prisma.pasture.findMany({ orderBy: { code: "asc" } }),
   ]);
 
+  const t = await getTranslations("pecuaria.cadastroAnimal");
+  const tf = await getTranslations("pecuaria.cadastroAnimal.fields");
+  const tSexo = await getTranslations("labels.animalSexo");
+  const tCategory = await getTranslations("labels.livestockCategory");
+  const tStatus = await getTranslations("labels.livestockStatus");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Animal</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={livestockAnimalFields}
+        fields={getLivestockAnimalFields(tf, tSexo, tCategory, tStatus)}
         action={createLivestockAnimalAction}
         initialValues={{ status: "ATIVO" }}
         relationOptions={{

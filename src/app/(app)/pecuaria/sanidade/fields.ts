@@ -1,17 +1,21 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, healthRecordTypeLabels } from "@/lib/labels";
+import { toOptionsFromKeys, healthRecordTypeLabels } from "@/lib/labels";
 
-export const healthRecordFields: RecordField[] = [
-  { name: "animalId", label: "Animal", type: "relation", required: true },
-  {
-    name: "type",
-    label: "Tipo",
-    type: "select",
-    required: true,
-    options: toOptions(healthRecordTypeLabels),
-  },
-  { name: "date", label: "Data", type: "date", required: true },
-  { name: "product", label: "Produto Aplicado", type: "text" },
-  { name: "nextDoseDate", label: "Próxima Dose", type: "date" },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+type Translator = (key: string) => string;
+
+export function getHealthRecordFields(t: Translator, tType: Translator): RecordField[] {
+  return [
+    { name: "animalId", label: t("animalId"), type: "relation", required: true },
+    {
+      name: "type",
+      label: t("type"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(healthRecordTypeLabels, tType),
+    },
+    { name: "date", label: t("date"), type: "date", required: true },
+    { name: "product", label: t("product"), type: "text" },
+    { name: "nextDoseDate", label: t("nextDoseDate"), type: "date" },
+    { name: "notes", label: t("notes"), type: "textarea", colSpan: 2 },
+  ];
+}

@@ -2,26 +2,34 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { loteFields } from "./lote-fields";
+import { getLoteFields } from "./lote-fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("pecuaria.lotes.fields");
+  const tCategory = await getTranslations("labels.livestockCategory");
+  return getLoteFields(tf, tCategory);
+}
 
 export async function createLoteAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(loteFields, formData);
-  if (!data.code) return { error: "Informe o código do lote." };
+  const t = await getTranslations("pecuaria.lotes.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.lote.create({
       data: data as Prisma.LoteUncheckedCreateInput,
     });
   } catch {
-    return { error: "Já existe um lote com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/pecuaria/manejo/lotes");
@@ -33,8 +41,9 @@ export async function updateLoteAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(loteFields, formData);
-  if (!data.code) return { error: "Informe o código do lote." };
+  const t = await getTranslations("pecuaria.lotes.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.lote.update({
@@ -42,7 +51,7 @@ export async function updateLoteAction(
       data: data as Prisma.LoteUncheckedUpdateInput,
     });
   } catch {
-    return { error: "Já existe um lote com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/pecuaria/manejo/lotes");

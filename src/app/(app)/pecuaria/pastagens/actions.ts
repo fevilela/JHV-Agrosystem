@@ -2,26 +2,34 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { pastureFields } from "./fields";
+import { getPastureFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("pecuaria.pastagens.fields");
+  const tStatus = await getTranslations("labels.pastureRotationStatus");
+  return getPastureFields(tf, tStatus);
+}
 
 export async function createPastureAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(pastureFields, formData);
-  if (!data.code) return { error: "Informe o código da pastagem." };
+  const t = await getTranslations("pecuaria.pastagens.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.pasture.create({
       data: data as Prisma.PastureUncheckedCreateInput,
     });
   } catch {
-    return { error: "Já existe uma pastagem com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/pecuaria/pastagens");
@@ -33,8 +41,9 @@ export async function updatePastureAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(pastureFields, formData);
-  if (!data.code) return { error: "Informe o código da pastagem." };
+  const t = await getTranslations("pecuaria.pastagens.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.code) return { error: t("codeRequired") };
 
   try {
     await prisma.pasture.update({
@@ -42,7 +51,7 @@ export async function updatePastureAction(
       data: data as Prisma.PastureUncheckedUpdateInput,
     });
   } catch {
-    return { error: "Já existe uma pastagem com esse código." };
+    return { error: t("duplicateCode") };
   }
 
   revalidatePath("/pecuaria/pastagens");

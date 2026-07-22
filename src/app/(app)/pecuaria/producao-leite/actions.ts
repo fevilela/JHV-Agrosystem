@@ -2,21 +2,29 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { milkFields } from "./fields";
+import { getMilkFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("pecuaria.producaoLeite.fields");
+  const tShift = await getTranslations("labels.milkShift");
+  return getMilkFields(tf, tShift);
+}
 
 export async function createMilkAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(milkFields, formData);
-  if (!data.animalId) return { error: "Selecione o animal." };
-  if (!data.date) return { error: "Informe a data." };
-  if (!data.liters) return { error: "Informe a quantidade de litros." };
+  const t = await getTranslations("pecuaria.producaoLeite.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.animalId) return { error: t("animalRequired") };
+  if (!data.date) return { error: t("dateRequired") };
+  if (!data.liters) return { error: t("litersRequired") };
 
   await prisma.milkProduction.create({
     data: data as Prisma.MilkProductionUncheckedCreateInput,
@@ -31,10 +39,11 @@ export async function updateMilkAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(milkFields, formData);
-  if (!data.animalId) return { error: "Selecione o animal." };
-  if (!data.date) return { error: "Informe a data." };
-  if (!data.liters) return { error: "Informe a quantidade de litros." };
+  const t = await getTranslations("pecuaria.producaoLeite.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.animalId) return { error: t("animalRequired") };
+  if (!data.date) return { error: t("dateRequired") };
+  if (!data.liters) return { error: t("litersRequired") };
 
   await prisma.milkProduction.update({
     where: { id },

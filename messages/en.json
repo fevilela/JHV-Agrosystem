@@ -1646,5 +1646,296 @@
         "duplicateCode": "A silo/warehouse with this code already exists."
       }
     }
+  },
+  "pecuaria": {
+    "cadastroAnimal": {
+      "title": "Animal Registry",
+      "count": "{count, plural, one {# animal registered} other {# animals registered}}",
+      "new": "New Animal",
+      "newTitle": "New Animal",
+      "editTitle": "Edit Animal",
+      "empty": "No animals registered yet.",
+      "edit": "Edit",
+      "weightUnit": "{value} kg",
+      "table": {
+        "brinco": "Tag",
+        "name": "Name",
+        "sexo": "Sex",
+        "category": "Category",
+        "lote": "Lot",
+        "pasture": "Pasture",
+        "weight": "Weight",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "brinco": "Tag",
+        "rfid": "RFID",
+        "name": "Name",
+        "sexo": "Sex",
+        "raca": "Breed",
+        "category": "Category",
+        "dataNascimento": "Birth Date",
+        "pesoAtual": "Current Weight (kg)",
+        "status": "Status",
+        "loteId": "Lot",
+        "pastureId": "Pasture",
+        "notes": "Notes"
+      },
+      "errors": {
+        "brincoRequired": "Enter the animal's tag.",
+        "categoryRequired": "Select the category.",
+        "duplicateBrinco": "An animal with this tag or RFID already exists."
+      }
+    },
+    "reproducao": {
+      "title": "Reproduction",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "new": "New Record",
+      "newTitle": "New Reproduction Record",
+      "editTitle": "Edit Reproduction Record",
+      "empty": "No records registered yet.",
+      "edit": "Edit",
+      "table": {
+        "date": "Date",
+        "animal": "Animal",
+        "method": "Method",
+        "diagnosis": "Diagnosis",
+        "expectedBirth": "Expected Birth",
+        "birth": "Birth",
+        "actions": "Actions"
+      },
+      "fields": {
+        "animalId": "Animal (Female)",
+        "method": "Method",
+        "date": "Date",
+        "diagnosisDate": "Diagnosis Date",
+        "diagnosisResult": "Diagnosis Result",
+        "expectedBirthDate": "Expected Birth Date",
+        "birthDate": "Birth Date",
+        "weaningDate": "Weaning Date",
+        "notes": "Notes"
+      },
+      "errors": {
+        "animalRequired": "Select the animal.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "sanidade": {
+      "title": "Health",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "new": "New Record",
+      "newTitle": "New Health Record",
+      "editTitle": "Edit Health Record",
+      "empty": "No records registered yet.",
+      "edit": "Edit",
+      "table": {
+        "date": "Date",
+        "animal": "Animal",
+        "type": "Type",
+        "product": "Product",
+        "nextDose": "Next Dose",
+        "actions": "Actions"
+      },
+      "fields": {
+        "animalId": "Animal",
+        "type": "Type",
+        "date": "Date",
+        "product": "Applied Product",
+        "nextDoseDate": "Next Dose",
+        "notes": "Notes"
+      },
+      "errors": {
+        "animalRequired": "Select the animal.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "pesagens": {
+      "title": "Weighings",
+      "count": "{count, plural, one {# weighing registered} other {# weighings registered}}",
+      "new": "New Weighing",
+      "newTitle": "New Weighing",
+      "editTitle": "Edit Weighing",
+      "empty": "No weighings registered yet.",
+      "edit": "Edit",
+      "weightUnit": "{value} kg",
+      "gmdUnit": "{value} kg/day",
+      "table": {
+        "date": "Date",
+        "animal": "Animal",
+        "weight": "Weight",
+        "gmd": "ADG (kg/day)",
+        "actions": "Actions"
+      },
+      "fields": {
+        "animalId": "Animal",
+        "date": "Date",
+        "weightKg": "Weight (kg)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "animalRequired": "Select the animal.",
+        "dateRequired": "Enter the date.",
+        "weightRequired": "Enter the weight."
+      }
+    },
+    "pastagens": {
+      "title": "Pastures",
+      "count": "{count, plural, one {# pasture registered} other {# pastures registered}}",
+      "new": "New Pasture",
+      "newTitle": "New Pasture",
+      "editTitle": "Edit Pasture",
+      "empty": "No pastures registered yet.",
+      "edit": "Edit",
+      "areaUnit": "{value} ha",
+      "heightUnit": "{value} cm",
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "area": "Area",
+        "stocking": "Stocking",
+        "grassHeight": "Grass Height",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "areaHectares": "Area (ha)",
+        "capacityHead": "Capacity (head)",
+        "rotationStatus": "Rotation Status",
+        "grassHeightCm": "Grass Height (cm)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "codeRequired": "Enter the pasture code.",
+        "duplicateCode": "A pasture with this code already exists."
+      }
+    },
+    "nutricao": {
+      "title": "Nutrition / Feedlot",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "new": "New Record",
+      "newTitle": "New Nutrition Record",
+      "editTitle": "Edit Nutrition Record",
+      "empty": "No records registered yet.",
+      "edit": "Edit",
+      "weightUnit": "{value} kg",
+      "table": {
+        "date": "Date",
+        "lote": "Lot",
+        "type": "Type",
+        "consumption": "Consumption",
+        "dailyCost": "Daily Cost",
+        "actions": "Actions"
+      },
+      "fields": {
+        "loteId": "Lot",
+        "type": "Type",
+        "date": "Date",
+        "silagemKg": "Silage (kg)",
+        "suplementacaoKg": "Supplementation (kg)",
+        "consumoKg": "Total Consumption (kg)",
+        "custoDiario": "Daily Cost (R$)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "loteRequired": "Select the lot.",
+        "dateRequired": "Enter the date."
+      }
+    },
+    "manejo": {
+      "title": "Management",
+      "count": "{count, plural, one {# movement} other {# movements}}",
+      "lotesLink": "Lots",
+      "new": "New Movement",
+      "newTitle": "New Movement",
+      "editTitle": "Edit Movement",
+      "empty": "No movements registered yet.",
+      "edit": "Edit",
+      "table": {
+        "date": "Date",
+        "type": "Type",
+        "animalOrLote": "Animal/Lot",
+        "route": "Origin → Destination",
+        "value": "Value",
+        "actions": "Actions"
+      },
+      "fields": {
+        "type": "Type",
+        "date": "Date",
+        "animalId": "Animal",
+        "loteId": "Lot",
+        "origin": "Origin",
+        "destination": "Destination",
+        "value": "Value (R$)",
+        "counterpartyName": "Counterparty",
+        "notes": "Notes"
+      },
+      "errors": {
+        "dateRequired": "Enter the date.",
+        "animalOrLoteRequired": "Select an animal or a lot."
+      }
+    },
+    "lotes": {
+      "backLink": "Management",
+      "title": "Lots",
+      "count": "{count, plural, one {# lot registered} other {# lots registered}}",
+      "new": "New Lot",
+      "newTitle": "New Lot",
+      "editTitle": "Edit Lot",
+      "empty": "No lots registered yet.",
+      "edit": "Edit",
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "category": "Category",
+        "animals": "Animals",
+        "actions": "Actions"
+      },
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "category": "Category",
+        "description": "Description"
+      },
+      "errors": {
+        "codeRequired": "Enter the lot code.",
+        "duplicateCode": "A lot with this code already exists."
+      }
+    },
+    "producaoLeite": {
+      "title": "Milk Production",
+      "summary": "{count, plural, one {# milking} other {# milkings}} · {total} L total",
+      "new": "New Milking",
+      "newTitle": "New Milking",
+      "editTitle": "Edit Milking",
+      "empty": "No milkings registered yet.",
+      "edit": "Edit",
+      "litersUnit": "{value} L",
+      "table": {
+        "date": "Date",
+        "animal": "Animal",
+        "shift": "Shift",
+        "liters": "Liters",
+        "ccs": "SCC",
+        "cbt": "TBC",
+        "actions": "Actions"
+      },
+      "fields": {
+        "animalId": "Animal",
+        "date": "Date",
+        "shift": "Shift",
+        "liters": "Liters",
+        "ccs": "SCC (Somatic Cell Count)",
+        "cbt": "TBC (Total Bacterial Count)",
+        "notes": "Notes"
+      },
+      "errors": {
+        "animalRequired": "Select the animal.",
+        "dateRequired": "Enter the date.",
+        "litersRequired": "Enter the amount of liters."
+      }
+    }
   }
 }

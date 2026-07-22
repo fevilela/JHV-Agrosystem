@@ -1,20 +1,24 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, managementMovementTypeLabels } from "@/lib/labels";
+import { toOptionsFromKeys, managementMovementTypeLabels } from "@/lib/labels";
 
-export const movementFields: RecordField[] = [
-  {
-    name: "type",
-    label: "Tipo",
-    type: "select",
-    required: true,
-    options: toOptions(managementMovementTypeLabels),
-  },
-  { name: "date", label: "Data", type: "date", required: true },
-  { name: "animalId", label: "Animal", type: "relation" },
-  { name: "loteId", label: "Lote", type: "relation" },
-  { name: "origin", label: "Origem", type: "text" },
-  { name: "destination", label: "Destino", type: "text" },
-  { name: "value", label: "Valor (R$)", type: "number" },
-  { name: "counterpartyName", label: "Contraparte", type: "text" },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+type Translator = (key: string) => string;
+
+export function getMovementFields(t: Translator, tType: Translator): RecordField[] {
+  return [
+    {
+      name: "type",
+      label: t("type"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(managementMovementTypeLabels, tType),
+    },
+    { name: "date", label: t("date"), type: "date", required: true },
+    { name: "animalId", label: t("animalId"), type: "relation" },
+    { name: "loteId", label: t("loteId"), type: "relation" },
+    { name: "origin", label: t("origin"), type: "text" },
+    { name: "destination", label: t("destination"), type: "text" },
+    { name: "value", label: t("value"), type: "number" },
+    { name: "counterpartyName", label: t("counterpartyName"), type: "text" },
+    { name: "notes", label: t("notes"), type: "textarea", colSpan: 2 },
+  ];
+}

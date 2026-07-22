@@ -2,21 +2,29 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { movementFields } from "./fields";
+import { getMovementFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFields() {
+  const tf = await getTranslations("pecuaria.manejo.fields");
+  const tType = await getTranslations("labels.managementMovementType");
+  return getMovementFields(tf, tType);
+}
 
 export async function createMovementAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(movementFields, formData);
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("pecuaria.manejo.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.date) return { error: t("dateRequired") };
   if (!data.animalId && !data.loteId) {
-    return { error: "Selecione um animal ou um lote." };
+    return { error: t("animalOrLoteRequired") };
   }
 
   await prisma.managementMovement.create({
@@ -32,10 +40,11 @@ export async function updateMovementAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(movementFields, formData);
-  if (!data.date) return { error: "Informe a data." };
+  const t = await getTranslations("pecuaria.manejo.errors");
+  const data = buildRecordData(await getFields(), formData);
+  if (!data.date) return { error: t("dateRequired") };
   if (!data.animalId && !data.loteId) {
-    return { error: "Selecione um animal ou um lote." };
+    return { error: t("animalOrLoteRequired") };
   }
 
   await prisma.managementMovement.update({

@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { movementFields } from "../fields";
+import { getMovementFields } from "../fields";
 import { updateMovementAction } from "../actions";
 
 export default async function EditMovementPage({
@@ -19,11 +20,15 @@ export default async function EditMovementPage({
 
   if (!movement) notFound();
 
+  const t = await getTranslations("pecuaria.manejo");
+  const tf = await getTranslations("pecuaria.manejo.fields");
+  const tType = await getTranslations("labels.managementMovementType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Movimentação</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={movementFields}
+        fields={getMovementFields(tf, tType)}
         action={updateMovementAction.bind(null, id)}
         initialValues={movement}
         relationOptions={{

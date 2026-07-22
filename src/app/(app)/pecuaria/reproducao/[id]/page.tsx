@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { reproductionFields } from "../fields";
+import { getReproductionFields } from "../fields";
 import { updateReproductionAction } from "../actions";
 
 export default async function EditReproductionPage({
@@ -18,11 +19,16 @@ export default async function EditReproductionPage({
 
   if (!record) notFound();
 
+  const t = await getTranslations("pecuaria.reproducao");
+  const tf = await getTranslations("pecuaria.reproducao.fields");
+  const tMethod = await getTranslations("labels.reproductionMethod");
+  const tDiagnosis = await getTranslations("labels.diagnosisResult");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Registro de Reprodução</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={reproductionFields}
+        fields={getReproductionFields(tf, tMethod, tDiagnosis)}
         action={updateReproductionAction.bind(null, id)}
         initialValues={record}
         relationOptions={{

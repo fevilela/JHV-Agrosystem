@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { weightFields } from "../fields";
+import { getWeightFields } from "../fields";
 import { updateWeightAction } from "../actions";
 
 export default async function EditWeightPage({
@@ -18,11 +19,14 @@ export default async function EditWeightPage({
 
   if (!record) notFound();
 
+  const t = await getTranslations("pecuaria.pesagens");
+  const tf = await getTranslations("pecuaria.pesagens.fields");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Pesagem</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={weightFields}
+        fields={getWeightFields(tf)}
         action={updateWeightAction.bind(null, id)}
         initialValues={record}
         relationOptions={{

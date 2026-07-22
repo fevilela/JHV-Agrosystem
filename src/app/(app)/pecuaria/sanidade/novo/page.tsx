@@ -1,16 +1,21 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { healthRecordFields } from "../fields";
+import { getHealthRecordFields } from "../fields";
 import { createHealthRecordAction } from "../actions";
 
 export default async function NewHealthRecordPage() {
   const animals = await prisma.livestockAnimal.findMany({ orderBy: { brinco: "asc" } });
 
+  const t = await getTranslations("pecuaria.sanidade");
+  const tf = await getTranslations("pecuaria.sanidade.fields");
+  const tType = await getTranslations("labels.healthRecordType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Novo Registro de Sanidade</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={healthRecordFields}
+        fields={getHealthRecordFields(tf, tType)}
         action={createHealthRecordAction}
         relationOptions={{
           animalId: animals.map((a) => ({ id: a.id, label: `${a.brinco}${a.name ? ` — ${a.name}` : ""}` })),

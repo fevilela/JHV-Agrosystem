@@ -1,6 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { movementFields } from "../fields";
+import { getMovementFields } from "../fields";
 import { createMovementAction } from "../actions";
 
 export default async function NewMovementPage() {
@@ -9,11 +10,15 @@ export default async function NewMovementPage() {
     prisma.lote.findMany({ orderBy: { code: "asc" } }),
   ]);
 
+  const t = await getTranslations("pecuaria.manejo");
+  const tf = await getTranslations("pecuaria.manejo.fields");
+  const tType = await getTranslations("labels.managementMovementType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Nova Movimentação</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("newTitle")}</h1>
       <RecordForm
-        fields={movementFields}
+        fields={getMovementFields(tf, tType)}
         action={createMovementAction}
         relationOptions={{
           animalId: animals.map((a) => ({ id: a.id, label: `${a.brinco}${a.name ? ` — ${a.name}` : ""}` })),

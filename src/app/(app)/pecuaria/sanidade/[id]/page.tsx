@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { healthRecordFields } from "../fields";
+import { getHealthRecordFields } from "../fields";
 import { updateHealthRecordAction } from "../actions";
 
 export default async function EditHealthRecordPage({
@@ -18,11 +19,15 @@ export default async function EditHealthRecordPage({
 
   if (!record) notFound();
 
+  const t = await getTranslations("pecuaria.sanidade");
+  const tf = await getTranslations("pecuaria.sanidade.fields");
+  const tType = await getTranslations("labels.healthRecordType");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Registro de Sanidade</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={healthRecordFields}
+        fields={getHealthRecordFields(tf, tType)}
         action={updateHealthRecordAction.bind(null, id)}
         initialValues={record}
         relationOptions={{

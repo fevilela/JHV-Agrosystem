@@ -2,10 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { weightFields } from "./fields";
+import { getWeightFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
 
@@ -13,10 +14,12 @@ export async function createWeightAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(weightFields, formData);
-  if (!data.animalId) return { error: "Selecione o animal." };
-  if (!data.date) return { error: "Informe a data." };
-  if (!data.weightKg) return { error: "Informe o peso." };
+  const t = await getTranslations("pecuaria.pesagens.errors");
+  const tf = await getTranslations("pecuaria.pesagens.fields");
+  const data = buildRecordData(getWeightFields(tf), formData);
+  if (!data.animalId) return { error: t("animalRequired") };
+  if (!data.date) return { error: t("dateRequired") };
+  if (!data.weightKg) return { error: t("weightRequired") };
 
   await prisma.$transaction([
     prisma.weightRecord.create({
@@ -38,10 +41,12 @@ export async function updateWeightAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(weightFields, formData);
-  if (!data.animalId) return { error: "Selecione o animal." };
-  if (!data.date) return { error: "Informe a data." };
-  if (!data.weightKg) return { error: "Informe o peso." };
+  const t = await getTranslations("pecuaria.pesagens.errors");
+  const tf = await getTranslations("pecuaria.pesagens.fields");
+  const data = buildRecordData(getWeightFields(tf), formData);
+  if (!data.animalId) return { error: t("animalRequired") };
+  if (!data.date) return { error: t("dateRequired") };
+  if (!data.weightKg) return { error: t("weightRequired") };
 
   await prisma.weightRecord.update({
     where: { id },
