@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { ExportButton } from "@/components/crud/export-button";
 import { deleteJournalEntryAction } from "./actions";
 
 export default async function JournalEntryListPage() {
@@ -26,13 +27,16 @@ export default async function JournalEntryListPage() {
             {t("entryCount", { count: entries.length })}
           </p>
         </div>
-        <Link
-          href="/contabilidade/lancamentos/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          {t("new")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportButton baseHref="/api/export/lancamentos" />
+          <Link
+            href="/contabilidade/lancamentos/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            {t("new")}
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">

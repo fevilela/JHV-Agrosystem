@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { ExportButton } from "@/components/crud/export-button";
 import { deletePayableAction, markPayablePaidAction } from "./actions";
 
 const statusColor: Record<string, string> = {
@@ -40,13 +41,16 @@ export default async function PayableListPage() {
             {t("summary", { count: entries.length, amount: formatCurrency(totalPendente, locale) })}
           </p>
         </div>
-        <Link
-          href="/financeiro/contas-pagar/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          {t("new")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportButton baseHref="/api/export/contas-pagar" />
+          <Link
+            href="/financeiro/contas-pagar/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            {t("new")}
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
