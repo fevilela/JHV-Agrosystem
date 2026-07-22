@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { EntityConfig, EntityField } from "@/lib/entities";
+import { logAudit } from "@/lib/audit";
 
 // The entity models covered here (Owner, Client, Supplier, Employee,
 // Veterinarian, Farrier, Instructor, Handler) share a simple id/CRUD shape,
@@ -46,32 +47,71 @@ export function buildData(config: EntityConfig, formData: FormData) {
   return data;
 }
 
+type Actor = { userId?: string | null; userName?: string | null };
+
 export async function createEntityRecord(
   config: EntityConfig,
   formData: FormData,
-  organizationId: string
+  organizationId: string,
+  actor?: Actor
 ) {
   const delegate = getDelegate(config.model);
   const data = buildData(config, formData);
-  await delegate.create({ data: { ...data, organizationId } });
+  const record = await delegate.create({ data: { ...data, organizationId } });
+  await logAudit({
+    organizationId,
+    userId: actor?.userId,
+    userName: actor?.userName,
+    action: "CREATE",
+    entityType: config.model,
+    entityId: record.id as string,
+    after: record,
+  });
 }
 
 export async function updateEntityRecord(
   config: EntityConfig,
   id: string,
   formData: FormData,
-  organizationId: string
+  organizationId: string,
+  actor?: Actor
 ) {
   const delegate = getDelegate(config.model);
   const data = buildData(config, formData);
+  const before = await delegate.findFirst({ where: { id, organizationId } });
   await delegate.updateMany({ where: { id, organizationId }, data });
+  if (before) {
+    await logAudit({
+      organizationId,
+      userId: actor?.userId,
+      userName: actor?.userName,
+      action: "UPDATE",
+      entityType: config.model,
+      entityId: id,
+      before,
+      after: { ...before, ...data },
+    });
+  }
 }
 
 export async function deleteEntityRecord(
   config: EntityConfig,
   id: string,
-  organizationId: string
+  organizationId: string,
+  actor?: Actor
 ) {
   const delegate = getDelegate(config.model);
+  const before = await delegate.findFirst({ where: { id, organizationId } });
   await delegate.deleteMany({ where: { id, organizationId } });
+  if (before) {
+    await logAudit({
+      organizationId,
+      userId: actor?.userId,
+      userName: actor?.userName,
+      action: "DELETE",
+      entityType: config.model,
+      entityId: id,
+      before,
+    });
+  }
 }

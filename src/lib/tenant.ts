@@ -45,6 +45,7 @@ export async function requireOrg() {
     organizationId: user.organization.id,
     organization: user.organization,
     effectiveModules,
+    userName: user.name,
   };
 }
 

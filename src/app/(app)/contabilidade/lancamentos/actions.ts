@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
+import { logAudit } from "@/lib/audit";
 
 type FormState = { error?: string } | undefined;
 
@@ -55,7 +56,7 @@ export async function createJournalEntryAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const { organizationId } = await requireOrg();
+  const { organizationId, userId, userName } = await requireOrg();
   const t = await getTranslations("contabilidade.lancamentos.errors");
   const date = formData.get("date") as string;
   const description = formData.get("description") as string;
@@ -72,7 +73,7 @@ export async function createJournalEntryAction(
     return { error: t("accountRequired") };
   }
 
-  await prisma.journalEntry.create({
+  const entry = await prisma.journalEntry.create({
     data: {
       date: new Date(date),
       description,
@@ -85,6 +86,16 @@ export async function createJournalEntryAction(
         })),
       },
     },
+    include: { lines: true },
+  });
+  await logAudit({
+    organizationId,
+    userId,
+    userName,
+    action: "CREATE",
+    entityType: "journalEntry",
+    entityId: entry.id,
+    after: entry,
   });
 
   revalidatePath("/contabilidade/lancamentos");
@@ -96,7 +107,7 @@ export async function updateJournalEntryAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const { organizationId } = await requireOrg();
+  const { organizationId, userId, userName } = await requireOrg();
   const t = await getTranslations("contabilidade.lancamentos.errors");
   const date = formData.get("date") as string;
   const description = formData.get("description") as string;
@@ -113,7 +124,10 @@ export async function updateJournalEntryAction(
     return { error: t("accountRequired") };
   }
 
-  const existing = await prisma.journalEntry.findFirst({ where: { id, organizationId } });
+  const existing = await prisma.journalEntry.findFirst({
+    where: { id, organizationId },
+    include: { lines: true },
+  });
   if (!existing) return { error: t("notFound") };
 
   await prisma.$transaction([
@@ -133,13 +147,38 @@ export async function updateJournalEntryAction(
       },
     }),
   ]);
+  await logAudit({
+    organizationId,
+    userId,
+    userName,
+    action: "UPDATE",
+    entityType: "journalEntry",
+    entityId: id,
+    before: existing,
+    after: { ...existing, date: new Date(date), description, lines: result },
+  });
 
   revalidatePath("/contabilidade/lancamentos");
   redirect("/contabilidade/lancamentos");
 }
 
 export async function deleteJournalEntryAction(id: string) {
-  const { organizationId } = await requireOrg();
+  const { organizationId, userId, userName } = await requireOrg();
+  const before = await prisma.journalEntry.findFirst({
+    where: { id, organizationId },
+    include: { lines: true },
+  });
   await prisma.journalEntry.deleteMany({ where: { id, organizationId } });
+  if (before) {
+    await logAudit({
+      organizationId,
+      userId,
+      userName,
+      action: "DELETE",
+      entityType: "journalEntry",
+      entityId: id,
+      before,
+    });
+  }
   revalidatePath("/contabilidade/lancamentos");
 }

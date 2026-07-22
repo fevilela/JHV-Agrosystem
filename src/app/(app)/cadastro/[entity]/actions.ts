@@ -20,10 +20,10 @@ export async function createEntityAction(
   const config = getEntityConfig(entitySlug, t);
   if (!config) return { error: t("errors.invalidEntity") };
 
-  const { organizationId } = await requireOrg();
+  const { organizationId, userId, userName } = await requireOrg();
 
   try {
-    await createEntityRecord(config, formData, organizationId);
+    await createEntityRecord(config, formData, organizationId, { userId, userName });
   } catch {
     return { error: t("errors.saveError") };
   }
@@ -42,10 +42,10 @@ export async function updateEntityAction(
   const config = getEntityConfig(entitySlug, t);
   if (!config) return { error: t("errors.invalidEntity") };
 
-  const { organizationId } = await requireOrg();
+  const { organizationId, userId, userName } = await requireOrg();
 
   try {
-    await updateEntityRecord(config, id, formData, organizationId);
+    await updateEntityRecord(config, id, formData, organizationId, { userId, userName });
   } catch {
     return { error: t("errors.saveError") };
   }
@@ -59,8 +59,8 @@ export async function deleteEntityAction(entitySlug: string, id: string) {
   const config = getEntityConfig(entitySlug, t);
   if (!config) return;
 
-  const { organizationId } = await requireOrg();
+  const { organizationId, userId, userName } = await requireOrg();
 
-  await deleteEntityRecord(config, id, organizationId);
+  await deleteEntityRecord(config, id, organizationId, { userId, userName });
   revalidatePath(`/cadastro/${entitySlug}`);
 }

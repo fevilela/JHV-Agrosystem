@@ -162,6 +162,7 @@ export const navGroups: NavGroup[] = [
       { label: "Dados da Empresa", href: "/configuracoes/empresa" },
       { label: "Conectar WhatsApp", href: "/configuracoes/whatsapp" },
       { label: "Conversas WhatsApp", href: "/configuracoes/whatsapp/conversas" },
+      { label: "Log de Auditoria", href: "/configuracoes/auditoria" },
     ],
   },
 ];

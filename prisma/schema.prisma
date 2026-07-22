@@ -101,6 +101,8 @@ model Organization {
   livestockAnimals    LivestockAnimal[]
   managementMovements ManagementMovement[]
 
+  auditLogs AuditLog[]
+
   @@map("organizations")
 }
 
@@ -1743,4 +1745,29 @@ model Contract {
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("contracts")
+}
+
+// ---------- Log de Auditoria ----------
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  userId     String?
+  userName   String?
+  action     AuditAction
+  entityType String
+  entityId   String
+  changes    Json?
+  createdAt  DateTime    @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@map("audit_logs")
 }
