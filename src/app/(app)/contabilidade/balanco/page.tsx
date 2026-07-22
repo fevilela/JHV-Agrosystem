@@ -1,3 +1,4 @@
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/labels";
 import { calcularSaldo } from "@/lib/contabilidade";
@@ -8,6 +9,8 @@ export default async function BalancoPatrimonialPage() {
     orderBy: { code: "asc" },
     include: { lines: true },
   });
+  const t = await getTranslations("contabilidade.balanco");
+  const locale = await getLocale();
 
   const rows = accounts
     .map((a) => {
@@ -29,28 +32,21 @@ export default async function BalancoPatrimonialPage() {
 
   return (
     <div>
-      <h1 className="mb-2 text-xl font-semibold text-neutral-900">Balanço Patrimonial</h1>
-      <p className="mb-6 text-sm text-neutral-500">
-        Posição patrimonial acumulada desde o início dos lançamentos.
-      </p>
+      <h1 className="mb-2 text-xl font-semibold text-neutral-900">{t("title")}</h1>
+      <p className="mb-6 text-sm text-neutral-500">{t("description")}</p>
 
-      <p className="mb-6 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-        Este balanço mostra só as contas de Ativo, Passivo e Patrimônio Líquido. Para fechar
-        certinho (Ativo = Passivo + PL), o resultado apurado na DRE do período precisa ser lançado
-        manualmente em &quot;Lucros/Prejuízos Acumulados&quot; ao final do exercício — isso é
-        trabalho de encerramento contábil, normalmente feito junto com um contador.
-      </p>
+      <p className="mb-6 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">{t("notice")}</p>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
           <div className="border-b border-neutral-200 px-4 py-3">
-            <h2 className="text-sm font-semibold text-neutral-700">Ativo</h2>
+            <h2 className="text-sm font-semibold text-neutral-700">{t("assets")}</h2>
           </div>
           <table className="w-full text-sm">
             <tbody>
               {ativo.length === 0 && (
                 <tr>
-                  <td className="px-4 py-6 text-center text-sm text-neutral-400">Sem saldo.</td>
+                  <td className="px-4 py-6 text-center text-sm text-neutral-400">{t("noBalance")}</td>
                 </tr>
               )}
               {ativo.map((r) => (
@@ -58,14 +54,14 @@ export default async function BalancoPatrimonialPage() {
                   <td className="px-4 py-2 text-neutral-700">
                     {r.code} — {r.name}
                   </td>
-                  <td className="px-4 py-2 text-right text-neutral-700">{formatCurrency(r.saldo)}</td>
+                  <td className="px-4 py-2 text-right text-neutral-700">{formatCurrency(r.saldo, locale)}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="border-t border-neutral-200 bg-neutral-50 font-semibold text-neutral-800">
-                <td className="px-4 py-3">Total do Ativo</td>
-                <td className="px-4 py-3 text-right">{formatCurrency(totalAtivo)}</td>
+                <td className="px-4 py-3">{t("totalAssets")}</td>
+                <td className="px-4 py-3 text-right">{formatCurrency(totalAtivo, locale)}</td>
               </tr>
             </tfoot>
           </table>
@@ -73,7 +69,7 @@ export default async function BalancoPatrimonialPage() {
 
         <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
           <div className="border-b border-neutral-200 px-4 py-3">
-            <h2 className="text-sm font-semibold text-neutral-700">Passivo + Patrimônio Líquido</h2>
+            <h2 className="text-sm font-semibold text-neutral-700">{t("liabilitiesEquity")}</h2>
           </div>
           <table className="w-full text-sm">
             <tbody>
@@ -82,7 +78,7 @@ export default async function BalancoPatrimonialPage() {
                   <td className="px-4 py-2 text-neutral-700">
                     {r.code} — {r.name}
                   </td>
-                  <td className="px-4 py-2 text-right text-neutral-700">{formatCurrency(r.saldo)}</td>
+                  <td className="px-4 py-2 text-right text-neutral-700">{formatCurrency(r.saldo, locale)}</td>
                 </tr>
               ))}
               {patrimonioLiquido.map((r) => (
@@ -90,21 +86,21 @@ export default async function BalancoPatrimonialPage() {
                   <td className="px-4 py-2 text-neutral-700">
                     {r.code} — {r.name}
                   </td>
-                  <td className="px-4 py-2 text-right text-neutral-700">{formatCurrency(r.saldo)}</td>
+                  <td className="px-4 py-2 text-right text-neutral-700">{formatCurrency(r.saldo, locale)}</td>
                 </tr>
               ))}
               {passivo.length === 0 && patrimonioLiquido.length === 0 && (
                 <tr>
                   <td colSpan={2} className="px-4 py-6 text-center text-sm text-neutral-400">
-                    Sem saldo.
+                    {t("noBalance")}
                   </td>
                 </tr>
               )}
             </tbody>
             <tfoot>
               <tr className="border-t border-neutral-200 bg-neutral-50 font-semibold text-neutral-800">
-                <td className="px-4 py-3">Total Passivo + PL</td>
-                <td className="px-4 py-3 text-right">{formatCurrency(totalPassivoPL)}</td>
+                <td className="px-4 py-3">{t("totalLiabilitiesEquity")}</td>
+                <td className="px-4 py-3 text-right">{formatCurrency(totalPassivoPL, locale)}</td>
               </tr>
             </tfoot>
           </table>
@@ -112,7 +108,7 @@ export default async function BalancoPatrimonialPage() {
       </div>
 
       <p className="mt-4 text-sm text-neutral-500">
-        Diferença Ativo − (Passivo + PL): <strong>{formatCurrency(totalAtivo - totalPassivoPL)}</strong>
+        {t("difference")}: <strong>{formatCurrency(totalAtivo - totalPassivoPL, locale)}</strong>
       </p>
     </div>
   );

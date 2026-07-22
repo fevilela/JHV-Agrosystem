@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
-import { chartAccountFields } from "../fields";
+import { getChartAccountFields } from "../fields";
 import { updateChartAccountAction } from "../actions";
 
 export default async function EditChartAccountPage({
@@ -18,11 +19,15 @@ export default async function EditChartAccountPage({
 
   if (!account) notFound();
 
+  const t = await getTranslations("contabilidade.planoContas");
+  const tType = await getTranslations("labels.chartAccountType");
+  const tNature = await getTranslations("labels.chartAccountNature");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Conta</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <RecordForm
-        fields={chartAccountFields}
+        fields={getChartAccountFields(t, tType, tNature)}
         action={updateChartAccountAction.bind(null, id)}
         initialValues={account}
         relationOptions={{

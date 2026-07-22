@@ -1,25 +1,31 @@
 import type { RecordField } from "@/components/crud/record-form";
-import { toOptions, chartAccountTypeLabels, chartAccountNatureLabels } from "@/lib/labels";
+import { toOptionsFromKeys, chartAccountTypeLabels, chartAccountNatureLabels } from "@/lib/labels";
 
-export const chartAccountFields: RecordField[] = [
-  { name: "code", label: "Código", type: "text", required: true },
-  { name: "name", label: "Nome", type: "text", required: true, colSpan: 2 },
-  {
-    name: "type",
-    label: "Tipo",
-    type: "select",
-    required: true,
-    options: toOptions(chartAccountTypeLabels),
-  },
-  {
-    name: "nature",
-    label: "Natureza",
-    type: "select",
-    required: true,
-    options: toOptions(chartAccountNatureLabels),
-  },
-  { name: "parentId", label: "Conta Pai", type: "relation" },
-  { name: "analytic", label: "Analítica (aceita lançamento)", type: "checkbox" },
-  { name: "active", label: "Ativa", type: "checkbox" },
-  { name: "notes", label: "Observações", type: "textarea", colSpan: 2 },
-];
+export function getChartAccountFields(
+  t: (key: string) => string,
+  tType: (key: string) => string,
+  tNature: (key: string) => string
+): RecordField[] {
+  return [
+    { name: "code", label: t("fields.code"), type: "text", required: true },
+    { name: "name", label: t("fields.name"), type: "text", required: true, colSpan: 2 },
+    {
+      name: "type",
+      label: t("fields.type"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(chartAccountTypeLabels, tType),
+    },
+    {
+      name: "nature",
+      label: t("fields.nature"),
+      type: "select",
+      required: true,
+      options: toOptionsFromKeys(chartAccountNatureLabels, tNature),
+    },
+    { name: "parentId", label: t("fields.parentId"), type: "relation" },
+    { name: "analytic", label: t("fields.analytic"), type: "checkbox" },
+    { name: "active", label: t("fields.active"), type: "checkbox" },
+    { name: "notes", label: t("fields.notes"), type: "textarea", colSpan: 2 },
+  ];
+}

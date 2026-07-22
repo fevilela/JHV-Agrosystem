@@ -2,37 +2,42 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 
 type FormState = { error?: string } | undefined;
 
 type ParsedLine = { accountId: string; type: "DEBITO" | "CREDITO"; amount: number };
+type Translator = (key: string) => string;
 
-function parseAndValidateLines(linesJson: string): ParsedLine[] | { error: string } {
+async function parseAndValidateLines(
+  linesJson: string,
+  t: Translator
+): Promise<ParsedLine[] | { error: string }> {
   let raw: { accountId: string; type: string; amount: string }[];
   try {
     raw = JSON.parse(linesJson);
   } catch {
-    return { error: "Partidas inválidas." };
+    return { error: t("invalidLines") };
   }
 
   if (!Array.isArray(raw) || raw.length < 2) {
-    return { error: "Um lançamento precisa de pelo menos duas partidas." };
+    return { error: t("minTwoLines") };
   }
 
   const lines: ParsedLine[] = [];
   for (const l of raw) {
-    if (!l.accountId) return { error: "Selecione a conta em todas as partidas." };
-    if (l.type !== "DEBITO" && l.type !== "CREDITO") return { error: "Tipo de partida inválido." };
+    if (!l.accountId) return { error: t("accountRequired") };
+    if (l.type !== "DEBITO" && l.type !== "CREDITO") return { error: t("invalidLineType") };
     const amount = Number(l.amount);
-    if (!amount || amount <= 0) return { error: "Informe um valor maior que zero em todas as partidas." };
+    if (!amount || amount <= 0) return { error: t("positiveAmountRequired") };
     lines.push({ accountId: l.accountId, type: l.type, amount });
   }
 
   const totalDebito = lines.filter((l) => l.type === "DEBITO").reduce((s, l) => s + l.amount, 0);
   const totalCredito = lines.filter((l) => l.type === "CREDITO").reduce((s, l) => s + l.amount, 0);
   if (Math.abs(totalDebito - totalCredito) >= 0.01) {
-    return { error: "O lançamento não fecha: o total de débito precisa ser igual ao total de crédito." };
+    return { error: t("unbalanced") };
   }
 
   return lines;
@@ -42,14 +47,15 @@ export async function createJournalEntryAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const t = await getTranslations("contabilidade.lancamentos.errors");
   const date = formData.get("date") as string;
   const description = formData.get("description") as string;
   const linesJson = formData.get("linesJson") as string;
 
-  if (!date) return { error: "Informe a data." };
-  if (!description) return { error: "Informe a descrição." };
+  if (!date) return { error: t("dateRequired") };
+  if (!description) return { error: t("descriptionRequired") };
 
-  const result = parseAndValidateLines(linesJson);
+  const result = await parseAndValidateLines(linesJson, t);
   if ("error" in result) return { error: result.error };
 
   await prisma.journalEntry.create({
@@ -75,14 +81,15 @@ export async function updateJournalEntryAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const t = await getTranslations("contabilidade.lancamentos.errors");
   const date = formData.get("date") as string;
   const description = formData.get("description") as string;
   const linesJson = formData.get("linesJson") as string;
 
-  if (!date) return { error: "Informe a data." };
-  if (!description) return { error: "Informe a descrição." };
+  if (!date) return { error: t("dateRequired") };
+  if (!description) return { error: t("descriptionRequired") };
 
-  const result = parseAndValidateLines(linesJson);
+  const result = await parseAndValidateLines(linesJson, t);
   if ("error" in result) return { error: result.error };
 
   await prisma.$transaction([

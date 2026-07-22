@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { JournalEntryForm } from "../journal-entry-form";
 import { updateJournalEntryAction } from "../actions";
@@ -17,9 +18,11 @@ export default async function EditJournalEntryPage({
 
   if (!entry) notFound();
 
+  const t = await getTranslations("contabilidade.lancamentos");
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-neutral-900">Editar Lançamento Contábil</h1>
+      <h1 className="mb-6 text-xl font-semibold text-neutral-900">{t("editTitle")}</h1>
       <JournalEntryForm
         accounts={accounts}
         action={updateJournalEntryAction.bind(null, id)}

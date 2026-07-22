@@ -972,5 +972,145 @@
         "orderDateRequired": "Indique la fecha del pedido."
       }
     }
+  },
+  "contabilidade": {
+    "planoContas": {
+      "title": "Plan de Cuentas",
+      "new": "Nueva Cuenta",
+      "editTitle": "Editar Cuenta",
+      "accountCount": "{count, plural, one {# cuenta} other {# cuentas}}",
+      "noRecords": "Aún no hay cuentas registradas.",
+      "table": {
+        "code": "Código",
+        "name": "Nombre",
+        "type": "Tipo",
+        "nature": "Naturaleza",
+        "analytic": "Analítica",
+        "status": "Estado",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "yes": "Sí",
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "fields": {
+        "code": "Código",
+        "name": "Nombre",
+        "type": "Tipo",
+        "nature": "Naturaleza",
+        "parentId": "Cuenta Padre",
+        "analytic": "Analítica (acepta asientos)",
+        "active": "Activa",
+        "notes": "Observaciones"
+      },
+      "errors": {
+        "codeRequired": "Indique el código de la cuenta.",
+        "nameRequired": "Indique el nombre de la cuenta.",
+        "typeRequired": "Seleccione el tipo.",
+        "natureRequired": "Seleccione la naturaleza.",
+        "selfParent": "Una cuenta no puede ser padre de sí misma.",
+        "duplicateCode": "Ya existe una cuenta con ese código."
+      }
+    },
+    "lancamentos": {
+      "title": "Asientos Contables",
+      "new": "Nuevo Asiento",
+      "newDetail": "Nuevo Asiento Contable",
+      "editTitle": "Editar Asiento Contable",
+      "entryCount": "{count, plural, one {# asiento} other {# asientos}}",
+      "noRecords": "Aún no hay asientos registrados.",
+      "table": {
+        "number": "N°",
+        "date": "Fecha",
+        "description": "Descripción",
+        "lines": "Partidas",
+        "value": "Valor",
+        "actions": "Acciones",
+        "edit": "Editar"
+      },
+      "form": {
+        "date": "Fecha",
+        "description": "Descripción",
+        "lines": "Partidas",
+        "addLine": "Agregar línea",
+        "account": "Cuenta",
+        "type": "Tipo",
+        "value": "Valor",
+        "removeLine": "Eliminar línea",
+        "select": "Seleccione",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "totalDebit": "Total Débito",
+        "totalCredit": "Total Crédito",
+        "balanced": "Cerrado",
+        "unbalanced": "No cerrado"
+      },
+      "errors": {
+        "invalidLines": "Partidas inválidas.",
+        "minTwoLines": "Un asiento necesita al menos dos partidas.",
+        "accountRequired": "Seleccione la cuenta en todas las partidas.",
+        "invalidLineType": "Tipo de partida inválido.",
+        "positiveAmountRequired": "Indique un valor mayor que cero en todas las partidas.",
+        "unbalanced": "El asiento no cierra: el total de débito debe ser igual al total de crédito.",
+        "dateRequired": "Indique la fecha.",
+        "descriptionRequired": "Indique la descripción."
+      }
+    },
+    "razao": {
+      "title": "Libro Mayor",
+      "description": "Extracto de movimientos por cuenta.",
+      "accountLabel": "Cuenta",
+      "selectAccount": "Seleccione una cuenta",
+      "filter": "Filtrar",
+      "selectPrompt": "Seleccione una cuenta para ver el extracto.",
+      "table": {
+        "date": "Fecha",
+        "history": "Historial",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "balance": "Saldo"
+      },
+      "noMovements": "Aún no hay movimientos en esta cuenta."
+    },
+    "balancete": {
+      "title": "Balance de Comprobación",
+      "description": "Total de débitos y créditos por cuenta, desde el inicio de los asientos.",
+      "table": {
+        "code": "Código",
+        "account": "Cuenta",
+        "type": "Tipo",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "balance": "Saldo"
+      },
+      "noRecords": "Aún no hay asientos contables.",
+      "grandTotal": "Total General",
+      "balanced": "Cerrado",
+      "unbalanced": "No cerrado"
+    },
+    "balanco": {
+      "title": "Balance General",
+      "description": "Posición patrimonial acumulada desde el inicio de los asientos.",
+      "notice": "Este balance muestra solo las cuentas de Activo, Pasivo y Patrimonio Neto. Para cerrar correctamente (Activo = Pasivo + PN), el resultado obtenido en el Estado de Resultados del período debe registrarse manualmente en \"Resultados Acumulados\" al cierre del ejercicio — este es un trabajo de cierre contable, normalmente realizado junto con un contador.",
+      "assets": "Activo",
+      "liabilitiesEquity": "Pasivo + Patrimonio Neto",
+      "noBalance": "Sin saldo.",
+      "totalAssets": "Total del Activo",
+      "totalLiabilitiesEquity": "Total Pasivo + PN",
+      "difference": "Diferencia Activo − (Pasivo + PN)"
+    },
+    "dre": {
+      "title": "Estado de Resultados",
+      "description": "Ingresos menos costos y gastos, acumulado desde el inicio de los asientos.",
+      "revenue": "Ingresos",
+      "costs": "Costos",
+      "expenses": "Gastos",
+      "noEntries": "Sin asientos.",
+      "totalRevenue": "Total Ingresos",
+      "totalCosts": "(−) Total Costos",
+      "totalExpenses": "(−) Total Gastos",
+      "profit": "Ganancia del Período",
+      "loss": "Pérdida del Período"
+    }
   }
 }

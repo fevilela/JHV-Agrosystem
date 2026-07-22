@@ -972,5 +972,145 @@
         "orderDateRequired": "Enter the order date."
       }
     }
+  },
+  "contabilidade": {
+    "planoContas": {
+      "title": "Chart of Accounts",
+      "new": "New Account",
+      "editTitle": "Edit Account",
+      "accountCount": "{count, plural, one {# account} other {# accounts}}",
+      "noRecords": "No accounts registered yet.",
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "type": "Type",
+        "nature": "Nature",
+        "analytic": "Analytic",
+        "status": "Status",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "yes": "Yes",
+      "active": "Active",
+      "inactive": "Inactive",
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "type": "Type",
+        "nature": "Nature",
+        "parentId": "Parent Account",
+        "analytic": "Analytic (accepts entries)",
+        "active": "Active",
+        "notes": "Notes"
+      },
+      "errors": {
+        "codeRequired": "Enter the account code.",
+        "nameRequired": "Enter the account name.",
+        "typeRequired": "Select the type.",
+        "natureRequired": "Select the nature.",
+        "selfParent": "An account can't be its own parent.",
+        "duplicateCode": "An account with this code already exists."
+      }
+    },
+    "lancamentos": {
+      "title": "Journal Entries",
+      "new": "New Entry",
+      "newDetail": "New Journal Entry",
+      "editTitle": "Edit Journal Entry",
+      "entryCount": "{count, plural, one {# entry} other {# entries}}",
+      "noRecords": "No entries registered yet.",
+      "table": {
+        "number": "No.",
+        "date": "Date",
+        "description": "Description",
+        "lines": "Lines",
+        "value": "Value",
+        "actions": "Actions",
+        "edit": "Edit"
+      },
+      "form": {
+        "date": "Date",
+        "description": "Description",
+        "lines": "Lines",
+        "addLine": "Add line",
+        "account": "Account",
+        "type": "Type",
+        "value": "Value",
+        "removeLine": "Remove line",
+        "select": "Select",
+        "debit": "Debit",
+        "credit": "Credit",
+        "totalDebit": "Total Debit",
+        "totalCredit": "Total Credit",
+        "balanced": "Balanced",
+        "unbalanced": "Unbalanced"
+      },
+      "errors": {
+        "invalidLines": "Invalid lines.",
+        "minTwoLines": "An entry needs at least two lines.",
+        "accountRequired": "Select the account on every line.",
+        "invalidLineType": "Invalid line type.",
+        "positiveAmountRequired": "Enter a value greater than zero on every line.",
+        "unbalanced": "The entry doesn't balance: total debit must equal total credit.",
+        "dateRequired": "Enter the date.",
+        "descriptionRequired": "Enter the description."
+      }
+    },
+    "razao": {
+      "title": "General Ledger",
+      "description": "Movement statement by account.",
+      "accountLabel": "Account",
+      "selectAccount": "Select an account",
+      "filter": "Filter",
+      "selectPrompt": "Select an account to see the statement.",
+      "table": {
+        "date": "Date",
+        "history": "History",
+        "debit": "Debit",
+        "credit": "Credit",
+        "balance": "Balance"
+      },
+      "noMovements": "No movements on this account yet."
+    },
+    "balancete": {
+      "title": "Trial Balance",
+      "description": "Total debits and credits by account, since the first entry.",
+      "table": {
+        "code": "Code",
+        "account": "Account",
+        "type": "Type",
+        "debit": "Debit",
+        "credit": "Credit",
+        "balance": "Balance"
+      },
+      "noRecords": "No journal entries yet.",
+      "grandTotal": "Grand Total",
+      "balanced": "Balanced",
+      "unbalanced": "Unbalanced"
+    },
+    "balanco": {
+      "title": "Balance Sheet",
+      "description": "Accumulated financial position since the first entry.",
+      "notice": "This balance sheet shows only Asset, Liability and Equity accounts. To close correctly (Assets = Liabilities + Equity), the result from the period's Income Statement must be manually posted to \"Retained Earnings\" at year-end closing — this is accounting close work, normally done together with an accountant.",
+      "assets": "Assets",
+      "liabilitiesEquity": "Liabilities + Equity",
+      "noBalance": "No balance.",
+      "totalAssets": "Total Assets",
+      "totalLiabilitiesEquity": "Total Liabilities + Equity",
+      "difference": "Difference Assets − (Liabilities + Equity)"
+    },
+    "dre": {
+      "title": "Income Statement",
+      "description": "Revenue minus costs and expenses, accumulated since the first entry.",
+      "revenue": "Revenue",
+      "costs": "Costs",
+      "expenses": "Expenses",
+      "noEntries": "No entries.",
+      "totalRevenue": "Total Revenue",
+      "totalCosts": "(−) Total Costs",
+      "totalExpenses": "(−) Total Expenses",
+      "profit": "Period Profit",
+      "loss": "Period Loss"
+    }
   }
 }

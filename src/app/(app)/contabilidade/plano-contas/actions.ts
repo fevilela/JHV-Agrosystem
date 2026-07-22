@@ -3,28 +3,37 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
-import { chartAccountFields } from "./fields";
+import { getChartAccountFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
+
+async function getFieldsAndT() {
+  const t = await getTranslations("contabilidade.planoContas");
+  const tType = await getTranslations("labels.chartAccountType");
+  const tNature = await getTranslations("labels.chartAccountNature");
+  return { t, fields: getChartAccountFields(t, tType, tNature) };
+}
 
 export async function createChartAccountAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(chartAccountFields, formData);
-  if (!data.code) return { error: "Informe o código da conta." };
-  if (!data.name) return { error: "Informe o nome da conta." };
-  if (!data.type) return { error: "Selecione o tipo." };
-  if (!data.nature) return { error: "Selecione a natureza." };
+  const { t, fields } = await getFieldsAndT();
+  const data = buildRecordData(fields, formData);
+  if (!data.code) return { error: t("errors.codeRequired") };
+  if (!data.name) return { error: t("errors.nameRequired") };
+  if (!data.type) return { error: t("errors.typeRequired") };
+  if (!data.nature) return { error: t("errors.natureRequired") };
 
   try {
     await prisma.chartAccount.create({
       data: data as Prisma.ChartAccountUncheckedCreateInput,
     });
   } catch {
-    return { error: "Já existe uma conta com esse código." };
+    return { error: t("errors.duplicateCode") };
   }
 
   revalidatePath("/contabilidade/plano-contas");
@@ -36,14 +45,15 @@ export async function updateChartAccountAction(
   _prevState: FormState,
   formData: FormData
 ) {
-  const data = buildRecordData(chartAccountFields, formData);
-  if (!data.code) return { error: "Informe o código da conta." };
-  if (!data.name) return { error: "Informe o nome da conta." };
-  if (!data.type) return { error: "Selecione o tipo." };
-  if (!data.nature) return { error: "Selecione a natureza." };
+  const { t, fields } = await getFieldsAndT();
+  const data = buildRecordData(fields, formData);
+  if (!data.code) return { error: t("errors.codeRequired") };
+  if (!data.name) return { error: t("errors.nameRequired") };
+  if (!data.type) return { error: t("errors.typeRequired") };
+  if (!data.nature) return { error: t("errors.natureRequired") };
 
   if (data.parentId === id) {
-    return { error: "Uma conta não pode ser pai dela mesma." };
+    return { error: t("errors.selfParent") };
   }
 
   try {
@@ -52,7 +62,7 @@ export async function updateChartAccountAction(
       data: data as Prisma.ChartAccountUncheckedUpdateInput,
     });
   } catch {
-    return { error: "Já existe uma conta com esse código." };
+    return { error: t("errors.duplicateCode") };
   }
 
   revalidatePath("/contabilidade/plano-contas");

@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (state: FormState, formData: FormData) => Promise<FormState>;
@@ -29,6 +30,9 @@ export function JournalEntryForm({
   backHref: string;
 }) {
   const [state, formAction, isPending] = useActionState(action, undefined);
+  const t = useTranslations("contabilidade.lancamentos.form");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [lines, setLines] = useState<Line[]>(
     initialValues?.lines ?? [
       { accountId: "", type: "DEBITO", amount: "" },
@@ -66,7 +70,7 @@ export function JournalEntryForm({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Data <span className="text-red-500">*</span>
+            {t("date")} <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
@@ -78,7 +82,7 @@ export function JournalEntryForm({
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Descrição <span className="text-red-500">*</span>
+            {t("description")} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -92,14 +96,14 @@ export function JournalEntryForm({
 
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-neutral-700">Partidas</h3>
+          <h3 className="text-sm font-semibold text-neutral-700">{t("lines")}</h3>
           <button
             type="button"
             onClick={addLine}
             className="flex items-center gap-1 rounded-md border border-neutral-300 px-2 py-1 text-xs text-neutral-600 hover:bg-neutral-100"
           >
             <Plus size={14} />
-            Adicionar linha
+            {t("addLine")}
           </button>
         </div>
 
@@ -107,9 +111,9 @@ export function JournalEntryForm({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
-                <th className="px-3 py-2">Conta</th>
-                <th className="px-3 py-2">Tipo</th>
-                <th className="px-3 py-2">Valor</th>
+                <th className="px-3 py-2">{t("account")}</th>
+                <th className="px-3 py-2">{t("type")}</th>
+                <th className="px-3 py-2">{t("value")}</th>
                 <th className="px-3 py-2 text-right">—</th>
               </tr>
             </thead>
@@ -122,7 +126,7 @@ export function JournalEntryForm({
                       onChange={(e) => updateLine(i, { accountId: e.target.value })}
                       className="w-full rounded-lg border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
                     >
-                      <option value="">Selecione</option>
+                      <option value="">{t("select")}</option>
                       {accounts.map((a) => (
                         <option key={a.id} value={a.id}>
                           {a.code} — {a.name}
@@ -136,8 +140,8 @@ export function JournalEntryForm({
                       onChange={(e) => updateLine(i, { type: e.target.value as "DEBITO" | "CREDITO" })}
                       className="w-full rounded-lg border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
                     >
-                      <option value="DEBITO">Débito</option>
-                      <option value="CREDITO">Crédito</option>
+                      <option value="DEBITO">{t("debit")}</option>
+                      <option value="CREDITO">{t("credit")}</option>
                     </select>
                   </td>
                   <td className="px-3 py-2">
@@ -156,7 +160,7 @@ export function JournalEntryForm({
                       onClick={() => removeLine(i)}
                       disabled={lines.length <= 2}
                       className="rounded-md p-1.5 text-neutral-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
-                      title="Remover linha"
+                      title={t("removeLine")}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -169,19 +173,19 @@ export function JournalEntryForm({
 
         <div className="mt-3 flex items-center gap-4 text-sm">
           <span className="text-neutral-600">
-            Total Débito:{" "}
-            <strong>{totalDebito.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong>
+            {t("totalDebit")}:{" "}
+            <strong>{totalDebito.toLocaleString(locale, { style: "currency", currency: "BRL" })}</strong>
           </span>
           <span className="text-neutral-600">
-            Total Crédito:{" "}
-            <strong>{totalCredito.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong>
+            {t("totalCredit")}:{" "}
+            <strong>{totalCredito.toLocaleString(locale, { style: "currency", currency: "BRL" })}</strong>
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
               balanced ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
             }`}
           >
-            {balanced ? "Fechado" : "Não fechado"}
+            {balanced ? t("balanced") : t("unbalanced")}
           </span>
         </div>
       </div>
@@ -196,13 +200,13 @@ export function JournalEntryForm({
           disabled={isPending || !balanced}
           className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800 disabled:opacity-60"
         >
-          {isPending ? "Salvando..." : "Salvar"}
+          {isPending ? tc("saving") : tc("save")}
         </button>
         <Link
           href={backHref}
           className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
         >
-          Cancelar
+          {tc("cancel")}
         </Link>
       </div>
     </form>

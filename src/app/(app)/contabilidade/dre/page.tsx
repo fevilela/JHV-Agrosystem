@@ -1,3 +1,4 @@
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/labels";
 import { calcularSaldo } from "@/lib/contabilidade";
@@ -8,6 +9,8 @@ export default async function DrePage() {
     orderBy: { code: "asc" },
     include: { lines: true },
   });
+  const t = await getTranslations("contabilidade.dre");
+  const locale = await getLocale();
 
   const rows = accounts
     .map((a) => {
@@ -32,7 +35,7 @@ export default async function DrePage() {
       <div className="mb-4">
         <h3 className="mb-2 text-sm font-semibold text-neutral-700">{title}</h3>
         {rows.length === 0 ? (
-          <p className="text-sm text-neutral-400">Sem lançamentos.</p>
+          <p className="text-sm text-neutral-400">{t("noEntries")}</p>
         ) : (
           <table className="w-full text-sm">
             <tbody>
@@ -41,7 +44,7 @@ export default async function DrePage() {
                   <td className="py-1.5 text-neutral-700">
                     {r.code} — {r.name}
                   </td>
-                  <td className="py-1.5 text-right text-neutral-700">{formatCurrency(r.saldo)}</td>
+                  <td className="py-1.5 text-right text-neutral-700">{formatCurrency(r.saldo, locale)}</td>
                 </tr>
               ))}
             </tbody>
@@ -54,37 +57,35 @@ export default async function DrePage() {
   return (
     <div>
       <h1 className="mb-2 text-xl font-semibold text-neutral-900">
-        DRE — Demonstração de Resultado
+        {t("title")}
       </h1>
-      <p className="mb-6 text-sm text-neutral-500">
-        Receitas menos custos e despesas, acumulado desde o início dos lançamentos.
-      </p>
+      <p className="mb-6 text-sm text-neutral-500">{t("description")}</p>
 
       <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-        <Section title="Receitas" rows={receitas} />
-        <Section title="Custos" rows={custos} />
-        <Section title="Despesas" rows={despesas} />
+        <Section title={t("revenue")} rows={receitas} />
+        <Section title={t("costs")} rows={custos} />
+        <Section title={t("expenses")} rows={despesas} />
 
         <div className="mt-6 space-y-1 border-t border-neutral-200 pt-4 text-sm">
           <div className="flex justify-between text-neutral-700">
-            <span>Total Receitas</span>
-            <span>{formatCurrency(totalReceitas)}</span>
+            <span>{t("totalRevenue")}</span>
+            <span>{formatCurrency(totalReceitas, locale)}</span>
           </div>
           <div className="flex justify-between text-neutral-700">
-            <span>(−) Total Custos</span>
-            <span>{formatCurrency(totalCustos)}</span>
+            <span>{t("totalCosts")}</span>
+            <span>{formatCurrency(totalCustos, locale)}</span>
           </div>
           <div className="flex justify-between text-neutral-700">
-            <span>(−) Total Despesas</span>
-            <span>{formatCurrency(totalDespesas)}</span>
+            <span>{t("totalExpenses")}</span>
+            <span>{formatCurrency(totalDespesas, locale)}</span>
           </div>
           <div
             className={`flex justify-between border-t border-neutral-200 pt-2 text-base font-semibold ${
               resultado >= 0 ? "text-green-700" : "text-red-600"
             }`}
           >
-            <span>{resultado >= 0 ? "Lucro do Período" : "Prejuízo do Período"}</span>
-            <span>{formatCurrency(resultado)}</span>
+            <span>{resultado >= 0 ? t("profit") : t("loss")}</span>
+            <span>{formatCurrency(resultado, locale)}</span>
           </div>
         </div>
       </div>

@@ -972,5 +972,145 @@
         "orderDateRequired": "Informe a data do pedido."
       }
     }
+  },
+  "contabilidade": {
+    "planoContas": {
+      "title": "Plano de Contas",
+      "new": "Nova Conta",
+      "editTitle": "Editar Conta",
+      "accountCount": "{count, plural, one {# conta} other {# contas}}",
+      "noRecords": "Nenhuma conta cadastrada ainda.",
+      "table": {
+        "code": "Código",
+        "name": "Nome",
+        "type": "Tipo",
+        "nature": "Natureza",
+        "analytic": "Analítica",
+        "status": "Status",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "yes": "Sim",
+      "active": "Ativa",
+      "inactive": "Inativa",
+      "fields": {
+        "code": "Código",
+        "name": "Nome",
+        "type": "Tipo",
+        "nature": "Natureza",
+        "parentId": "Conta Pai",
+        "analytic": "Analítica (aceita lançamento)",
+        "active": "Ativa",
+        "notes": "Observações"
+      },
+      "errors": {
+        "codeRequired": "Informe o código da conta.",
+        "nameRequired": "Informe o nome da conta.",
+        "typeRequired": "Selecione o tipo.",
+        "natureRequired": "Selecione a natureza.",
+        "selfParent": "Uma conta não pode ser pai dela mesma.",
+        "duplicateCode": "Já existe uma conta com esse código."
+      }
+    },
+    "lancamentos": {
+      "title": "Lançamentos Contábeis",
+      "new": "Novo Lançamento",
+      "newDetail": "Novo Lançamento Contábil",
+      "editTitle": "Editar Lançamento Contábil",
+      "entryCount": "{count, plural, one {# lançamento} other {# lançamentos}}",
+      "noRecords": "Nenhum lançamento cadastrado ainda.",
+      "table": {
+        "number": "Nº",
+        "date": "Data",
+        "description": "Descrição",
+        "lines": "Partidas",
+        "value": "Valor",
+        "actions": "Ações",
+        "edit": "Editar"
+      },
+      "form": {
+        "date": "Data",
+        "description": "Descrição",
+        "lines": "Partidas",
+        "addLine": "Adicionar linha",
+        "account": "Conta",
+        "type": "Tipo",
+        "value": "Valor",
+        "removeLine": "Remover linha",
+        "select": "Selecione",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "totalDebit": "Total Débito",
+        "totalCredit": "Total Crédito",
+        "balanced": "Fechado",
+        "unbalanced": "Não fechado"
+      },
+      "errors": {
+        "invalidLines": "Partidas inválidas.",
+        "minTwoLines": "Um lançamento precisa de pelo menos duas partidas.",
+        "accountRequired": "Selecione a conta em todas as partidas.",
+        "invalidLineType": "Tipo de partida inválido.",
+        "positiveAmountRequired": "Informe um valor maior que zero em todas as partidas.",
+        "unbalanced": "O lançamento não fecha: o total de débito precisa ser igual ao total de crédito.",
+        "dateRequired": "Informe a data.",
+        "descriptionRequired": "Informe a descrição."
+      }
+    },
+    "razao": {
+      "title": "Livro Razão",
+      "description": "Extrato de movimentações por conta.",
+      "accountLabel": "Conta",
+      "selectAccount": "Selecione uma conta",
+      "filter": "Filtrar",
+      "selectPrompt": "Selecione uma conta para ver o extrato.",
+      "table": {
+        "date": "Data",
+        "history": "Histórico",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "balance": "Saldo"
+      },
+      "noMovements": "Nenhuma movimentação nessa conta ainda."
+    },
+    "balancete": {
+      "title": "Balancete de Verificação",
+      "description": "Total de débitos e créditos por conta, desde o início dos lançamentos.",
+      "table": {
+        "code": "Código",
+        "account": "Conta",
+        "type": "Tipo",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "balance": "Saldo"
+      },
+      "noRecords": "Nenhum lançamento contábil ainda.",
+      "grandTotal": "Total Geral",
+      "balanced": "Fechado",
+      "unbalanced": "Não fechado"
+    },
+    "balanco": {
+      "title": "Balanço Patrimonial",
+      "description": "Posição patrimonial acumulada desde o início dos lançamentos.",
+      "notice": "Este balanço mostra só as contas de Ativo, Passivo e Patrimônio Líquido. Para fechar certinho (Ativo = Passivo + PL), o resultado apurado na DRE do período precisa ser lançado manualmente em \"Lucros/Prejuízos Acumulados\" ao final do exercício — isso é trabalho de encerramento contábil, normalmente feito junto com um contador.",
+      "assets": "Ativo",
+      "liabilitiesEquity": "Passivo + Patrimônio Líquido",
+      "noBalance": "Sem saldo.",
+      "totalAssets": "Total do Ativo",
+      "totalLiabilitiesEquity": "Total Passivo + PL",
+      "difference": "Diferença Ativo − (Passivo + PL)"
+    },
+    "dre": {
+      "title": "DRE — Demonstração de Resultado",
+      "description": "Receitas menos custos e despesas, acumulado desde o início dos lançamentos.",
+      "revenue": "Receitas",
+      "costs": "Custos",
+      "expenses": "Despesas",
+      "noEntries": "Sem lançamentos.",
+      "totalRevenue": "Total Receitas",
+      "totalCosts": "(−) Total Custos",
+      "totalExpenses": "(−) Total Despesas",
+      "profit": "Lucro do Período",
+      "loss": "Prejuízo do Período"
+    }
   }
 }
