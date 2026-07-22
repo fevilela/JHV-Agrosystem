@@ -2,20 +2,24 @@
 
 import { Trash2, Ban, Check, X } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 
 const icons = { delete: Trash2, cancel: Ban };
 
 export function DeleteButton({
   onDelete,
-  confirmLabel = "Confirmar exclusão",
+  confirmLabel,
   variant = "delete",
-  title = "Excluir",
+  title,
 }: {
   onDelete: () => Promise<void>;
   confirmLabel?: string;
   variant?: "delete" | "cancel";
   title?: string;
 }) {
+  const t = useTranslations("common");
+  const resolvedConfirmLabel = confirmLabel ?? t("confirmDelete");
+  const resolvedTitle = title ?? (variant === "cancel" ? t("cancel") : t("delete"));
   const Icon = icons[variant];
   const [confirming, setConfirming] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -33,7 +37,7 @@ export function DeleteButton({
         <button
           type="button"
           disabled={isPending}
-          title={confirmLabel}
+          title={resolvedConfirmLabel}
           onClick={() => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             startTransition(() => {
@@ -46,7 +50,7 @@ export function DeleteButton({
         </button>
         <button
           type="button"
-          title="Cancelar"
+          title={t("cancel")}
           onClick={() => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             setConfirming(false);
@@ -67,7 +71,7 @@ export function DeleteButton({
         timeoutRef.current = setTimeout(() => setConfirming(false), 4000);
       }}
       className="rounded-md p-1.5 text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
-      title={title}
+      title={resolvedTitle}
     >
       <Icon size={16} />
     </button>

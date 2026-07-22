@@ -1,0 +1,415 @@
+{
+  "common": {
+    "save": "Salvar",
+    "saving": "Salvando...",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "confirmDelete": "Confirmar exclusão",
+    "select": "Selecione"
+  },
+  "nav": {
+    "cadastro": {
+      "group": "Cadastro",
+      "items": {
+        "proprietarios": "Proprietários",
+        "animais": "Animais / Cavalos",
+        "funcionarios": "Funcionários",
+        "veterinarios": "Veterinários",
+        "ferradores": "Ferradores",
+        "instrutores": "Instrutores",
+        "tratadores": "Tratadores",
+        "clientes": "Clientes",
+        "fornecedores": "Fornecedores"
+      }
+    },
+    "hipica": {
+      "group": "Hípica",
+      "items": {
+        "treinamento": "Controle Diário / Treinamento",
+        "nutricao": "Nutrição",
+        "sanidade": "Sanidade",
+        "baia": "Baia",
+        "piquetes": "Piquetes",
+        "agenda": "Agenda",
+        "competicoes": "Competições",
+        "transporte": "Transporte",
+        "financeiro": "Financeiro da Hípica",
+        "compraVenda": "Compra e Venda de Animais",
+        "contratos": "Contratos"
+      }
+    },
+    "pecuaria": {
+      "group": "Pecuária",
+      "items": {
+        "cadastroAnimal": "Cadastro Animal",
+        "reproducao": "Reprodução",
+        "sanidade": "Sanidade",
+        "pesagens": "Pesagens",
+        "pastagens": "Pastagens",
+        "nutricao": "Nutrição / Confinamento",
+        "manejo": "Manejo",
+        "producaoLeite": "Produção de Leite"
+      }
+    },
+    "agricultura": {
+      "group": "Agricultura",
+      "items": {
+        "talhoes": "Talhões",
+        "safra": "Planejamento de Safra",
+        "plantio": "Plantio",
+        "tratosCulturais": "Tratos Culturais",
+        "fertilidade": "Fertilidade",
+        "irrigacao": "Irrigação",
+        "colheita": "Colheita",
+        "armazenagem": "Armazenagem"
+      }
+    },
+    "maquinas": {
+      "group": "Máquinas e Equipamentos",
+      "items": {
+        "cadastro": "Cadastro",
+        "controle": "Controle de Uso",
+        "manutencoes": "Manutenções"
+      }
+    },
+    "estoque": {
+      "group": "Estoque",
+      "items": {
+        "materiais": "Materiais e Insumos",
+        "lotes": "Lotes e Validade"
+      }
+    },
+    "compras": {
+      "group": "Compras",
+      "items": {
+        "solicitacoes": "Solicitações",
+        "cotacoes": "Cotações",
+        "pedidos": "Pedidos"
+      }
+    },
+    "financeiro": {
+      "group": "Financeiro",
+      "items": {
+        "fluxoCaixa": "Fluxo de Caixa",
+        "contasPagar": "Contas a Pagar",
+        "contasReceber": "Contas a Receber",
+        "recorrentes": "Cobranças Recorrentes",
+        "centroCustos": "Centro de Custos"
+      }
+    },
+    "contabilidade": {
+      "group": "Contabilidade",
+      "items": {
+        "planoContas": "Plano de Contas",
+        "lancamentos": "Lançamentos Contábeis",
+        "razao": "Livro Razão",
+        "balancete": "Balancete de Verificação",
+        "balanco": "Balanço Patrimonial",
+        "dre": "DRE"
+      }
+    },
+    "rh": {
+      "group": "Recursos Humanos",
+      "items": {
+        "funcionarios": "Funcionários",
+        "ponto": "Ponto e Escalas",
+        "treinamentos": "Treinamentos e EPIs"
+      }
+    },
+    "oficina": {
+      "group": "Oficina",
+      "items": {
+        "ordensServico": "Ordens de Serviço",
+        "pecas": "Peças e Mecânicos"
+      }
+    },
+    "configuracoes": {
+      "group": "Configurações",
+      "items": {
+        "empresa": "Dados da Empresa",
+        "whatsapp": "Conectar WhatsApp",
+        "conversas": "Conversas WhatsApp"
+      }
+    }
+  },
+  "labels": {
+    "exerciseType": {
+      "EXERCICIO_GERAL": "Exercício Geral",
+      "SALTO": "Salto",
+      "TAMBOR": "Tambor",
+      "MARCHA": "Marcha",
+      "CORRIDA": "Corrida",
+      "ADESTRAMENTO": "Adestramento",
+      "OUTRO": "Outro"
+    },
+    "intensity": {
+      "LEVE": "Leve",
+      "MODERADA": "Moderada",
+      "INTENSA": "Intensa"
+    },
+    "stallStatus": {
+      "LIVRE": "Livre",
+      "OCUPADA": "Ocupada",
+      "LIMPEZA": "Limpeza",
+      "MANUTENCAO": "Manutenção"
+    },
+    "stallEventType": {
+      "OCUPACAO": "Ocupação",
+      "DESOCUPACAO": "Desocupação",
+      "LIMPEZA": "Limpeza",
+      "MANUTENCAO": "Manutenção",
+      "TROCA": "Troca de animal"
+    },
+    "piqueteStatus": {
+      "LIVRE": "Livre",
+      "OCUPADO": "Ocupado",
+      "MANUTENCAO": "Manutenção"
+    },
+    "piqueteEventType": {
+      "OCUPACAO": "Ocupação",
+      "DESOCUPACAO": "Desocupação",
+      "MANUTENCAO": "Manutenção",
+      "TROCA": "Troca de animal"
+    },
+    "contractType": {
+      "AULAS": "Aulas na Hípica",
+      "PIQUETE": "Aluguel de Piquete",
+      "BAIA": "Aluguel de Baia"
+    },
+    "agendaEventType": {
+      "FERRADOR": "Ferrador",
+      "VETERINARIO": "Veterinário",
+      "VACINA": "Vacina",
+      "COMPETICAO": "Competição",
+      "TRANSPORTE": "Transporte",
+      "OUTRO": "Outro"
+    },
+    "agendaEventStatus": {
+      "AGENDADO": "Agendado",
+      "CONCLUIDO": "Concluído",
+      "CANCELADO": "Cancelado"
+    },
+    "financialEntryType": {
+      "MENSALIDADE": "Mensalidade",
+      "HOSPEDAGEM": "Hospedagem",
+      "TREINAMENTO": "Treinamento",
+      "VETERINARIO": "Veterinário",
+      "MEDICAMENTO": "Medicamento",
+      "OUTRO": "Outro"
+    },
+    "financialEntryStatus": {
+      "PENDENTE": "Pendente",
+      "PAGO": "Pago",
+      "ATRASADO": "Atrasado",
+      "CANCELADO": "Cancelado"
+    },
+    "animalTransactionType": {
+      "COMPRA": "Compra",
+      "VENDA": "Venda",
+      "LEILAO": "Leilão"
+    },
+    "livestockCategory": {
+      "CORTE": "Corte",
+      "LEITE": "Leite",
+      "CONFINAMENTO": "Confinamento",
+      "CRIA": "Cria",
+      "RECRIA": "Recria",
+      "ENGORDA": "Engorda",
+      "REPRODUTOR": "Reprodutor",
+      "OUTRO": "Outro"
+    },
+    "livestockStatus": {
+      "ATIVO": "Ativo",
+      "VENDIDO": "Vendido",
+      "ABATIDO": "Abatido",
+      "OBITO": "Óbito",
+      "INATIVO": "Inativo"
+    },
+    "animalSexo": {
+      "MACHO": "Macho",
+      "FEMEA": "Fêmea",
+      "CASTRADO": "Castrado"
+    },
+    "pastureRotationStatus": {
+      "EM_USO": "Em uso",
+      "DESCANSO": "Descanso"
+    },
+    "reproductionMethod": {
+      "IA": "Inseminação Artificial",
+      "MONTA_NATURAL": "Monta Natural"
+    },
+    "diagnosisResult": {
+      "PRENHE": "Prenhe",
+      "VAZIA": "Vazia",
+      "INDEFINIDO": "Indefinido"
+    },
+    "healthRecordType": {
+      "VACINA_BRUCELOSE": "Vacina Brucelose",
+      "VACINA_AFTOSA": "Vacina Aftosa",
+      "CARRAPATICIDA": "Carrapaticida",
+      "VERMIFUGO": "Vermífugo",
+      "TRATAMENTO": "Tratamento",
+      "OUTRO": "Outro"
+    },
+    "equineHealthRecordType": {
+      "MEDICAMENTO": "Medicamento",
+      "VACINA": "Vacina",
+      "SORO": "Soro",
+      "VERMIFUGO": "Vermífugo",
+      "FERRADURA": "Troca de Ferradura",
+      "CASQUEAMENTO": "Casqueamento",
+      "OUTRO": "Outro"
+    },
+    "milkShift": {
+      "MANHA": "Manhã",
+      "TARDE": "Tarde"
+    },
+    "feedingType": {
+      "PASTO": "Pasto",
+      "CONFINAMENTO": "Confinamento",
+      "SEMI_CONFINAMENTO": "Semi Confinamento"
+    },
+    "managementMovementType": {
+      "MOVIMENTACAO": "Movimentação",
+      "EMBARQUE": "Embarque",
+      "COMPRA": "Compra",
+      "VENDA": "Venda"
+    },
+    "safraStatus": {
+      "PLANEJADA": "Planejada",
+      "EM_ANDAMENTO": "Em Andamento",
+      "COLHIDA": "Colhida",
+      "CANCELADA": "Cancelada"
+    },
+    "tratoCulturalType": {
+      "ADUBACAO": "Adubação",
+      "PULVERIZACAO": "Pulverização",
+      "HERBICIDA": "Herbicida",
+      "INSETICIDA": "Inseticida",
+      "FUNGICIDA": "Fungicida",
+      "OUTRO": "Outro"
+    },
+    "fertilityType": {
+      "ANALISE_SOLO": "Análise de Solo",
+      "CALAGEM": "Calagem",
+      "GESSAGEM": "Gessagem",
+      "CORRECAO": "Correção",
+      "OUTRO": "Outro"
+    },
+    "storageType": {
+      "SILO": "Silo",
+      "ARMAZEM": "Armazém"
+    },
+    "storageMovementType": {
+      "ENTRADA": "Entrada",
+      "SAIDA": "Saída",
+      "QUEBRA": "Quebra"
+    },
+    "machineType": {
+      "TRATOR": "Trator",
+      "COLHEITADEIRA": "Colheitadeira",
+      "PULVERIZADOR": "Pulverizador",
+      "CAMINHAO": "Caminhão",
+      "IMPLEMENTO": "Implemento",
+      "CARRETA": "Carreta",
+      "OUTRO": "Outro"
+    },
+    "machineStatus": {
+      "ATIVO": "Ativo",
+      "MANUTENCAO": "Em Manutenção",
+      "INATIVO": "Inativo",
+      "VENDIDO": "Vendido"
+    },
+    "maintenanceType": {
+      "PREVENTIVA": "Preventiva",
+      "CORRETIVA": "Corretiva",
+      "TROCA_OLEO": "Troca de Óleo",
+      "TROCA_PNEU": "Troca de Pneu",
+      "LUBRIFICACAO": "Lubrificação",
+      "OUTRO": "Outro"
+    },
+    "stockCategory": {
+      "MEDICAMENTO": "Medicamento",
+      "INSUMO": "Insumo",
+      "RACAO": "Ração",
+      "FERRAMENTA": "Ferramenta",
+      "PECA": "Peça",
+      "COMBUSTIVEL": "Combustível",
+      "EPI": "EPI",
+      "MATERIAL": "Material",
+      "OUTRO": "Outro"
+    },
+    "stockBatchStatus": {
+      "DISPONIVEL": "Disponível",
+      "CONSUMIDO": "Consumido"
+    },
+    "purchaseRequestStatus": {
+      "PENDENTE": "Pendente",
+      "APROVADA": "Aprovada",
+      "REJEITADA": "Rejeitada",
+      "ATENDIDA": "Atendida"
+    },
+    "quotationStatus": {
+      "PENDENTE": "Pendente",
+      "APROVADA": "Aprovada",
+      "RECUSADA": "Recusada"
+    },
+    "purchaseOrderStatus": {
+      "PENDENTE": "Pendente",
+      "ENVIADO": "Enviado",
+      "ENTREGUE": "Entregue",
+      "CANCELADO": "Cancelado"
+    },
+    "financeEntryStatus": {
+      "PENDENTE": "Pendente",
+      "PAGO": "Pago",
+      "ATRASADO": "Atrasado",
+      "CANCELADO": "Cancelado"
+    },
+    "paymentMethod": {
+      "PIX": "PIX",
+      "BOLETO": "Boleto",
+      "CARTAO": "Cartão",
+      "CHEQUE": "Cheque",
+      "DINHEIRO": "Dinheiro",
+      "TRANSFERENCIA": "Transferência",
+      "OUTRO": "Outro"
+    },
+    "attendanceStatus": {
+      "PRESENTE": "Presente",
+      "FALTA": "Falta",
+      "ATESTADO": "Atestado",
+      "FERIAS": "Férias",
+      "FOLGA": "Folga"
+    },
+    "scheduleShift": {
+      "MANHA": "Manhã",
+      "TARDE": "Tarde",
+      "NOITE": "Noite",
+      "INTEGRAL": "Integral",
+      "FOLGA": "Folga"
+    },
+    "serviceOrderStatus": {
+      "ABERTA": "Aberta",
+      "EM_ANDAMENTO": "Em Andamento",
+      "CONCLUIDA": "Concluída",
+      "CANCELADA": "Cancelada"
+    },
+    "chartAccountType": {
+      "ATIVO": "Ativo",
+      "PASSIVO": "Passivo",
+      "PATRIMONIO_LIQUIDO": "Patrimônio Líquido",
+      "RECEITA": "Receita",
+      "CUSTO": "Custo",
+      "DESPESA": "Despesa"
+    },
+    "chartAccountNature": {
+      "DEVEDORA": "Devedora",
+      "CREDORA": "Credora"
+    },
+    "journalEntryLineType": {
+      "DEBITO": "Débito",
+      "CREDITO": "Crédito"
+    }
+  }
+}

@@ -324,16 +324,18 @@ export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }
 
-export function formatCurrency(value: unknown) {
+export function formatCurrency(value: unknown, locale: string = "pt-BR") {
   if (value === null || value === undefined) return "—";
   const n = Number(value);
   if (Number.isNaN(n)) return "—";
-  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  // Moeda sempre BRL (é dinheiro real, cobrado em reais) — só o formato de
+  // exibição (separador decimal, posição do símbolo) muda com o locale.
+  return n.toLocaleString(locale, { style: "currency", currency: "BRL" });
 }
 
-export function formatDate(value: unknown) {
+export function formatDate(value: unknown, locale: string = "pt-BR") {
   if (!value) return "—";
   const d = new Date(value as string);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+  return d.toLocaleDateString(locale, { timeZone: "UTC" });
 }

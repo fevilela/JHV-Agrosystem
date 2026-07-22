@@ -5,16 +5,23 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
+
+function navItemKey(href: string) {
+  const last = href.split("/").filter(Boolean).pop() ?? "";
+  return last.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+}
 
 export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
   const visibleGroups = navGroups.filter(
     (g) => ALWAYS_ON_MODULES.includes(g.key) || allowedModules.includes(g.key)
   );
   const [openGroup, setOpenGroup] = useState<string | null>(
     visibleGroups.find((g) => g.items?.some((i) => pathname.startsWith(i.href)))
-      ?.label ?? "Cadastro"
+      ?.key ?? "cadastro"
   );
 
   return (
@@ -25,23 +32,23 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
 
       <nav className="flex-1 overflow-y-auto px-2.5 py-4">
         {visibleGroups.map((group) => {
-          const isOpen = openGroup === group.label;
+          const isOpen = openGroup === group.key;
           const isGroupActive = group.items?.some((i) =>
             pathname.startsWith(i.href)
           );
 
           return (
-            <div key={group.label} className="mb-0.5">
+            <div key={group.key} className="mb-0.5">
               <button
                 type="button"
-                onClick={() => setOpenGroup(isOpen ? null : group.label)}
+                onClick={() => setOpenGroup(isOpen ? null : group.key)}
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors duration-150 ${
                   isGroupActive
                     ? "text-brand-800"
                     : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
                 }`}
               >
-                {group.label}
+                {t(`${group.key}.group`)}
                 <ChevronDown
                   size={15}
                   className={`text-neutral-400 transition-transform duration-200 ${
@@ -67,7 +74,7 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
                           {active && (
                             <span className="absolute -left-3 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-brand-600" />
                           )}
-                          {item.label}
+                          {t(`${group.key}.items.${navItemKey(item.href)}`)}
                         </Link>
                       </li>
                     );

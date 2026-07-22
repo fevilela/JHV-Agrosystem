@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { EntityConfig } from "@/lib/entities";
 
 type FormState = { error?: string } | undefined;
@@ -33,6 +34,7 @@ export function EntityForm({
   backHref: string;
 }) {
   const [state, formAction, isPending] = useActionState(action, undefined);
+  const t = useTranslations("common");
 
   return (
     <form
@@ -112,13 +114,13 @@ export function EntityForm({
           disabled={isPending}
           className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800 disabled:opacity-60"
         >
-          {isPending ? "Salvando..." : "Salvar"}
+          {isPending ? t("saving") : t("save")}
         </button>
         <Link
           href={backHref}
           className="rounded-lg border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50"
         >
-          Cancelar
+          {t("cancel")}
         </Link>
       </div>
     </form>

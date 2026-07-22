@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (
@@ -54,6 +55,7 @@ export function RecordForm({
   backHref: string;
 }) {
   const [state, formAction, isPending] = useActionState(action, undefined);
+  const t = useTranslations("common");
 
   return (
     <form
@@ -134,7 +136,7 @@ export function RecordForm({
                   defaultValue={toInputValue(value, field.type)}
                   className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
                 >
-                  <option value="">{field.required ? "Selecione" : "—"}</option>
+                  <option value="">{field.required ? t("select") : "—"}</option>
                   {options.map((opt) => (
                     <option key={opt.id} value={opt.id}>
                       {opt.label}
@@ -174,13 +176,13 @@ export function RecordForm({
           disabled={isPending}
           className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800 disabled:opacity-60"
         >
-          {isPending ? "Salvando..." : "Salvar"}
+          {isPending ? t("saving") : t("save")}
         </button>
         <Link
           href={backHref}
           className="rounded-lg border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50"
         >
-          Cancelar
+          {t("cancel")}
         </Link>
       </div>
     </form>

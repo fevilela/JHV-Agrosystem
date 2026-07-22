@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { auth, signOut } from "@/lib/auth";
+import { LocaleSwitcher } from "./locale-switcher";
 
 export async function Topbar({ isSuperAdmin }: { isSuperAdmin?: boolean }) {
   const session = await auth();
+  const locale = await getLocale();
   const name = session?.user?.name || "";
   const initials =
     name
@@ -36,6 +39,7 @@ export async function Topbar({ isSuperAdmin }: { isSuperAdmin?: boolean }) {
           </p>
         </div>
       </div>
+      <LocaleSwitcher current={locale} />
       <form
         action={async () => {
           "use server";

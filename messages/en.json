@@ -1,0 +1,415 @@
+{
+  "common": {
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDelete": "Confirm deletion",
+    "select": "Select"
+  },
+  "nav": {
+    "cadastro": {
+      "group": "Registration",
+      "items": {
+        "proprietarios": "Owners",
+        "animais": "Animals / Horses",
+        "funcionarios": "Employees",
+        "veterinarios": "Veterinarians",
+        "ferradores": "Farriers",
+        "instrutores": "Instructors",
+        "tratadores": "Handlers",
+        "clientes": "Clients",
+        "fornecedores": "Suppliers"
+      }
+    },
+    "hipica": {
+      "group": "Equestrian",
+      "items": {
+        "treinamento": "Daily Log / Training",
+        "nutricao": "Nutrition",
+        "sanidade": "Health",
+        "baia": "Stall",
+        "piquetes": "Paddocks",
+        "agenda": "Schedule",
+        "competicoes": "Competitions",
+        "transporte": "Transport",
+        "financeiro": "Equestrian Finance",
+        "compraVenda": "Animal Purchase & Sale",
+        "contratos": "Contracts"
+      }
+    },
+    "pecuaria": {
+      "group": "Livestock",
+      "items": {
+        "cadastroAnimal": "Animal Registration",
+        "reproducao": "Breeding",
+        "sanidade": "Health",
+        "pesagens": "Weighings",
+        "pastagens": "Pastures",
+        "nutricao": "Nutrition / Feedlot",
+        "manejo": "Handling",
+        "producaoLeite": "Milk Production"
+      }
+    },
+    "agricultura": {
+      "group": "Agriculture",
+      "items": {
+        "talhoes": "Fields",
+        "safra": "Crop Planning",
+        "plantio": "Planting",
+        "tratosCulturais": "Crop Management",
+        "fertilidade": "Fertility",
+        "irrigacao": "Irrigation",
+        "colheita": "Harvest",
+        "armazenagem": "Storage"
+      }
+    },
+    "maquinas": {
+      "group": "Machinery & Equipment",
+      "items": {
+        "cadastro": "Registration",
+        "controle": "Usage Log",
+        "manutencoes": "Maintenance"
+      }
+    },
+    "estoque": {
+      "group": "Inventory",
+      "items": {
+        "materiais": "Materials & Supplies",
+        "lotes": "Batches & Expiry"
+      }
+    },
+    "compras": {
+      "group": "Purchasing",
+      "items": {
+        "solicitacoes": "Requests",
+        "cotacoes": "Quotes",
+        "pedidos": "Orders"
+      }
+    },
+    "financeiro": {
+      "group": "Finance",
+      "items": {
+        "fluxoCaixa": "Cash Flow",
+        "contasPagar": "Accounts Payable",
+        "contasReceber": "Accounts Receivable",
+        "recorrentes": "Recurring Billing",
+        "centroCustos": "Cost Centers"
+      }
+    },
+    "contabilidade": {
+      "group": "Accounting",
+      "items": {
+        "planoContas": "Chart of Accounts",
+        "lancamentos": "Journal Entries",
+        "razao": "General Ledger",
+        "balancete": "Trial Balance",
+        "balanco": "Balance Sheet",
+        "dre": "Income Statement"
+      }
+    },
+    "rh": {
+      "group": "Human Resources",
+      "items": {
+        "funcionarios": "Employees",
+        "ponto": "Attendance & Shifts",
+        "treinamentos": "Training & PPE"
+      }
+    },
+    "oficina": {
+      "group": "Workshop",
+      "items": {
+        "ordensServico": "Service Orders",
+        "pecas": "Parts & Mechanics"
+      }
+    },
+    "configuracoes": {
+      "group": "Settings",
+      "items": {
+        "empresa": "Company Data",
+        "whatsapp": "Connect WhatsApp",
+        "conversas": "WhatsApp Conversations"
+      }
+    }
+  },
+  "labels": {
+    "exerciseType": {
+      "EXERCICIO_GERAL": "General Exercise",
+      "SALTO": "Jumping",
+      "TAMBOR": "Barrel Racing",
+      "MARCHA": "Gaited Riding",
+      "CORRIDA": "Racing",
+      "ADESTRAMENTO": "Dressage",
+      "OUTRO": "Other"
+    },
+    "intensity": {
+      "LEVE": "Light",
+      "MODERADA": "Moderate",
+      "INTENSA": "Intense"
+    },
+    "stallStatus": {
+      "LIVRE": "Free",
+      "OCUPADA": "Occupied",
+      "LIMPEZA": "Cleaning",
+      "MANUTENCAO": "Maintenance"
+    },
+    "stallEventType": {
+      "OCUPACAO": "Occupation",
+      "DESOCUPACAO": "Vacancy",
+      "LIMPEZA": "Cleaning",
+      "MANUTENCAO": "Maintenance",
+      "TROCA": "Animal change"
+    },
+    "piqueteStatus": {
+      "LIVRE": "Free",
+      "OCUPADO": "Occupied",
+      "MANUTENCAO": "Maintenance"
+    },
+    "piqueteEventType": {
+      "OCUPACAO": "Occupation",
+      "DESOCUPACAO": "Vacancy",
+      "MANUTENCAO": "Maintenance",
+      "TROCA": "Animal change"
+    },
+    "contractType": {
+      "AULAS": "Riding Lessons",
+      "PIQUETE": "Paddock Rental",
+      "BAIA": "Stall Rental"
+    },
+    "agendaEventType": {
+      "FERRADOR": "Farrier",
+      "VETERINARIO": "Veterinarian",
+      "VACINA": "Vaccine",
+      "COMPETICAO": "Competition",
+      "TRANSPORTE": "Transport",
+      "OUTRO": "Other"
+    },
+    "agendaEventStatus": {
+      "AGENDADO": "Scheduled",
+      "CONCLUIDO": "Completed",
+      "CANCELADO": "Cancelled"
+    },
+    "financialEntryType": {
+      "MENSALIDADE": "Monthly Fee",
+      "HOSPEDAGEM": "Boarding",
+      "TREINAMENTO": "Training",
+      "VETERINARIO": "Veterinarian",
+      "MEDICAMENTO": "Medication",
+      "OUTRO": "Other"
+    },
+    "financialEntryStatus": {
+      "PENDENTE": "Pending",
+      "PAGO": "Paid",
+      "ATRASADO": "Overdue",
+      "CANCELADO": "Cancelled"
+    },
+    "animalTransactionType": {
+      "COMPRA": "Purchase",
+      "VENDA": "Sale",
+      "LEILAO": "Auction"
+    },
+    "livestockCategory": {
+      "CORTE": "Beef",
+      "LEITE": "Dairy",
+      "CONFINAMENTO": "Feedlot",
+      "CRIA": "Breeding",
+      "RECRIA": "Backgrounding",
+      "ENGORDA": "Fattening",
+      "REPRODUTOR": "Breeding Stock",
+      "OUTRO": "Other"
+    },
+    "livestockStatus": {
+      "ATIVO": "Active",
+      "VENDIDO": "Sold",
+      "ABATIDO": "Slaughtered",
+      "OBITO": "Deceased",
+      "INATIVO": "Inactive"
+    },
+    "animalSexo": {
+      "MACHO": "Male",
+      "FEMEA": "Female",
+      "CASTRADO": "Gelded"
+    },
+    "pastureRotationStatus": {
+      "EM_USO": "In use",
+      "DESCANSO": "Resting"
+    },
+    "reproductionMethod": {
+      "IA": "Artificial Insemination",
+      "MONTA_NATURAL": "Natural Breeding"
+    },
+    "diagnosisResult": {
+      "PRENHE": "Pregnant",
+      "VAZIA": "Open",
+      "INDEFINIDO": "Undetermined"
+    },
+    "healthRecordType": {
+      "VACINA_BRUCELOSE": "Brucellosis Vaccine",
+      "VACINA_AFTOSA": "Foot-and-Mouth Vaccine",
+      "CARRAPATICIDA": "Tick Treatment",
+      "VERMIFUGO": "Dewormer",
+      "TRATAMENTO": "Treatment",
+      "OUTRO": "Other"
+    },
+    "equineHealthRecordType": {
+      "MEDICAMENTO": "Medication",
+      "VACINA": "Vaccine",
+      "SORO": "Serum",
+      "VERMIFUGO": "Dewormer",
+      "FERRADURA": "Reshoeing",
+      "CASQUEAMENTO": "Hoof Trimming",
+      "OUTRO": "Other"
+    },
+    "milkShift": {
+      "MANHA": "Morning",
+      "TARDE": "Afternoon"
+    },
+    "feedingType": {
+      "PASTO": "Pasture",
+      "CONFINAMENTO": "Feedlot",
+      "SEMI_CONFINAMENTO": "Semi-feedlot"
+    },
+    "managementMovementType": {
+      "MOVIMENTACAO": "Movement",
+      "EMBARQUE": "Shipping",
+      "COMPRA": "Purchase",
+      "VENDA": "Sale"
+    },
+    "safraStatus": {
+      "PLANEJADA": "Planned",
+      "EM_ANDAMENTO": "In Progress",
+      "COLHIDA": "Harvested",
+      "CANCELADA": "Cancelled"
+    },
+    "tratoCulturalType": {
+      "ADUBACAO": "Fertilizing",
+      "PULVERIZACAO": "Spraying",
+      "HERBICIDA": "Herbicide",
+      "INSETICIDA": "Insecticide",
+      "FUNGICIDA": "Fungicide",
+      "OUTRO": "Other"
+    },
+    "fertilityType": {
+      "ANALISE_SOLO": "Soil Analysis",
+      "CALAGEM": "Liming",
+      "GESSAGEM": "Gypsum Application",
+      "CORRECAO": "Correction",
+      "OUTRO": "Other"
+    },
+    "storageType": {
+      "SILO": "Silo",
+      "ARMAZEM": "Warehouse"
+    },
+    "storageMovementType": {
+      "ENTRADA": "In",
+      "SAIDA": "Out",
+      "QUEBRA": "Loss"
+    },
+    "machineType": {
+      "TRATOR": "Tractor",
+      "COLHEITADEIRA": "Combine Harvester",
+      "PULVERIZADOR": "Sprayer",
+      "CAMINHAO": "Truck",
+      "IMPLEMENTO": "Implement",
+      "CARRETA": "Trailer",
+      "OUTRO": "Other"
+    },
+    "machineStatus": {
+      "ATIVO": "Active",
+      "MANUTENCAO": "Under Maintenance",
+      "INATIVO": "Inactive",
+      "VENDIDO": "Sold"
+    },
+    "maintenanceType": {
+      "PREVENTIVA": "Preventive",
+      "CORRETIVA": "Corrective",
+      "TROCA_OLEO": "Oil Change",
+      "TROCA_PNEU": "Tire Change",
+      "LUBRIFICACAO": "Lubrication",
+      "OUTRO": "Other"
+    },
+    "stockCategory": {
+      "MEDICAMENTO": "Medication",
+      "INSUMO": "Supply",
+      "RACAO": "Feed",
+      "FERRAMENTA": "Tool",
+      "PECA": "Part",
+      "COMBUSTIVEL": "Fuel",
+      "EPI": "PPE",
+      "MATERIAL": "Material",
+      "OUTRO": "Other"
+    },
+    "stockBatchStatus": {
+      "DISPONIVEL": "Available",
+      "CONSUMIDO": "Consumed"
+    },
+    "purchaseRequestStatus": {
+      "PENDENTE": "Pending",
+      "APROVADA": "Approved",
+      "REJEITADA": "Rejected",
+      "ATENDIDA": "Fulfilled"
+    },
+    "quotationStatus": {
+      "PENDENTE": "Pending",
+      "APROVADA": "Approved",
+      "RECUSADA": "Declined"
+    },
+    "purchaseOrderStatus": {
+      "PENDENTE": "Pending",
+      "ENVIADO": "Sent",
+      "ENTREGUE": "Delivered",
+      "CANCELADO": "Cancelled"
+    },
+    "financeEntryStatus": {
+      "PENDENTE": "Pending",
+      "PAGO": "Paid",
+      "ATRASADO": "Overdue",
+      "CANCELADO": "Cancelled"
+    },
+    "paymentMethod": {
+      "PIX": "PIX",
+      "BOLETO": "Bank Slip",
+      "CARTAO": "Card",
+      "CHEQUE": "Check",
+      "DINHEIRO": "Cash",
+      "TRANSFERENCIA": "Bank Transfer",
+      "OUTRO": "Other"
+    },
+    "attendanceStatus": {
+      "PRESENTE": "Present",
+      "FALTA": "Absent",
+      "ATESTADO": "Medical Leave",
+      "FERIAS": "Vacation",
+      "FOLGA": "Day Off"
+    },
+    "scheduleShift": {
+      "MANHA": "Morning",
+      "TARDE": "Afternoon",
+      "NOITE": "Night",
+      "INTEGRAL": "Full-time",
+      "FOLGA": "Day Off"
+    },
+    "serviceOrderStatus": {
+      "ABERTA": "Open",
+      "EM_ANDAMENTO": "In Progress",
+      "CONCLUIDA": "Completed",
+      "CANCELADA": "Cancelled"
+    },
+    "chartAccountType": {
+      "ATIVO": "Assets",
+      "PASSIVO": "Liabilities",
+      "PATRIMONIO_LIQUIDO": "Equity",
+      "RECEITA": "Revenue",
+      "CUSTO": "Cost",
+      "DESPESA": "Expense"
+    },
+    "chartAccountNature": {
+      "DEVEDORA": "Debit",
+      "CREDORA": "Credit"
+    },
+    "journalEntryLineType": {
+      "DEBITO": "Debit",
+      "CREDITO": "Credit"
+    }
+  }
+}
