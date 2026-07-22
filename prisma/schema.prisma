@@ -80,6 +80,7 @@ model Organization {
 
   stockItems StockItem[]
   machines   Machine[]
+  mechanics  Mechanic[]
 
   @@map("organizations")
 }
@@ -1423,6 +1424,9 @@ model Mechanic {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   serviceOrders ServiceOrder[]
 

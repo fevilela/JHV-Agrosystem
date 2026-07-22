@@ -1,13 +1,15 @@
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getServiceOrderFields } from "../fields";
 import { createServiceOrderAction } from "../actions";
 
 export default async function NewServiceOrderPage() {
+  const { organizationId } = await requireOrg();
   const [machines, mechanics] = await Promise.all([
-    prisma.machine.findMany({ orderBy: { type: "asc" } }),
-    prisma.mechanic.findMany({ orderBy: { name: "asc" } }),
+    prisma.machine.findMany({ where: { organizationId }, orderBy: { type: "asc" } }),
+    prisma.mechanic.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
   const t = await getTranslations("oficina.ordensServico");
   const tStatus = await getTranslations("labels.serviceOrderStatus");

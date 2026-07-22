@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 
 const statusColor: Record<string, string> = {
@@ -12,7 +13,9 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function ServiceOrderListPage() {
+  const { organizationId } = await requireOrg();
   const orders = await prisma.serviceOrder.findMany({
+    where: { machine: { organizationId } },
     orderBy: { openDate: "desc" },
     include: { machine: true, mechanic: true, parts: true },
   });

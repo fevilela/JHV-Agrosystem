@@ -2,14 +2,16 @@ import Link from "next/link";
 import { Plus, Pencil, AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { deleteMechanicAction } from "./actions";
 
 export default async function MechanicsAndPartsPage() {
+  const { organizationId } = await requireOrg();
   const [mechanics, parts] = await Promise.all([
-    prisma.mechanic.findMany({ orderBy: { name: "asc" } }),
+    prisma.mechanic.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
     prisma.stockItem.findMany({
-      where: { category: "PECA" },
+      where: { organizationId, category: "PECA" },
       orderBy: { name: "asc" },
     }),
   ]);

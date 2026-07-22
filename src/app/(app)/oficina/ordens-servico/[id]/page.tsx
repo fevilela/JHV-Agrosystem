@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { RecordForm } from "@/components/crud/record-form";
 import { getServiceOrderFields } from "../fields";
 import {
@@ -20,15 +21,16 @@ export default async function ServiceOrderDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { organizationId } = await requireOrg();
 
   const [order, machines, mechanics, stockItems] = await Promise.all([
-    prisma.serviceOrder.findUnique({
-      where: { id },
+    prisma.serviceOrder.findFirst({
+      where: { id, machine: { organizationId } },
       include: { parts: { include: { stockItem: true }, orderBy: { createdAt: "desc" } } },
     }),
-    prisma.machine.findMany({ orderBy: { type: "asc" } }),
-    prisma.mechanic.findMany({ orderBy: { name: "asc" } }),
-    prisma.stockItem.findMany({ orderBy: { name: "asc" } }),
+    prisma.machine.findMany({ where: { organizationId }, orderBy: { type: "asc" } }),
+    prisma.mechanic.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.stockItem.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   if (!order) notFound();

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
+import { requireOrg } from "@/lib/tenant";
 import { buildRecordData } from "@/lib/record-data";
 import { getServiceOrderFields } from "./fields";
 
@@ -20,11 +21,17 @@ export async function createServiceOrderAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const { t, fields } = await getFieldsAndT();
   const data = buildRecordData(fields, formData);
   if (!data.machineId) return { error: t("errors.machineRequired") };
   if (!data.description) return { error: t("errors.descriptionRequired") };
   if (!data.openDate) return { error: t("errors.openDateRequired") };
+
+  const machine = await prisma.machine.findFirst({
+    where: { id: data.machineId as string, organizationId },
+  });
+  if (!machine) return { error: t("errors.machineRequired") };
 
   const order = await prisma.serviceOrder.create({
     data: data as Prisma.ServiceOrderUncheckedCreateInput,
@@ -39,14 +46,15 @@ export async function updateServiceOrderAction(
   _prevState: FormState,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const { t, fields } = await getFieldsAndT();
   const data = buildRecordData(fields, formData);
   if (!data.machineId) return { error: t("errors.machineRequired") };
   if (!data.description) return { error: t("errors.descriptionRequired") };
   if (!data.openDate) return { error: t("errors.openDateRequired") };
 
-  await prisma.serviceOrder.update({
-    where: { id },
+  await prisma.serviceOrder.updateMany({
+    where: { id, machine: { organizationId } },
     data: data as Prisma.ServiceOrderUncheckedUpdateInput,
   });
 
@@ -56,14 +64,16 @@ export async function updateServiceOrderAction(
 }
 
 export async function deleteServiceOrderAction(id: string) {
-  await prisma.serviceOrder.delete({ where: { id } });
+  const { organizationId } = await requireOrg();
+  await prisma.serviceOrder.deleteMany({ where: { id, machine: { organizationId } } });
   revalidatePath("/oficina/ordens-servico");
   redirect("/oficina/ordens-servico");
 }
 
 export async function markServiceOrderCompletedAction(id: string) {
-  await prisma.serviceOrder.update({
-    where: { id },
+  const { organizationId } = await requireOrg();
+  await prisma.serviceOrder.updateMany({
+    where: { id, machine: { organizationId } },
     data: { status: "CONCLUIDA", closeDate: new Date() },
   });
   revalidatePath("/oficina/ordens-servico");
@@ -74,10 +84,17 @@ export async function addServiceOrderPartAction(
   serviceOrderId: string,
   formData: FormData
 ) {
+  const { organizationId } = await requireOrg();
   const stockItemId = formData.get("stockItemId") as string | null;
   const quantityRaw = formData.get("quantity") as string | null;
   const unitCostRaw = formData.get("unitCost") as string | null;
   if (!stockItemId || !quantityRaw) return;
+
+  const [order, stockItem] = await Promise.all([
+    prisma.serviceOrder.findFirst({ where: { id: serviceOrderId, machine: { organizationId } } }),
+    prisma.stockItem.findFirst({ where: { id: stockItemId, organizationId } }),
+  ]);
+  if (!order || !stockItem) return;
 
   const quantity = Number(quantityRaw);
   const unitCost = unitCostRaw ? Number(unitCostRaw) : null;
@@ -100,7 +117,10 @@ export async function deleteServiceOrderPartAction(
   serviceOrderId: string,
   id: string
 ) {
-  const part = await prisma.serviceOrderPart.findUnique({ where: { id } });
+  const { organizationId } = await requireOrg();
+  const part = await prisma.serviceOrderPart.findFirst({
+    where: { id, serviceOrder: { machine: { organizationId } } },
+  });
   if (!part) return;
 
   await prisma.$transaction([
