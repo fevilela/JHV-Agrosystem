@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { ExportButton } from "@/components/crud/export-button";
 import { deleteHealthRecordAction } from "./actions";
 
 export default async function SanidadeListPage() {
@@ -28,16 +29,19 @@ export default async function SanidadeListPage() {
             {t("count", { count: records.length })}
           </p>
         </div>
-        {/* Plain <a>, not <Link>: this page has offline support, and only a
-        real browser navigation (not a client-side RSC transition) is
-        handled by the service worker's cache. */}
-        <a
-          href="/pecuaria/sanidade/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          {t("new")}
-        </a>
+        <div className="flex items-center gap-2">
+          <ExportButton baseHref="/api/export/sanidade" />
+          {/* Plain <a>, not <Link>: this page has offline support, and only a
+          real browser navigation (not a client-side RSC transition) is
+          handled by the service worker's cache. */}
+          <a
+            href="/pecuaria/sanidade/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            {t("new")}
+          </a>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">

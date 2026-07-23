@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { ExportButton } from "@/components/crud/export-button";
 import { deleteTalhaoAction } from "./actions";
 
 export default async function TalhoesListPage() {
@@ -26,6 +27,7 @@ export default async function TalhoesListPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <ExportButton baseHref="/api/export/talhoes" />
           <Link
             href="/agricultura/talhoes/mapa"
             className="flex items-center gap-1.5 rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"

@@ -99,6 +99,204 @@ async function getDataset(modulo: string, organizationId: string): Promise<Datas
         "Lançamentos"
       );
     }
+    case "talhoes": {
+      const rows = await prisma.talhao.findMany({
+        where: { organizationId },
+        orderBy: { code: "asc" },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "code", label: "Código", value: (r) => r.code },
+          { key: "name", label: "Nome", value: (r) => r.name ?? "" },
+          { key: "areaHectares", label: "Área (ha)", value: (r) => (r.areaHectares ? Number(r.areaHectares).toFixed(2) : "") },
+          { key: "soilType", label: "Tipo de solo", value: (r) => r.soilType ?? "" },
+        ],
+        "talhoes",
+        "Talhões"
+      );
+    }
+    case "safras": {
+      const rows = await prisma.safra.findMany({
+        where: { talhao: { organizationId } },
+        orderBy: { dataInicio: "desc" },
+        include: { talhao: true },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "name", label: "Safra", value: (r) => r.name },
+          { key: "talhao", label: "Talhão", value: (r) => r.talhao.code },
+          { key: "cultura", label: "Cultura", value: (r) => r.cultura },
+          { key: "dataInicio", label: "Início", value: (r) => (r.dataInicio ? formatDate(r.dataInicio) : "") },
+          { key: "dataFimPrevista", label: "Fim previsto", value: (r) => (r.dataFimPrevista ? formatDate(r.dataFimPrevista) : "") },
+          { key: "status", label: "Status", value: (r) => r.status },
+        ],
+        "safras",
+        "Safras"
+      );
+    }
+    case "colheita": {
+      const rows = await prisma.harvest.findMany({
+        where: { safra: { talhao: { organizationId } } },
+        orderBy: { date: "desc" },
+        include: { safra: { include: { talhao: true } } },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "date", label: "Data", value: (r) => formatDate(r.date) },
+          { key: "safra", label: "Safra", value: (r) => r.safra.name },
+          { key: "talhao", label: "Talhão", value: (r) => r.safra.talhao.code },
+          { key: "producaoKg", label: "Produção (kg)", value: (r) => (r.producaoKg ? Number(r.producaoKg).toFixed(2) : "") },
+          { key: "umidade", label: "Umidade (%)", value: (r) => (r.umidade ? Number(r.umidade).toFixed(2) : "") },
+          { key: "qualidade", label: "Qualidade", value: (r) => r.qualidade ?? "" },
+        ],
+        "colheita",
+        "Colheita"
+      );
+    }
+    case "armazenagem": {
+      const rows = await prisma.storage.findMany({
+        where: { organizationId },
+        orderBy: { code: "asc" },
+        include: { movements: true },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "code", label: "Código", value: (r) => r.code },
+          { key: "name", label: "Nome", value: (r) => r.name ?? "" },
+          { key: "type", label: "Tipo", value: (r) => r.type },
+          { key: "capacityTon", label: "Capacidade (t)", value: (r) => (r.capacityTon ? Number(r.capacityTon).toFixed(2) : "") },
+          {
+            key: "stock",
+            label: "Estoque atual (t)",
+            value: (r) =>
+              r.movements
+                .reduce((sum, m) => (m.type === "ENTRADA" ? sum + Number(m.quantityTon) : sum - Number(m.quantityTon)), 0)
+                .toFixed(2),
+          },
+        ],
+        "armazenagem",
+        "Armazenagem"
+      );
+    }
+    case "cadastro-animal": {
+      const rows = await prisma.livestockAnimal.findMany({
+        where: { organizationId },
+        orderBy: { brinco: "asc" },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "brinco", label: "Brinco", value: (r) => r.brinco },
+          { key: "name", label: "Nome", value: (r) => r.name ?? "" },
+          { key: "category", label: "Categoria", value: (r) => r.category },
+          { key: "sexo", label: "Sexo", value: (r) => r.sexo ?? "" },
+          { key: "raca", label: "Raça", value: (r) => r.raca ?? "" },
+          { key: "pesoAtual", label: "Peso atual (kg)", value: (r) => (r.pesoAtual ? Number(r.pesoAtual).toFixed(2) : "") },
+          { key: "status", label: "Status", value: (r) => r.status },
+        ],
+        "cadastro-animal",
+        "Cadastro Animal"
+      );
+    }
+    case "pesagens": {
+      const rows = await prisma.weightRecord.findMany({
+        where: { animal: { organizationId } },
+        orderBy: { date: "desc" },
+        include: { animal: true },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "date", label: "Data", value: (r) => formatDate(r.date) },
+          { key: "animal", label: "Animal", value: (r) => `${r.animal.brinco}${r.animal.name ? ` — ${r.animal.name}` : ""}` },
+          { key: "weightKg", label: "Peso (kg)", value: (r) => Number(r.weightKg).toFixed(2) },
+        ],
+        "pesagens",
+        "Pesagens"
+      );
+    }
+    case "sanidade": {
+      const rows = await prisma.healthRecord.findMany({
+        where: { animal: { organizationId } },
+        orderBy: { date: "desc" },
+        include: { animal: true },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "date", label: "Data", value: (r) => formatDate(r.date) },
+          { key: "animal", label: "Animal", value: (r) => `${r.animal.brinco}${r.animal.name ? ` — ${r.animal.name}` : ""}` },
+          { key: "type", label: "Tipo", value: (r) => r.type },
+          { key: "product", label: "Produto", value: (r) => r.product ?? "" },
+          { key: "nextDoseDate", label: "Próxima dose", value: (r) => (r.nextDoseDate ? formatDate(r.nextDoseDate) : "") },
+        ],
+        "sanidade",
+        "Sanidade"
+      );
+    }
+    case "producao-leite": {
+      const rows = await prisma.milkProduction.findMany({
+        where: { animal: { organizationId } },
+        orderBy: { date: "desc" },
+        include: { animal: true },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "date", label: "Data", value: (r) => formatDate(r.date) },
+          { key: "animal", label: "Animal", value: (r) => `${r.animal.brinco}${r.animal.name ? ` — ${r.animal.name}` : ""}` },
+          { key: "shift", label: "Turno", value: (r) => r.shift ?? "" },
+          { key: "liters", label: "Litros", value: (r) => Number(r.liters).toFixed(2) },
+          { key: "ccs", label: "CCS", value: (r) => (r.ccs ? Number(r.ccs).toFixed(2) : "") },
+          { key: "cbt", label: "CBT", value: (r) => (r.cbt ? Number(r.cbt).toFixed(2) : "") },
+        ],
+        "producao-leite",
+        "Produção de Leite"
+      );
+    }
+    case "materiais": {
+      const rows = await prisma.stockItem.findMany({
+        where: { organizationId },
+        orderBy: { code: "asc" },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "code", label: "Código", value: (r) => r.code },
+          { key: "name", label: "Nome", value: (r) => r.name },
+          { key: "category", label: "Categoria", value: (r) => r.category },
+          { key: "unit", label: "Unidade", value: (r) => r.unit ?? "" },
+          { key: "currentQuantity", label: "Quantidade atual", value: (r) => Number(r.currentQuantity).toFixed(2) },
+          { key: "minQuantity", label: "Quantidade mínima", value: (r) => (r.minQuantity ? Number(r.minQuantity).toFixed(2) : "") },
+        ],
+        "materiais",
+        "Materiais"
+      );
+    }
+    case "lotes": {
+      const rows = await prisma.stockBatch.findMany({
+        where: { stockItem: { organizationId } },
+        orderBy: { entryDate: "desc" },
+        include: { stockItem: true },
+      });
+      return buildDataset(
+        rows,
+        [
+          { key: "stockItem", label: "Material", value: (r) => r.stockItem.name },
+          { key: "batchNumber", label: "Lote", value: (r) => r.batchNumber ?? "" },
+          { key: "quantity", label: "Quantidade", value: (r) => Number(r.quantity).toFixed(2) },
+          { key: "entryDate", label: "Entrada", value: (r) => formatDate(r.entryDate) },
+          { key: "expiryDate", label: "Validade", value: (r) => (r.expiryDate ? formatDate(r.expiryDate) : "") },
+          { key: "status", label: "Status", value: (r) => r.status },
+        ],
+        "lotes",
+        "Lotes"
+      );
+    }
     default:
       return null;
   }

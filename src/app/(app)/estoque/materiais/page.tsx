@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { ExportButton } from "@/components/crud/export-button";
 import { deleteStockItemAction } from "./actions";
 
 export default async function StockItemListPage() {
@@ -24,13 +25,16 @@ export default async function StockItemListPage() {
             {t("recordCount", { count: items.length })}
           </p>
         </div>
-        <Link
-          href="/estoque/materiais/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          {t("new")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportButton baseHref="/api/export/materiais" />
+          <Link
+            href="/estoque/materiais/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            {t("new")}
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { ExportButton } from "@/components/crud/export-button";
 import { deleteLivestockAnimalAction } from "./actions";
 
 const statusColor: Record<string, string> = {
@@ -36,13 +37,16 @@ export default async function LivestockAnimalListPage() {
             {t("count", { count: animals.length })}
           </p>
         </div>
-        <Link
-          href="/pecuaria/cadastro-animal/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          {t("new")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportButton baseHref="/api/export/cadastro-animal" />
+          <Link
+            href="/pecuaria/cadastro-animal/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            {t("new")}
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">

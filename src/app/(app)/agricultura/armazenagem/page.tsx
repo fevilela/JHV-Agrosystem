@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
+import { ExportButton } from "@/components/crud/export-button";
 
 export default async function ArmazenagemListPage() {
   const { organizationId } = await requireOrg();
@@ -33,13 +34,16 @@ export default async function ArmazenagemListPage() {
             {t("count", { count: storages.length })}
           </p>
         </div>
-        <Link
-          href="/agricultura/armazenagem/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          {t("new")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportButton baseHref="/api/export/armazenagem" />
+          <Link
+            href="/agricultura/armazenagem/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            {t("new")}
+          </Link>
+        </div>
       </div>
 
       {withStock.length === 0 ? (
