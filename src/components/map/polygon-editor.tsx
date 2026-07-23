@@ -1,12 +1,33 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { MapContainer, TileLayer, Polygon, CircleMarker, useMap, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Polygon,
+  CircleMarker,
+  Marker,
+  LayersControl,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 import { Undo2, Trash2, Save, Search, LocateFixed } from "lucide-react";
 import { type LatLng, latLngsToGeoJson, geoJsonToLatLngs, areaHectares } from "@/lib/geo";
 
 const DEFAULT_CENTER: LatLng = { lat: -15.78, lng: -47.93 }; // centro do Brasil
+
+// Plain div-based icon (a small circle) instead of Leaflet's default marker
+// image — the default icon's asset paths don't resolve correctly through
+// Next.js's bundler, and this also keeps the vertex markers visually
+// consistent with the non-draggable CircleMarker style used elsewhere.
+const vertexIcon = L.divIcon({
+  className: "",
+  html: '<div style="width:14px;height:14px;border-radius:9999px;background:#21374f;border:2px solid white;box-shadow:0 0 0 1px #21374f;"></div>',
+  iconSize: [14, 14],
+  iconAnchor: [7, 7],
+});
 
 function ClickCapture({ onClick }: { onClick: (point: LatLng) => void }) {
   useMapEvents({
@@ -53,6 +74,9 @@ export function PolygonEditor({
 
   const undo = () => setPoints((prev) => prev.slice(0, -1));
   const clear = () => setPoints([]);
+  const movePoint = useCallback((index: number, point: LatLng) => {
+    setPoints((prev) => prev.map((p, i) => (i === index ? point : p)));
+  }, []);
 
   async function handleSearch(e: FormEvent) {
     e.preventDefault();
@@ -134,10 +158,20 @@ export function PolygonEditor({
 
       <div className="overflow-hidden rounded-xl border border-neutral-200">
         <MapContainer center={[center.lat, center.lng]} zoom={points.length ? 16 : 4} style={{ height: 360 }}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <LayersControl position="topright">
+            <LayersControl.BaseLayer checked name="Mapa">
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Satélite">
+              <TileLayer
+                attribution="Tiles &copy; Esri"
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              />
+            </LayersControl.BaseLayer>
+          </LayersControl>
           <FlyToLocation position={searchCenter} />
           <ClickCapture onClick={addPoint} />
           {searchCenter && (
@@ -148,11 +182,17 @@ export function PolygonEditor({
             />
           )}
           {points.map((p, i) => (
-            <CircleMarker
+            <Marker
               key={i}
-              center={[p.lat, p.lng]}
-              radius={5}
-              pathOptions={{ color: "#21374f", fillColor: "#21374f", fillOpacity: 1 }}
+              position={[p.lat, p.lng]}
+              icon={vertexIcon}
+              draggable
+              eventHandlers={{
+                dragend: (e) => {
+                  const { lat, lng } = (e.target as L.Marker).getLatLng();
+                  movePoint(i, { lat, lng });
+                },
+              }}
             />
           ))}
           {points.length >= 2 && (
@@ -199,6 +239,7 @@ export function PolygonEditor({
       </div>
       <p className="text-xs text-neutral-400">
         Clique no mapa pra marcar os cantos do talhão/pasto na ordem do contorno (mínimo 3 pontos).
+        Já marcados, os pontos podem ser arrastados pra ajustar a posição.
       </p>
     </div>
   );
