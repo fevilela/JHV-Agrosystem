@@ -44,13 +44,16 @@ export default async function AttendanceListPage() {
             <CalendarClock size={16} />
             {t("schedulesLink")}
           </Link>
-          <Link
+          {/* Plain <a>, not <Link>: this page has offline support, and only
+          a real browser navigation (not a client-side RSC transition) is
+          handled by the service worker's cache. */}
+          <a
             href="/rh/ponto/novo"
             className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
           >
             <Plus size={16} />
             {t("new")}
-          </Link>
+          </a>
         </div>
       </div>
 

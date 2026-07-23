@@ -28,13 +28,16 @@ export default async function TratosCulturaisListPage() {
             {t("count", { count: tratos.length })}
           </p>
         </div>
-        <Link
+        {/* Plain <a>, not <Link>: this page has offline support, and only a
+        real browser navigation (not a client-side RSC transition) is
+        handled by the service worker's cache. */}
+        <a
           href="/agricultura/tratos-culturais/novo"
           className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
         >
           <Plus size={16} />
           {t("new")}
-        </Link>
+        </a>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
