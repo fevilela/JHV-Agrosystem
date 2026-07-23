@@ -1,9 +1,9 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import { useCallback, useMemo, useState } from "react";
-import { MapContainer, TileLayer, Polygon, CircleMarker, useMapEvents } from "react-leaflet";
-import { Undo2, Trash2, Save } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { MapContainer, TileLayer, Polygon, CircleMarker, useMap, useMapEvents } from "react-leaflet";
+import { Undo2, Trash2, Save, Search } from "lucide-react";
 import { type LatLng, latLngsToGeoJson, geoJsonToLatLngs, areaHectares } from "@/lib/geo";
 
 const DEFAULT_CENTER: LatLng = { lat: -15.78, lng: -47.93 }; // centro do Brasil
@@ -17,6 +17,17 @@ function ClickCapture({ onClick }: { onClick: (point: LatLng) => void }) {
   return null;
 }
 
+// Recenters the map imperatively when a new search result comes in — the
+// MapContainer's `center` prop only applies on mount, it doesn't react to
+// later changes.
+function FlyToLocation({ position }: { position: LatLng | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (position) map.setView([position.lat, position.lng], 16);
+  }, [position, map]);
+  return null;
+}
+
 export function PolygonEditor({
   initialBoundary,
   onSave,
@@ -27,6 +38,10 @@ export function PolygonEditor({
   saving?: boolean;
 }) {
   const [points, setPoints] = useState<LatLng[]>(() => geoJsonToLatLngs(initialBoundary));
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchCenter, setSearchCenter] = useState<LatLng | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const center = points[0] ?? DEFAULT_CENTER;
   const area = useMemo(() => areaHectares(points), [points]);
@@ -38,14 +53,57 @@ export function PolygonEditor({
   const undo = () => setPoints((prev) => prev.slice(0, -1));
   const clear = () => setPoints([]);
 
+  async function handleSearch(e: FormEvent) {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    setSearching(true);
+    setSearchError(null);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`
+      );
+      const results = (await res.json()) as { lat: string; lon: string }[];
+      if (results.length === 0) {
+        setSearchError("Endereço não encontrado.");
+        return;
+      }
+      setSearchCenter({ lat: Number(results[0].lat), lng: Number(results[0].lon) });
+    } catch {
+      setSearchError("Não foi possível buscar o endereço agora.");
+    } finally {
+      setSearching(false);
+    }
+  }
+
   return (
     <div className="space-y-3">
+      <form onSubmit={handleSearch} className="flex gap-2">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Buscar endereço, cidade ou fazenda..."
+          className="flex-1 rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
+        />
+        <button
+          type="submit"
+          disabled={searching}
+          className="flex items-center gap-1.5 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 disabled:opacity-50"
+        >
+          <Search size={14} />
+          {searching ? "Buscando..." : "Buscar"}
+        </button>
+      </form>
+      {searchError && <p className="text-xs text-red-600">{searchError}</p>}
+
       <div className="overflow-hidden rounded-xl border border-neutral-200">
         <MapContainer center={[center.lat, center.lng]} zoom={points.length ? 16 : 4} style={{ height: 360 }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <FlyToLocation position={searchCenter} />
           <ClickCapture onClick={addPoint} />
           {points.map((p, i) => (
             <CircleMarker
