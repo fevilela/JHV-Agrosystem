@@ -140,6 +140,13 @@ export function PolygonEditor({
           />
           <FlyToLocation position={searchCenter} />
           <ClickCapture onClick={addPoint} />
+          {searchCenter && (
+            <CircleMarker
+              center={[searchCenter.lat, searchCenter.lng]}
+              radius={9}
+              pathOptions={{ color: "#dc2626", fillColor: "#dc2626", fillOpacity: 0.5, weight: 2 }}
+            />
+          )}
           {points.map((p, i) => (
             <CircleMarker
               key={i}
