@@ -44,7 +44,7 @@ function ClickCapture({ onClick }: { onClick: (point: LatLng) => void }) {
 function FlyToLocation({ position }: { position: LatLng | null }) {
   const map = useMap();
   useEffect(() => {
-    if (position) map.setView([position.lat, position.lng], 20);
+    if (position) map.setView([position.lat, position.lng], 18);
   }, [position, map]);
   return null;
 }
@@ -159,7 +159,7 @@ export function PolygonEditor({
       <div className="overflow-hidden rounded-xl border border-neutral-200">
         <MapContainer
           center={[center.lat, center.lng]}
-          zoom={points.length ? 20 : 4}
+          zoom={points.length ? 18 : 4}
           maxZoom={20}
           style={{ height: 360 }}
         >
@@ -248,7 +248,9 @@ export function PolygonEditor({
       </div>
       <p className="text-xs text-neutral-400">
         Clique no mapa pra marcar os cantos do talhão/pasto na ordem do contorno (mínimo 3 pontos).
-        Já marcados, os pontos podem ser arrastados pra ajustar a posição.
+        Já marcados, os pontos podem ser arrastados pra ajustar a posição. Se o satélite mostrar
+        &quot;Map data not yet available&quot;, dá um zoom pra fora (botão &quot;−&quot;) — a região não tem
+        imagem em alta resolução nesse nível.
       </p>
     </div>
   );
