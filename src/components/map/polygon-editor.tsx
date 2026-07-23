@@ -44,7 +44,7 @@ function ClickCapture({ onClick }: { onClick: (point: LatLng) => void }) {
 function FlyToLocation({ position }: { position: LatLng | null }) {
   const map = useMap();
   useEffect(() => {
-    if (position) map.setView([position.lat, position.lng], 19);
+    if (position) map.setView([position.lat, position.lng], 20);
   }, [position, map]);
   return null;
 }
@@ -157,18 +157,27 @@ export function PolygonEditor({
       {searchError && <p className="text-xs text-red-600">{searchError}</p>}
 
       <div className="overflow-hidden rounded-xl border border-neutral-200">
-        <MapContainer center={[center.lat, center.lng]} zoom={points.length ? 19 : 4} style={{ height: 360 }}>
+        <MapContainer
+          center={[center.lat, center.lng]}
+          zoom={points.length ? 20 : 4}
+          maxZoom={20}
+          style={{ height: 360 }}
+        >
           <LayersControl position="topright">
             <LayersControl.BaseLayer checked name="Mapa">
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                maxZoom={19}
+                maxNativeZoom={19}
               />
             </LayersControl.BaseLayer>
             <LayersControl.BaseLayer name="Satélite">
               <TileLayer
                 attribution="Tiles &copy; Esri"
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                maxZoom={20}
+                maxNativeZoom={20}
               />
             </LayersControl.BaseLayer>
           </LayersControl>
