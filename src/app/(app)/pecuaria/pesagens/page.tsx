@@ -6,6 +6,7 @@ import { requireOrg } from "@/lib/tenant";
 import { formatDate } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { ExportButton } from "@/components/crud/export-button";
+import { WeightEvolutionChart } from "@/components/pecuaria/weight-evolution-chart";
 import { deleteWeightAction } from "./actions";
 
 export default async function PesagensListPage() {
@@ -31,6 +32,18 @@ export default async function PesagensListPage() {
   });
 
   withGmd.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const byMonth = new Map<string, { total: number; count: number }>();
+  for (const r of records) {
+    const month = new Date(r.date).toISOString().slice(0, 7);
+    const acc = byMonth.get(month) ?? { total: 0, count: 0 };
+    acc.total += Number(r.weightKg);
+    acc.count += 1;
+    byMonth.set(month, acc);
+  }
+  const weightChartData = Array.from(byMonth.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, { total, count }]) => ({ month, avgWeight: total / count }));
 
   const t = await getTranslations("pecuaria.pesagens");
   const locale = await getLocale();
@@ -58,6 +71,13 @@ export default async function PesagensListPage() {
           </a>
         </div>
       </div>
+
+      {weightChartData.length > 1 && (
+        <div className="mb-6 rounded-2xl border border-neutral-200 bg-white p-5">
+          <h2 className="mb-4 text-sm font-semibold text-neutral-700">{t("chartTitle")}</h2>
+          <WeightEvolutionChart data={weightChartData} locale={locale} />
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         <table className="w-full text-sm">

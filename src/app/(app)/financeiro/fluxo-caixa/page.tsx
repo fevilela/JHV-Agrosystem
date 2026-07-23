@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft } from "lucide-react";
+import { CashFlowTrendChart } from "@/components/dashboard/cash-flow-trend-chart";
 
 export default async function FluxoCaixaPage() {
   const { organizationId } = await requireOrg();
@@ -34,6 +35,11 @@ export default async function FluxoCaixaPage() {
 
   const t = await getTranslations("financeiro.fluxoCaixa");
   const locale = await getLocale();
+
+  const chartData = withBalance.map((e) => ({
+    date: new Date(e.paymentDate!).toISOString().slice(0, 10),
+    balance: e.balance,
+  }));
 
   return (
     <div>
@@ -73,6 +79,13 @@ export default async function FluxoCaixaPage() {
           </p>
         </div>
       </div>
+
+      {chartData.length > 1 && (
+        <div className="mb-6 rounded-2xl border border-neutral-200 bg-white p-5">
+          <h2 className="mb-4 text-sm font-semibold text-neutral-700">{t("chartTitle")}</h2>
+          <CashFlowTrendChart data={chartData} locale={locale} />
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         <div className="border-b border-neutral-200 px-4 py-3">
