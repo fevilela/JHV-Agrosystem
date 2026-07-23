@@ -93,7 +93,13 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
                             {label}
                           </a>
                         ) : (
-                          <Link href={item.href} className={linkClassName}>
+                          // prefetch={false}: Next.js prefetches every <Link>
+                          // that scrolls into view by default. With a whole
+                          // open sidebar group visible, that's several
+                          // background RSC fetches at once — harmless when
+                          // online, but confirmed to add visible jank while
+                          // offline (each one has to fail/time out first).
+                          <Link href={item.href} prefetch={false} className={linkClassName}>
                             {label}
                           </Link>
                         )}
