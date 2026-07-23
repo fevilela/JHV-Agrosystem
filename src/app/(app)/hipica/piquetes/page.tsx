@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Map as MapIcon } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { piqueteStatusLabels } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
@@ -37,13 +37,22 @@ export default async function PiquetesListPage() {
             {piquetes.length} {piquetes.length === 1 ? "piquete cadastrado" : "piquetes cadastrados"}
           </p>
         </div>
-        <Link
-          href="/hipica/piquetes/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          Novo Piquete
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/hipica/piquetes/mapa"
+            className="flex items-center gap-1.5 rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+          >
+            <MapIcon size={16} />
+            Mapa
+          </Link>
+          <Link
+            href="/hipica/piquetes/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            Novo Piquete
+          </Link>
+        </div>
       </div>
 
       {piquetes.length === 0 ? (

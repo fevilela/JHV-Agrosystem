@@ -105,6 +105,20 @@ export async function vacatePiqueteAction(piqueteId: string) {
   revalidatePath("/hipica/piquetes");
 }
 
+export async function updatePiqueteBoundaryAction(
+  id: string,
+  boundary: Prisma.InputJsonValue,
+  areaHa: number
+) {
+  const { organizationId } = await requireModule("hipica");
+  await prisma.piquete.updateMany({
+    where: { id, organizationId },
+    data: { boundary, areaHectares: areaHa },
+  });
+  revalidatePath(`/hipica/piquetes/${id}`);
+  revalidatePath("/hipica/piquetes/mapa");
+}
+
 export async function markPiqueteStatusAction(
   piqueteId: string,
   status: "MANUTENCAO" | "LIVRE"

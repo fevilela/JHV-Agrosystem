@@ -6,6 +6,7 @@ import { piqueteFields } from "../fields";
 import { updatePiqueteAction } from "../actions";
 import { piqueteEventTypeLabels, formatDate } from "@/lib/labels";
 import { requireModule } from "@/lib/tenant";
+import { PiqueteBoundarySection } from "./piquete-boundary-section";
 
 export default async function PiqueteDetailPage({
   params,
@@ -69,6 +70,10 @@ export default async function PiqueteDetailPage({
             </ul>
           )}
         </div>
+      </div>
+
+      <div className="mt-6">
+        <PiqueteBoundarySection piqueteId={id} boundary={piquete.boundary} />
       </div>
     </div>
   );
