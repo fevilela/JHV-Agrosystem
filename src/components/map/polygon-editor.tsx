@@ -44,7 +44,7 @@ function ClickCapture({ onClick }: { onClick: (point: LatLng) => void }) {
 function FlyToLocation({ position }: { position: LatLng | null }) {
   const map = useMap();
   useEffect(() => {
-    if (position) map.setView([position.lat, position.lng], 16);
+    if (position) map.setView([position.lat, position.lng], 19);
   }, [position, map]);
   return null;
 }
@@ -157,7 +157,7 @@ export function PolygonEditor({
       {searchError && <p className="text-xs text-red-600">{searchError}</p>}
 
       <div className="overflow-hidden rounded-xl border border-neutral-200">
-        <MapContainer center={[center.lat, center.lng]} zoom={points.length ? 16 : 4} style={{ height: 360 }}>
+        <MapContainer center={[center.lat, center.lng]} zoom={points.length ? 19 : 4} style={{ height: 360 }}>
           <LayersControl position="topright">
             <LayersControl.BaseLayer checked name="Mapa">
               <TileLayer
