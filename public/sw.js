@@ -1,4 +1,4 @@
-const SW_VERSION = "v3";
+const SW_VERSION = "v4";
 const STATIC_CACHE = `jhv-static-${SW_VERSION}`;
 const PAGES_CACHE = `jhv-pages-${SW_VERSION}`;
 const CURRENT_CACHES = [STATIC_CACHE, PAGES_CACHE];
@@ -55,9 +55,16 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Next.js varies page responses by RSC-related request headers (full HTML
+// vs. client-transition payload for the same URL). A precached response's
+// headers won't match a later real navigation's headers, so Vary-based
+// matching in Cache API would silently miss an entry that's clearly there
+// in Cache Storage. ignoreVary: true makes the match key the URL alone.
+const MATCH_OPTS = { ignoreVary: true };
+
 async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
+  const cached = await cache.match(request, MATCH_OPTS);
   if (cached) return cached;
   const response = await fetch(request);
   if (response.ok) cache.put(request, response.clone());
@@ -71,9 +78,9 @@ async function networkFirst(request, cacheName) {
     if (response.ok) cache.put(request, response.clone());
     return response;
   } catch {
-    const cached = await cache.match(request);
+    const cached = await cache.match(request, MATCH_OPTS);
     if (cached) return cached;
-    const offline = await caches.match("/offline");
+    const offline = await caches.match("/offline", MATCH_OPTS);
     return offline || Response.error();
   }
 }
@@ -95,7 +102,9 @@ self.addEventListener("fetch", (event) => {
       event.respondWith(networkFirst(request, PAGES_CACHE));
     } else {
       event.respondWith(
-        fetch(request).catch(() => caches.match("/offline").then((cached) => cached || Response.error()))
+        fetch(request).catch(() =>
+          caches.match("/offline", MATCH_OPTS).then((cached) => cached || Response.error())
+        )
       );
     }
   }
