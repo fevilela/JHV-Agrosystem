@@ -1,4 +1,4 @@
-const SW_VERSION = "v4";
+const SW_VERSION = "v5";
 const STATIC_CACHE = `jhv-static-${SW_VERSION}`;
 const PAGES_CACHE = `jhv-pages-${SW_VERSION}`;
 const CURRENT_CACHES = [STATIC_CACHE, PAGES_CACHE];
@@ -21,7 +21,7 @@ async function precache(cache, url) {
     const response = await fetch(url);
     if (response.ok) await cache.put(url, response);
   } catch {
-    // best-effort; runtime networkFirst()/cacheFirst() will fill this in
+    // best-effort; runtime staleWhileRevalidate()/cacheFirst() will fill this in
     // later on a successful request instead
   }
 }
@@ -71,18 +71,28 @@ async function cacheFirst(request, cacheName) {
   return response;
 }
 
-async function networkFirst(request, cacheName) {
+// Serves from cache immediately when available (instant offline loads —
+// waiting for fetch() to time out before falling back to cache made this
+// feel "stuck" for several seconds while actually offline) and refreshes
+// the cache in the background for next time. Falls back to a real fetch
+// only when there's nothing cached yet (first-ever visit to the page).
+async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
-  try {
-    const response = await fetch(request);
-    if (response.ok) cache.put(request, response.clone());
-    return response;
-  } catch {
-    const cached = await cache.match(request, MATCH_OPTS);
-    if (cached) return cached;
-    const offline = await caches.match("/offline", MATCH_OPTS);
-    return offline || Response.error();
-  }
+  const cached = await cache.match(request, MATCH_OPTS);
+
+  const networkUpdate = fetch(request)
+    .then((response) => {
+      if (response.ok) cache.put(request, response.clone());
+      return response;
+    })
+    .catch(() => null);
+
+  if (cached) return cached;
+
+  const response = await networkUpdate;
+  if (response) return response;
+  const offline = await caches.match("/offline", MATCH_OPTS);
+  return offline || Response.error();
 }
 
 self.addEventListener("fetch", (event) => {
@@ -99,7 +109,7 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     if (OFFLINE_PAGE_PREFIXES.some((prefix) => url.pathname.startsWith(prefix))) {
-      event.respondWith(networkFirst(request, PAGES_CACHE));
+      event.respondWith(staleWhileRevalidate(request, PAGES_CACHE));
     } else {
       event.respondWith(
         fetch(request).catch(() =>
