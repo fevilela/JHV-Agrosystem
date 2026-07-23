@@ -3,7 +3,7 @@
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { MapContainer, TileLayer, Polygon, CircleMarker, useMap, useMapEvents } from "react-leaflet";
-import { Undo2, Trash2, Save, Search } from "lucide-react";
+import { Undo2, Trash2, Save, Search, LocateFixed } from "lucide-react";
 import { type LatLng, latLngsToGeoJson, geoJsonToLatLngs, areaHectares } from "@/lib/geo";
 
 const DEFAULT_CENTER: LatLng = { lat: -15.78, lng: -47.93 }; // centro do Brasil
@@ -42,6 +42,7 @@ export function PolygonEditor({
   const [searchCenter, setSearchCenter] = useState<LatLng | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [locating, setLocating] = useState(false);
 
   const center = points[0] ?? DEFAULT_CENTER;
   const area = useMemo(() => areaHectares(points), [points]);
@@ -76,6 +77,30 @@ export function PolygonEditor({
     }
   }
 
+  function handleUseMyLocation() {
+    if (!("geolocation" in navigator)) {
+      setSearchError("Este navegador não suporta localização.");
+      return;
+    }
+    setLocating(true);
+    setSearchError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setSearchCenter({ lat: position.coords.latitude, lng: position.coords.longitude });
+        setLocating(false);
+      },
+      (error) => {
+        setSearchError(
+          error.code === error.PERMISSION_DENIED
+            ? "Permissão de localização negada. Habilite nas configurações do navegador."
+            : "Não foi possível obter sua localização agora."
+        );
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
   return (
     <div className="space-y-3">
       <form onSubmit={handleSearch} className="flex gap-2">
@@ -93,6 +118,16 @@ export function PolygonEditor({
         >
           <Search size={14} />
           {searching ? "Buscando..." : "Buscar"}
+        </button>
+        <button
+          type="button"
+          onClick={handleUseMyLocation}
+          disabled={locating}
+          title="Usar minha localização"
+          className="flex items-center gap-1.5 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 disabled:opacity-50"
+        >
+          <LocateFixed size={14} />
+          {locating ? "Localizando..." : "Minha localização"}
         </button>
       </form>
       {searchError && <p className="text-xs text-red-600">{searchError}</p>}
