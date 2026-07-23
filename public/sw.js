@@ -1,4 +1,4 @@
-const SW_VERSION = "v6";
+const SW_VERSION = "v7";
 const STATIC_CACHE = `jhv-static-${SW_VERSION}`;
 const PAGES_CACHE = `jhv-pages-${SW_VERSION}`;
 const CURRENT_CACHES = [STATIC_CACHE, PAGES_CACHE];
@@ -77,26 +77,19 @@ async function cacheFirst(request, cacheName) {
 // the cache in the background for next time. Falls back to a real fetch
 // only when there's nothing cached yet (first-ever visit to the page).
 async function staleWhileRevalidate(request, cacheName) {
-  const t0 = Date.now();
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request, MATCH_OPTS);
-  console.log(`[SW] ${request.url} cache ${cached ? "HIT" : "MISS"} (${Date.now() - t0}ms)`);
 
   const networkUpdate = fetch(request)
     .then((response) => {
       if (response.ok) cache.put(request, response.clone());
       return response;
     })
-    .catch((err) => {
-      console.log(`[SW] ${request.url} network update failed: ${err}`);
-      return null;
-    });
+    .catch(() => null);
 
   if (cached) return cached;
 
-  console.log(`[SW] ${request.url} no cache entry, awaiting network...`);
   const response = await networkUpdate;
-  console.log(`[SW] ${request.url} network settled (${Date.now() - t0}ms), ok=${!!response}`);
   if (response) return response;
   const offline = await caches.match("/offline", MATCH_OPTS);
   return offline || Response.error();
@@ -114,7 +107,16 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (request.mode === "navigate") {
+  // Next.js's client-side <Link> transitions also fire with request.mode
+  // "navigate" (not just real browser navigations) but carry a "_rsc"
+  // query param and expect a special RSC-formatted response back, not full
+  // HTML — serving our cached HTML document for one of these would corrupt
+  // the client router. Leave those alone entirely: on failure Next.js
+  // already falls back to a real browser navigation by itself, which then
+  // arrives here as a plain request our cache correctly serves.
+  const isClientTransition = url.searchParams.has("_rsc");
+
+  if (request.mode === "navigate" && !isClientTransition) {
     if (OFFLINE_PAGE_PREFIXES.some((prefix) => url.pathname.startsWith(prefix))) {
       event.respondWith(staleWhileRevalidate(request, PAGES_CACHE));
     } else {
