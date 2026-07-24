@@ -3,7 +3,7 @@ import type { AuditAction, Prisma } from "@prisma/client";
 
 type AuditChange = { field: string; before: unknown; after: unknown };
 
-function diffRecords(
+export function diffRecords(
   before?: Record<string, unknown> | null,
   after?: Record<string, unknown> | null
 ): AuditChange[] {
