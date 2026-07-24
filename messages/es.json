@@ -448,8 +448,10 @@
         "streetNumber": "Número",
         "neighborhood": "Barrio",
         "city": "Ciudad",
-        "state": "Provincia/Estado"
-      }
+        "state": "Provincia/Estado",
+        "currency": "Moneda de visualización"
+      },
+      "currencyHint": "Solo cambia el símbolo/formato mostrado en las pantallas — los cobros por boleto siguen siendo siempre en reales (BRL)."
     },
     "whatsapp": {
       "title": "Conectar WhatsApp",

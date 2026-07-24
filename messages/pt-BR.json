@@ -448,8 +448,10 @@
         "streetNumber": "Número",
         "neighborhood": "Bairro",
         "city": "Cidade",
-        "state": "UF"
-      }
+        "state": "UF",
+        "currency": "Moeda de exibição"
+      },
+      "currencyHint": "Só muda o símbolo/formato exibido nas telas — cobranças por boleto continuam sempre em reais (BRL)."
     },
     "whatsapp": {
       "title": "Conectar WhatsApp",

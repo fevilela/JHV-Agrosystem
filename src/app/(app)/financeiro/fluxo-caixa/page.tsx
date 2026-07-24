@@ -6,7 +6,7 @@ import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft } from "lucide-react";
 import { CashFlowTrendChart } from "@/components/dashboard/cash-flow-trend-chart";
 
 export default async function FluxoCaixaPage() {
-  const { organizationId } = await requireOrg();
+  const { organizationId, organization } = await requireOrg();
   const entries = await prisma.financeEntry.findMany({
     where: { organizationId },
     orderBy: { dueDate: "asc" },
@@ -52,7 +52,7 @@ export default async function FluxoCaixaPage() {
             <Wallet size={18} className="text-brand-700" />
           </div>
           <p className={`mt-3 text-2xl font-semibold ${saldoAtual >= 0 ? "text-neutral-900" : "text-red-600"}`}>
-            {formatCurrency(saldoAtual, locale)}
+            {formatCurrency(saldoAtual, locale, organization.currency)}
           </p>
         </div>
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
@@ -60,14 +60,14 @@ export default async function FluxoCaixaPage() {
             <p className="text-sm font-medium text-neutral-500">{t("pendingReceivable")}</p>
             <TrendingUp size={18} className="text-green-700" />
           </div>
-          <p className="mt-3 text-2xl font-semibold text-neutral-900">{formatCurrency(pendingReceivable, locale)}</p>
+          <p className="mt-3 text-2xl font-semibold text-neutral-900">{formatCurrency(pendingReceivable, locale, organization.currency)}</p>
         </div>
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-neutral-500">{t("pendingPayable")}</p>
             <TrendingDown size={18} className="text-red-600" />
           </div>
-          <p className="mt-3 text-2xl font-semibold text-neutral-900">{formatCurrency(pendingPayable, locale)}</p>
+          <p className="mt-3 text-2xl font-semibold text-neutral-900">{formatCurrency(pendingPayable, locale, organization.currency)}</p>
         </div>
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
           <div className="flex items-center justify-between">
@@ -75,7 +75,7 @@ export default async function FluxoCaixaPage() {
             <ArrowRightLeft size={18} className="text-neutral-500" />
           </div>
           <p className={`mt-3 text-2xl font-semibold ${saldoProjetado >= 0 ? "text-neutral-900" : "text-red-600"}`}>
-            {formatCurrency(saldoProjetado, locale)}
+            {formatCurrency(saldoProjetado, locale, organization.currency)}
           </p>
         </div>
       </div>
@@ -124,9 +124,9 @@ export default async function FluxoCaixaPage() {
                 </td>
                 <td className={`px-4 py-3 ${e.type === "RECEBER" ? "text-green-700" : "text-red-600"}`}>
                   {e.type === "RECEBER" ? "+" : "-"}
-                  {formatCurrency(e.amount, locale)}
+                  {formatCurrency(e.amount, locale, organization.currency)}
                 </td>
-                <td className="px-4 py-3 font-medium text-neutral-800">{formatCurrency(e.balance, locale)}</td>
+                <td className="px-4 py-3 font-medium text-neutral-800">{formatCurrency(e.balance, locale, organization.currency)}</td>
               </tr>
             ))}
           </tbody>

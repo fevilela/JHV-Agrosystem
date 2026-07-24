@@ -448,8 +448,10 @@
         "streetNumber": "Number",
         "neighborhood": "Neighborhood",
         "city": "City",
-        "state": "State"
-      }
+        "state": "State",
+        "currency": "Display currency"
+      },
+      "currencyHint": "Only changes the symbol/format shown on screens — boleto charges are always in Brazilian reais (BRL)."
     },
     "whatsapp": {
       "title": "Connect WhatsApp",

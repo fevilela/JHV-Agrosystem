@@ -12,5 +12,22 @@ export function getCompanyProfileFields(t: (key: string) => string): RecordField
     { name: "neighborhood", label: t("fields.neighborhood"), type: "text" },
     { name: "city", label: t("fields.city"), type: "text" },
     { name: "state", label: t("fields.state"), type: "text" },
+    {
+      name: "currency",
+      label: t("fields.currency"),
+      type: "select",
+      required: true,
+      options: [
+        { value: "BRL", label: "R$ — Real (BRL)" },
+        { value: "USD", label: "$ — Dólar (USD)" },
+        { value: "EUR", label: "€ — Euro (EUR)" },
+        { value: "ARS", label: "$ — Peso argentino (ARS)" },
+        { value: "MXN", label: "$ — Peso mexicano (MXN)" },
+        { value: "PYG", label: "₲ — Guarani (PYG)" },
+        { value: "UYU", label: "$U — Peso uruguaio (UYU)" },
+        { value: "BOB", label: "Bs — Boliviano (BOB)" },
+        { value: "COP", label: "$ — Peso colombiano (COP)" },
+      ],
+    },
   ];
 }

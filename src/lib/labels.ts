@@ -331,13 +331,16 @@ export function toOptionsFromKeys(labels: Record<string, string>, t: (key: strin
   return Object.keys(labels).map((value) => ({ value, label: t(value) }));
 }
 
-export function formatCurrency(value: unknown, locale: string = "pt-BR") {
+// `currency` é só o código de EXIBIÇÃO (símbolo/formato) escolhido pela
+// organização em Configurações > Empresa — não converte o valor numérico.
+// O padrão continua BRL: cobrança via boleto/Mercado Pago só existe em
+// reais mesmo, então em qualquer tela que lide com boleto o valor real
+// segue sendo BRL independente do que passar aqui.
+export function formatCurrency(value: unknown, locale: string = "pt-BR", currency: string = "BRL") {
   if (value === null || value === undefined) return "—";
   const n = Number(value);
   if (Number.isNaN(n)) return "—";
-  // Moeda sempre BRL (é dinheiro real, cobrado em reais) — só o formato de
-  // exibição (separador decimal, posição do símbolo) muda com o locale.
-  return n.toLocaleString(locale, { style: "currency", currency: "BRL" });
+  return n.toLocaleString(locale, { style: "currency", currency });
 }
 
 export function formatDate(value: unknown, locale: string = "pt-BR") {

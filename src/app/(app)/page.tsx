@@ -22,7 +22,7 @@ const categoryColor: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await auth();
-  const { organizationId } = await requireOrg();
+  const { organizationId, organization } = await requireOrg();
 
   const pendencias = await getPendencias(organizationId);
   const paidEntries = await prisma.financeEntry.findMany({
@@ -77,7 +77,7 @@ export default async function DashboardPage() {
             <TrendingDown size={18} className="text-red-600" />
           </div>
           <p className="mt-3 text-2xl font-semibold text-neutral-900">
-            {formatCurrency(totalPagarAtrasado)}
+            {formatCurrency(totalPagarAtrasado, "pt-BR", organization.currency)}
           </p>
         </div>
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
             <TrendingUp size={18} className="text-green-700" />
           </div>
           <p className="mt-3 text-2xl font-semibold text-neutral-900">
-            {formatCurrency(totalReceberAtrasado)}
+            {formatCurrency(totalReceberAtrasado, "pt-BR", organization.currency)}
           </p>
         </div>
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">

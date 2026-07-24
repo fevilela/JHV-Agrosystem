@@ -47,6 +47,10 @@ model Organization {
   city            String?
   state           String?
   allowedModules  String[] @default([])
+  // Só afeta como valores monetários são EXIBIDOS nas telas (símbolo,
+  // separador) — não converte valores nem muda como o boleto/Mercado
+  // Pago funciona, que continua sendo especificamente em BRL.
+  currency        String   @default("BRL")
   active          Boolean  @default(true)
   mpAccessToken   String?
   resendApiKey    String?

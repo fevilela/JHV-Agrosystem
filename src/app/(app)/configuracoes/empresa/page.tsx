@@ -11,7 +11,8 @@ export default async function CompanyProfilePage() {
   return (
     <div>
       <h1 className="text-xl font-semibold text-neutral-900">{t("title")}</h1>
-      <p className="mt-1 mb-6 text-sm text-neutral-500">{t("description")}</p>
+      <p className="mt-1 mb-1 text-sm text-neutral-500">{t("description")}</p>
+      <p className="mb-6 text-xs text-neutral-400">{t("currencyHint")}</p>
 
       <div className="max-w-2xl">
         <RecordForm
