@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
@@ -18,7 +18,8 @@ function navItemKey(href: string) {
 export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const { open } = useSidebar();
+  const { open, close } = useSidebar();
+  const [isDesktop, setIsDesktop] = useState(true);
   const visibleGroups = navGroups.filter(
     (g) => ALWAYS_ON_MODULES.includes(g.key) || allowedModules.includes(g.key)
   );
@@ -27,17 +28,44 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
       ?.key ?? "cadastro"
   );
 
-  return (
-    <aside
-      style={{ width: open ? "16rem" : 0, borderRightWidth: open ? "1px" : 0, borderRightStyle: "solid" }}
-      className="h-full flex-shrink-0 overflow-hidden border-neutral-200/80 bg-white transition-all duration-200"
-    >
-      <div className="flex h-full w-64 flex-col">
-        <div className="flex items-center justify-center border-b border-neutral-100 px-4 py-5">
-          <Image src="/JHV_icon.png" alt="JHV Agrosystem" width={40} height={40} unoptimized priority />
-        </div>
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
-        <nav className="flex-1 overflow-y-auto px-2.5 py-4">
+  // On mobile the sidebar is an overlay drawer: picking a page should
+  // close it automatically, since it would otherwise cover the new page.
+  function handleNavClick(e: React.MouseEvent) {
+    if (!isDesktop && (e.target as HTMLElement).closest("a")) close();
+  }
+
+  return (
+    <>
+      {!isDesktop && open && (
+        <div
+          onClick={close}
+          className="fixed inset-0 z-30 bg-black/40 transition-opacity duration-200"
+        />
+      )}
+      <aside
+        style={
+          isDesktop
+            ? { width: open ? "16rem" : 0, borderRightWidth: open ? "1px" : 0, borderRightStyle: "solid" }
+            : { width: "16rem", transform: open ? "translateX(0)" : "translateX(-100%)" }
+        }
+        className={`h-full flex-shrink-0 overflow-hidden border-neutral-200/80 bg-white transition-all duration-200 ${
+          isDesktop ? "" : "fixed inset-y-0 left-0 z-40 shadow-xl"
+        }`}
+      >
+        <div className="flex h-full w-64 flex-col">
+          <div className="flex items-center justify-center border-b border-neutral-100 px-4 py-5">
+            <Image src="/JHV_icon.png" alt="JHV Agrosystem" width={40} height={40} unoptimized priority />
+          </div>
+
+          <nav onClick={handleNavClick} className="flex-1 overflow-y-auto px-2.5 py-4">
         {visibleGroups.map((group) => {
           const isOpen = openGroup === group.key;
           const isGroupActive = group.items?.some((i) =>
@@ -117,8 +145,9 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
             </div>
           );
         })}
-        </nav>
-      </div>
-    </aside>
+          </nav>
+        </div>
+      </aside>
+    </>
   );
 }

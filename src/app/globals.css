@@ -66,6 +66,18 @@ body {
   box-shadow: 0 1px 1px rgba(22, 40, 63, 0.14);
 }
 
+/* Tabelas ficam roláveis na horizontal dentro do próprio card, em vez
+   de estourar a largura da tela — crítico no celular, onde colunas
+   inteiras ficavam cortadas e inacessíveis atrás do overflow-hidden
+   do layout principal. display:block preserva o alinhamento entre
+   thead/tbody (testado) porque o próprio elemento table vira o
+   contêiner com scroll, sem precisar editar cada tela do sistema. */
+table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

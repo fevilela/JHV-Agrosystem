@@ -1,4 +1,4 @@
-const SW_VERSION = "v8";
+const SW_VERSION = "v9";
 const STATIC_CACHE = `jhv-static-${SW_VERSION}`;
 const PAGES_CACHE = `jhv-pages-${SW_VERSION}`;
 const CURRENT_CACHES = [STATIC_CACHE, PAGES_CACHE];

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import { auth, signOut } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LocaleSwitcher } from "./locale-switcher";
@@ -36,25 +37,27 @@ export async function Topbar({
       .join("") || "?";
 
   return (
-    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-3 border-b border-neutral-100 bg-white px-4">
+    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-1.5 border-b border-neutral-100 bg-white px-2.5 sm:gap-3 sm:px-6">
       <SidebarToggleButton />
-      <div className="flex flex-1 items-center justify-end gap-3">
+      <div className="flex flex-1 items-center justify-end gap-1.5 overflow-x-auto sm:gap-3">
         {isSuperAdmin && (
           <Link
             href="/admin"
-            className="rounded-lg border border-neutral-200 px-3 py-1.5 text-sm font-medium text-brand-800 transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50"
+            title="Painel JHV"
+            className="flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 px-2 py-1.5 text-sm font-medium text-brand-800 transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50 sm:px-3"
           >
-            Painel JHV
+            <LayoutDashboard size={16} />
+            <span className="hidden sm:inline">Painel JHV</span>
           </Link>
         )}
         <OfflineStatusBadge />
         <PushOptIn />
         <NotificationBell notifications={notifications} unreadCount={unreadCount} />
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-800">
+        <div className="flex flex-shrink-0 items-center gap-3">
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-800">
             {initials}
           </div>
-          <div className="text-right">
+          <div className="hidden text-right sm:block">
             <p className="text-sm font-medium leading-none text-neutral-900">
               {session?.user?.name}
             </p>
@@ -73,9 +76,11 @@ export async function Topbar({
         >
           <button
             type="submit"
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+            title="Sair"
+            className="flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-neutral-300 px-2 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 sm:px-3"
           >
-            Sair
+            <LogOut size={16} />
+            <span className="hidden sm:inline">Sair</span>
           </button>
         </form>
       </div>
