@@ -1,4 +1,4 @@
-const SW_VERSION = "v7";
+const SW_VERSION = "v8";
 const STATIC_CACHE = `jhv-static-${SW_VERSION}`;
 const PAGES_CACHE = `jhv-pages-${SW_VERSION}`;
 const CURRENT_CACHES = [STATIC_CACHE, PAGES_CACHE];
@@ -194,4 +194,37 @@ self.addEventListener("sync", (event) => {
   if (event.tag === "sync-write-queue") {
     event.waitUntil(drainQueueInWorker());
   }
+});
+
+self.addEventListener("push", (event) => {
+  let payload = { title: "JHV Agrosystem", body: "Você tem uma notificação nova.", url: "/" };
+  try {
+    if (event.data) payload = { ...payload, ...event.data.json() };
+  } catch {
+    // keep the fallback payload
+  }
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: "/JHV_icon.png",
+      badge: "/JHV_icon.png",
+      data: { url: payload.url },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "/";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if (client.url.includes(self.location.origin) && "focus" in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
 });

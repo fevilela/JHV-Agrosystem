@@ -8,6 +8,8 @@
     "select": "Select",
     "savedOffline": "Saved offline — will be sent when the connection is back.",
     "saveError": "Couldn't save. Please try again.",
+    "enableNotifications": "Enable notifications",
+    "enablingNotifications": "Enabling...",
     "online": "Online",
     "offline": "Offline",
     "pendingSync": "{count, plural, one {# pending sync} other {# pending syncs}}"

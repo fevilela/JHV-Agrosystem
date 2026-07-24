@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getPendencias } from "@/lib/pendencias";
+import { sendPushToOrganization } from "@/lib/push";
 
 async function gerarNotificacoesParaOrganizacao(organizationId: string) {
   const pendencias = await getPendencias(organizationId);
@@ -46,6 +47,14 @@ async function gerarNotificacoesParaOrganizacao(organizationId: string) {
       sourceKey: currentKeys.length > 0 ? { notIn: currentKeys } : undefined,
     },
   });
+
+  if (criadas > 0) {
+    await sendPushToOrganization(organizationId, {
+      title: criadas === 1 ? "1 pendência nova" : `${criadas} pendências novas`,
+      body: "Toque para ver o que precisa de atenção no JHV Agrosystem.",
+      url: "/",
+    });
+  }
 
   return criadas;
 }

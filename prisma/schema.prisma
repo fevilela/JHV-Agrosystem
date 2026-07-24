@@ -27,6 +27,8 @@ model User {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
+  pushSubscriptions PushSubscription[]
+
   @@map("users")
 }
 
@@ -103,6 +105,7 @@ model Organization {
 
   auditLogs     AuditLog[]
   notifications Notification[]
+  pushSubscriptions PushSubscription[]
 
   @@map("organizations")
 }
@@ -1798,4 +1801,21 @@ model Notification {
   @@unique([organizationId, sourceKey])
   @@index([organizationId, read, createdAt])
   @@map("notifications")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("push_subscriptions")
 }
