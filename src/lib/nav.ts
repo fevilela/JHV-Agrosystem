@@ -33,6 +33,7 @@ export const navGroups: NavGroup[] = [
     key: "cadastro",
     label: "Cadastro",
     items: [
+      { label: "Propriedades", href: "/cadastro/propriedades" },
       { label: "Proprietários", href: "/cadastro/proprietarios" },
       { label: "Animais / Cavalos", href: "/cadastro/animais" },
       { label: "Funcionários", href: "/cadastro/funcionarios" },

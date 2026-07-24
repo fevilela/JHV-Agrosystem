@@ -18,6 +18,7 @@
     "cadastro": {
       "group": "Registro",
       "items": {
+        "propriedades": "Propiedades",
         "proprietarios": "Propietarios",
         "animais": "Animales / Caballos",
         "funcionarios": "Empleados",
@@ -514,9 +515,11 @@
       "salary": "Salario",
       "crmv": "CRMV",
       "specialty": "Especialidad",
-      "productsOrServices": "Productos/Servicios"
+      "productsOrServices": "Productos/Servicios",
+      "code": "Código"
     },
     "entities": {
+      "propriedades": { "title": "Propiedades", "singular": "Propiedad" },
       "proprietarios": { "title": "Propietarios", "singular": "Propietario" },
       "clientes": { "title": "Clientes", "singular": "Cliente" },
       "fornecedores": { "title": "Proveedores", "singular": "Proveedor" },
@@ -1424,6 +1427,7 @@
       "fields": {
         "code": "Código",
         "name": "Nombre",
+        "property": "Propiedad",
         "areaHectares": "Área (ha)",
         "soilType": "Tipo de Suelo",
         "coordinates": "Coordenadas",
@@ -1811,6 +1815,7 @@
       "fields": {
         "code": "Código",
         "name": "Nombre",
+        "property": "Propiedad",
         "areaHectares": "Área (ha)",
         "capacityHead": "Capacidad (cabezas)",
         "rotationStatus": "Estado de Rotación",

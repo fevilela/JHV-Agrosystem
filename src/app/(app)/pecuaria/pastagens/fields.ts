@@ -7,6 +7,7 @@ export function getPastureFields(t: Translator, tStatus: Translator): RecordFiel
   return [
     { name: "code", label: t("code"), type: "text", required: true },
     { name: "name", label: t("name"), type: "text" },
+    { name: "propertyId", label: t("property"), type: "relation" },
     { name: "areaHectares", label: t("areaHectares"), type: "number" },
     { name: "capacityHead", label: t("capacityHead"), type: "number" },
     {

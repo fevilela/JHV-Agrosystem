@@ -18,6 +18,8 @@ export default async function EditPasturePage({
   const pasture = await prisma.pasture.findFirst({ where: { id, organizationId } });
   if (!pasture) notFound();
 
+  const properties = await prisma.property.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
+
   const t = await getTranslations("pecuaria.pastagens");
   const tf = await getTranslations("pecuaria.pastagens.fields");
   const tStatus = await getTranslations("labels.pastureRotationStatus");
@@ -29,6 +31,9 @@ export default async function EditPasturePage({
         fields={getPastureFields(tf, tStatus)}
         action={updatePastureAction.bind(null, id)}
         initialValues={pasture}
+        relationOptions={{
+          propertyId: properties.map((p) => ({ id: p.id, label: p.name })),
+        }}
         backHref="/pecuaria/pastagens"
       />
       <div className="mt-6">

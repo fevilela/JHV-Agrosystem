@@ -29,6 +29,8 @@ export default async function PiqueteDetailPage({
 
   if (!piquete) notFound();
 
+  const properties = await prisma.property.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
+
   return (
     <div>
       <Link href="/hipica/piquetes" className="text-sm text-neutral-500 hover:text-neutral-800">
@@ -43,6 +45,9 @@ export default async function PiqueteDetailPage({
           fields={piqueteFields}
           action={updatePiqueteAction.bind(null, id)}
           initialValues={piquete}
+          relationOptions={{
+            propertyId: properties.map((p) => ({ id: p.id, label: p.name })),
+          }}
           backHref="/hipica/piquetes"
         />
 

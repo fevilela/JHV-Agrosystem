@@ -18,6 +18,7 @@ export type EntityField = {
 export type EntityConfig = {
   slug: string;
   model:
+    | "property"
     | "owner"
     | "client"
     | "supplier"
@@ -59,6 +60,21 @@ export function getEntities(t: T): Record<string, EntityConfig> {
   ];
 
   return {
+    propriedades: {
+      slug: "propriedades",
+      model: "property",
+      title: e("propriedades", "title"),
+      singular: e("propriedades", "singular"),
+      fields: [
+        { name: "name", label: f("name"), type: "text", required: true, colSpan: 2 },
+        { name: "code", label: f("code"), type: "text" },
+        { name: "notes", label: f("notes"), type: "textarea", colSpan: 2 },
+      ],
+      listColumns: [
+        { key: "name", label: f("name") },
+        { key: "code", label: f("code") },
+      ],
+    },
     proprietarios: {
       slug: "proprietarios",
       model: "owner",

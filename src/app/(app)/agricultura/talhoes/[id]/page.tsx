@@ -18,6 +18,8 @@ export default async function EditTalhaoPage({
   const talhao = await prisma.talhao.findFirst({ where: { id, organizationId } });
   if (!talhao) notFound();
 
+  const properties = await prisma.property.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
+
   const t = await getTranslations("agricultura.talhoes");
   const tf = await getTranslations("agricultura.talhoes.fields");
 
@@ -28,6 +30,9 @@ export default async function EditTalhaoPage({
         fields={getTalhaoFields(tf)}
         action={updateTalhaoAction.bind(null, id)}
         initialValues={talhao}
+        relationOptions={{
+          propertyId: properties.map((p) => ({ id: p.id, label: p.name })),
+        }}
         backHref="/agricultura/talhoes"
       />
       <div className="mt-6">

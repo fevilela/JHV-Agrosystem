@@ -106,8 +106,33 @@ model Organization {
   auditLogs     AuditLog[]
   notifications Notification[]
   pushSubscriptions PushSubscription[]
+  properties        Property[]
 
   @@map("organizations")
+}
+
+// ---------- Cadastro: propriedades (fazendas) ----------
+// Uma organização pode ter mais de uma fazenda/propriedade. Ligação
+// opcional: hoje só as entidades geográficas (Talhão, Pastagem, Piquete)
+// referenciam a propriedade — os demais módulos (financeiro, RH, estoque
+// etc.) continuam escopados só por organização, não por propriedade
+// individual, pra não precisar refazer o retrofit inteiro de novo.
+model Property {
+  id        String   @id @default(cuid())
+  name      String
+  code      String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  talhoes  Talhao[]
+  pastures Pasture[]
+  piquetes Piquete[]
+
+  @@map("properties")
 }
 
 // ---------- Cadastro: pessoas ----------
@@ -714,6 +739,9 @@ model Pasture {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id])
+
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
 
@@ -904,6 +932,9 @@ model Talhao {
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id])
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -1689,6 +1720,9 @@ model Piquete {
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id])
 
   currentAnimalId String? @unique
   currentAnimal   Animal? @relation("PiqueteOccupant", fields: [currentAnimalId], references: [id])
