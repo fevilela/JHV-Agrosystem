@@ -111,6 +111,7 @@ model Organization {
   notifications Notification[]
   pushSubscriptions PushSubscription[]
   properties        Property[]
+  apiKeys           ApiKey[]
 
   @@map("organizations")
 }
@@ -1856,4 +1857,22 @@ model PushSubscription {
 
   @@index([organizationId])
   @@map("push_subscriptions")
+}
+
+// ---------- API pública (somente leitura) ----------
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  name       String
+  keyPrefix  String
+  keyHash    String    @unique
+  lastUsedAt DateTime?
+  revoked    Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@map("api_keys")
 }

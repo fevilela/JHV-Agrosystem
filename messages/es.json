@@ -136,7 +136,9 @@
       "items": {
         "empresa": "Datos de la Empresa",
         "whatsapp": "Conectar WhatsApp",
-        "conversas": "Conversaciones de WhatsApp"
+        "conversas": "Conversaciones de WhatsApp",
+        "auditoria": "Registro de Auditoría",
+        "api": "API pública"
       }
     }
   },
@@ -494,6 +496,37 @@
         "helperText": "El mensaje de texto libre solo funciona hasta 24h después del último mensaje del cliente. Fuera de ese plazo, es necesario usar una plantilla aprobada por Meta.",
         "errorEmpty": "Escriba un mensaje."
       }
+    },
+    "api": {
+      "title": "API pública",
+      "description": "Genere claves de API para integrar sistemas externos con los datos de esta organización (solo lectura).",
+      "newKeyTitle": "Nueva clave",
+      "nameLabel": "Nombre de la clave",
+      "namePlaceholder": "Ej: Integración BI",
+      "createKey": "Generar clave",
+      "creating": "Generando...",
+      "tokenCreatedTitle": "Clave generada con éxito",
+      "tokenShownOnce": "Cópiela ahora — por seguridad, esta clave no se mostrará de nuevo.",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "keysTitle": "Claves activas",
+      "empty": "Aún no se creó ninguna clave.",
+      "neverUsed": "Nunca usada",
+      "active": "Activa",
+      "revoked": "Revocada",
+      "revoke": "Revocar",
+      "confirmRevoke": "Confirmar revocación",
+      "table": {
+        "name": "Nombre",
+        "prefix": "Clave",
+        "createdAt": "Creada el",
+        "lastUsedAt": "Último uso",
+        "status": "Estado"
+      },
+      "docsTitle": "Endpoints disponibles",
+      "docsDescription": "Todos los endpoints son de solo lectura (GET) y devuelven datos únicamente de esta organización.",
+      "docsAuthLabel": "Autenticación (header en cada solicitud):",
+      "docsPagination": "Paginación: parámetros ?page y ?pageSize (máximo 100 por página) en todos los listados."
     }
   },
   "cadastro": {
