@@ -3,6 +3,7 @@ import { Plus, Pencil, Map as MapIcon } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { piqueteStatusLabels } from "@/lib/labels";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { SearchableSelect } from "@/components/crud/searchable-select";
 import { requireModule } from "@/lib/tenant";
 import {
   deletePiqueteAction,
@@ -103,18 +104,16 @@ export default async function PiquetesListPage() {
                     action={occupyPiqueteAction.bind(null, piquete.id)}
                     className="flex gap-2"
                   >
-                    <select
-                      name="animalId"
-                      required
-                      className="flex-1 rounded-lg border border-neutral-300 px-2 py-1.5 text-xs outline-none focus:border-brand-600"
-                    >
-                      <option value="">Selecione o animal</option>
-                      {animals.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex-1">
+                      <SearchableSelect
+                        name="animalId"
+                        required
+                        options={animals.map((a) => ({ value: a.id, label: a.name }))}
+                        placeholder="Selecione o animal"
+                        searchPlaceholder="Buscar por nome..."
+                        className="w-full rounded-lg border border-neutral-300 px-2 py-1.5 text-xs outline-none focus:border-brand-600"
+                      />
+                    </div>
                     <button
                       type="submit"
                       className="rounded-lg bg-brand-700 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand-800"

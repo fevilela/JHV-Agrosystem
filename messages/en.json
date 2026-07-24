@@ -6,6 +6,7 @@
     "delete": "Delete",
     "confirmDelete": "Confirm deletion",
     "select": "Select",
+    "searchPlaceholder": "Search by name...",
     "savedOffline": "Saved offline — will be sent when the connection is back.",
     "saveError": "Couldn't save. Please try again.",
     "enableNotifications": "Enable notifications",

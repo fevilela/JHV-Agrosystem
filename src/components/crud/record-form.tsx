@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { enqueueWrite } from "@/lib/offline-queue";
+import { SearchableSelect } from "@/components/crud/searchable-select";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (
@@ -64,6 +65,7 @@ export function RecordForm({
   const [savedOffline, setSavedOffline] = useState(false);
   const [offlineError, setOfflineError] = useState<string | undefined>();
   const [offlineSubmitting, setOfflineSubmitting] = useState(false);
+  const [formKey, setFormKey] = useState(0);
   const router = useRouter();
   const t = useTranslations("common");
 
@@ -94,7 +96,11 @@ export function RecordForm({
       setOfflineError(data.error || t("saveError"));
     } catch {
       await enqueueWrite({ endpoint: offline.syncEndpoint, moduleLabel: offline.moduleLabel, payload });
+      // form.reset() only resets native uncontrolled inputs — the
+      // SearchableSelect combobox below holds its own React state, so a
+      // remount (key bump) is needed to actually clear it too.
       form.reset();
+      setFormKey((k) => k + 1);
       setSavedOffline(true);
     } finally {
       setOfflineSubmitting(false);
@@ -103,6 +109,7 @@ export function RecordForm({
 
   return (
     <form
+      key={formKey}
       action={formAction}
       onSubmit={offline ? handleSubmit : undefined}
       className="space-y-7 rounded-2xl border border-neutral-200 bg-white p-7"
@@ -153,19 +160,13 @@ export function RecordForm({
             return (
               <div key={field.name} className={wide}>
                 {label}
-                <select
+                <SearchableSelect
                   name={field.name}
                   required={field.required}
                   defaultValue={toInputValue(value, field.type)}
-                  className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
-                >
-                  {!field.required && <option value="">—</option>}
-                  {field.options?.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                  options={field.options ?? []}
+                  searchPlaceholder={t("searchPlaceholder")}
+                />
               </div>
             );
           }
@@ -175,19 +176,14 @@ export function RecordForm({
             return (
               <div key={field.name} className={wide}>
                 {label}
-                <select
+                <SearchableSelect
                   name={field.name}
                   required={field.required}
                   defaultValue={toInputValue(value, field.type)}
-                  className="w-full rounded-xl border border-neutral-200 px-3.5 py-2.5 text-sm text-neutral-800 outline-none transition-shadow duration-150 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
-                >
-                  <option value="">{field.required ? t("select") : "—"}</option>
-                  {options.map((opt) => (
-                    <option key={opt.id} value={opt.id}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                  options={options.map((opt) => ({ value: opt.id, label: opt.label }))}
+                  placeholder={field.required ? t("select") : "—"}
+                  searchPlaceholder={t("searchPlaceholder")}
+                />
               </div>
             );
           }

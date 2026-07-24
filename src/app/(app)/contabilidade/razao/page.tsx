@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireOrg } from "@/lib/tenant";
 import { formatCurrency, formatDate } from "@/lib/labels";
 import { calcularSaldo } from "@/lib/contabilidade";
+import { SearchableSelect } from "@/components/crud/searchable-select";
 
 export default async function LivroRazaoPage({
   searchParams,
@@ -17,6 +18,7 @@ export default async function LivroRazaoPage({
     orderBy: { code: "asc" },
   });
   const t = await getTranslations("contabilidade.razao");
+  const tc = await getTranslations("common");
   const locale = await getLocale();
 
   const selected = accountId ? accounts.find((a) => a.id === accountId) : undefined;
@@ -45,18 +47,14 @@ export default async function LivroRazaoPage({
       <form method="get" className="mb-6 flex max-w-md items-end gap-3">
         <div className="flex-1">
           <label className="mb-1 block text-sm font-medium text-neutral-700">{t("accountLabel")}</label>
-          <select
+          <SearchableSelect
             name="accountId"
             defaultValue={accountId || ""}
+            options={accounts.map((a) => ({ value: a.id, label: `${a.code} — ${a.name}` }))}
+            placeholder={t("selectAccount")}
+            searchPlaceholder={tc("searchPlaceholder")}
             className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-          >
-            <option value="">{t("selectAccount")}</option>
-            {accounts.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.code} — {a.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
         <button
           type="submit"

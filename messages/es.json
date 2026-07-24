@@ -6,6 +6,7 @@
     "delete": "Eliminar",
     "confirmDelete": "Confirmar eliminación",
     "select": "Seleccione",
+    "searchPlaceholder": "Buscar por nombre...",
     "savedOffline": "Guardado sin conexión — se enviará cuando vuelva la conexión.",
     "saveError": "No se pudo guardar. Intente de nuevo.",
     "enableNotifications": "Activar notificaciones",

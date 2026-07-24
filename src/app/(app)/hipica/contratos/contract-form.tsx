@@ -3,6 +3,7 @@
 import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
 import { contractTypeLabels } from "@/lib/labels";
+import { SearchableSelect } from "@/components/crud/searchable-select";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (state: FormState, formData: FormData) => Promise<FormState>;
@@ -68,20 +69,15 @@ export function ContractForm({
           <label className={labelClass}>
             Cliente <span className="text-red-500">*</span>
           </label>
-          <select
+          <SearchableSelect
             name="clientId"
             required
             value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
+            onChange={setClientId}
+            options={clients.map((c) => ({ value: c.id, label: c.name }))}
+            searchPlaceholder="Buscar por nome..."
             className={inputClass}
-          >
-            <option value="">Selecione</option>
-            {clients.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         {selectedClient && (
@@ -111,14 +107,12 @@ export function ContractForm({
 
         <div>
           <label className={labelClass}>Animal</label>
-          <select name="animalId" className={inputClass}>
-            <option value="">—</option>
-            {animals.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
+          <SearchableSelect
+            name="animalId"
+            options={animals.map((a) => ({ value: a.id, label: a.name }))}
+            searchPlaceholder="Buscar por nome..."
+            className={inputClass}
+          />
         </div>
 
         {type === "BAIA" && (
@@ -126,15 +120,13 @@ export function ContractForm({
             <label className={labelClass}>
               Baia <span className="text-red-500">*</span>
             </label>
-            <select name="stallId" required className={inputClass}>
-              <option value="">Selecione</option>
-              {stalls.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.code}
-                  {s.location ? ` — ${s.location}` : ""}
-                </option>
-              ))}
-            </select>
+            <SearchableSelect
+              name="stallId"
+              required
+              options={stalls.map((s) => ({ value: s.id, label: `${s.code}${s.location ? ` — ${s.location}` : ""}` }))}
+              searchPlaceholder="Buscar por nome..."
+              className={inputClass}
+            />
           </div>
         )}
 
@@ -143,15 +135,13 @@ export function ContractForm({
             <label className={labelClass}>
               Piquete <span className="text-red-500">*</span>
             </label>
-            <select name="piqueteId" required className={inputClass}>
-              <option value="">Selecione</option>
-              {piquetes.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.code}
-                  {p.location ? ` — ${p.location}` : ""}
-                </option>
-              ))}
-            </select>
+            <SearchableSelect
+              name="piqueteId"
+              required
+              options={piquetes.map((p) => ({ value: p.id, label: `${p.code}${p.location ? ` — ${p.location}` : ""}` }))}
+              searchPlaceholder="Buscar por nome..."
+              className={inputClass}
+            />
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { SearchableSelect } from "@/components/crud/searchable-select";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (state: FormState, formData: FormData) => Promise<FormState>;
@@ -121,18 +122,14 @@ export function JournalEntryForm({
               {lines.map((line, i) => (
                 <tr key={i} className="border-b border-neutral-100 last:border-0">
                   <td className="px-3 py-2">
-                    <select
+                    <SearchableSelect
                       value={line.accountId}
-                      onChange={(e) => updateLine(i, { accountId: e.target.value })}
+                      onChange={(accountId) => updateLine(i, { accountId })}
+                      options={accounts.map((a) => ({ value: a.id, label: `${a.code} — ${a.name}` }))}
+                      placeholder={t("select")}
+                      searchPlaceholder={tc("searchPlaceholder")}
                       className="w-full rounded-lg border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-                    >
-                      <option value="">{t("select")}</option>
-                      {accounts.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.code} — {a.name}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </td>
                   <td className="px-3 py-2">
                     <select

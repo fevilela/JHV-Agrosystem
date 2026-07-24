@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { SearchableSelect } from "@/components/crud/searchable-select";
 
 type FormState = { error?: string } | undefined;
 type FormAction = (
@@ -196,54 +197,42 @@ export function AnimalForm({
             <label className="mb-1 block text-sm font-medium text-neutral-700">
               {t("owner")}
             </label>
-            <select
+            <SearchableSelect
               name="ownerId"
               defaultValue={(animal?.ownerId as string) ?? ""}
+              options={owners.map((o) => ({ value: o.id, label: o.name }))}
+              placeholder={t("noOwner")}
+              searchPlaceholder={tc("searchPlaceholder")}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-            >
-              <option value="">{t("noOwner")}</option>
-              {owners.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
               {t("father")}
             </label>
-            <select
+            <SearchableSelect
               name="paiId"
               defaultValue={(animal?.paiId as string) ?? ""}
+              options={animalsForGenealogy.map((a) => ({ value: a.id, label: a.name }))}
+              placeholder={t("notInformed")}
+              searchPlaceholder={tc("searchPlaceholder")}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-            >
-              <option value="">{t("notInformed")}</option>
-              {animalsForGenealogy.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
               {t("mother")}
             </label>
-            <select
+            <SearchableSelect
               name="maeId"
               defaultValue={(animal?.maeId as string) ?? ""}
+              options={animalsForGenealogy.map((a) => ({ value: a.id, label: a.name }))}
+              placeholder={t("notInformed")}
+              searchPlaceholder={tc("searchPlaceholder")}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-            >
-              <option value="">{t("notInformed")}</option>
-              {animalsForGenealogy.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
       </section>

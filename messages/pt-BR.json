@@ -6,6 +6,7 @@
     "delete": "Excluir",
     "confirmDelete": "Confirmar exclusão",
     "select": "Selecione",
+    "searchPlaceholder": "Buscar por nome...",
     "savedOffline": "Salvo offline — será enviado quando a conexão voltar.",
     "saveError": "Não foi possível salvar. Tente novamente.",
     "enableNotifications": "Ativar notificações",
