@@ -8,6 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
 import { OFFLINE_PAGE_PREFIXES } from "@/lib/offline-pages";
+import { useSidebar } from "./sidebar-context";
 
 function navItemKey(href: string) {
   const last = href.split("/").filter(Boolean).pop() ?? "";
@@ -17,6 +18,7 @@ function navItemKey(href: string) {
 export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const { open } = useSidebar();
   const visibleGroups = navGroups.filter(
     (g) => ALWAYS_ON_MODULES.includes(g.key) || allowedModules.includes(g.key)
   );
@@ -26,12 +28,16 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
   );
 
   return (
-    <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-neutral-200/80 bg-white">
-      <div className="flex items-center justify-center border-b border-neutral-100 px-4 py-5">
-        <Image src="/JHV_icon.png" alt="JHV Agrosystem" width={40} height={40} unoptimized priority />
-      </div>
+    <aside
+      style={{ width: open ? "16rem" : 0, borderRightWidth: open ? "1px" : 0, borderRightStyle: "solid" }}
+      className="h-full flex-shrink-0 overflow-hidden border-neutral-200/80 bg-white transition-all duration-200"
+    >
+      <div className="flex h-full w-64 flex-col">
+        <div className="flex items-center justify-center border-b border-neutral-100 px-4 py-5">
+          <Image src="/JHV_icon.png" alt="JHV Agrosystem" width={40} height={40} unoptimized priority />
+        </div>
 
-      <nav className="flex-1 overflow-y-auto px-2.5 py-4">
+        <nav className="flex-1 overflow-y-auto px-2.5 py-4">
         {visibleGroups.map((group) => {
           const isOpen = openGroup === group.key;
           const isGroupActive = group.items?.some((i) =>
@@ -111,7 +117,8 @@ export function Sidebar({ allowedModules }: { allowedModules: string[] }) {
             </div>
           );
         })}
-      </nav>
+        </nav>
+      </div>
     </aside>
   );
 }
