@@ -2,6 +2,18 @@
 
 Sistema de gestão agropecuária completo: Cadastro, Hípica, Pecuária, Agricultura, Máquinas e Equipamentos, Estoque, Compras, Financeiro, Recursos Humanos e Oficina.
 
+## Documentação
+
+Este README cobre a visão de produto (marca, integrações, status dos módulos). Documentação técnica completa em [`docs/`](./docs):
+
+- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — stack, estrutura de pastas, multi-tenancy, autenticação, padrões de código
+- [`docs/DATABASE.md`](./docs/DATABASE.md) — modelos do Prisma por módulo, migrations, comandos de banco
+- [`docs/MODULES.md`](./docs/MODULES.md) — os 12 módulos, rotas e chaves de liberação
+- [`docs/SETUP.md`](./docs/SETUP.md) — rodar localmente, variáveis de ambiente
+- [`docs/DEPLOY.md`](./docs/DEPLOY.md) — deploy, cron jobs, webhooks
+- [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — fluxo de branches/commits, proteção da `master`, uso do Claude Code em equipe (importante para mais de uma pessoa mexendo no código)
+- [`prompts/`](./prompts) — histórico de tarefas discutidas no Cowork e rodadas no Claude Code (ver [`prompts/README.md`](./prompts/README.md))
+
 ## Stack
 
 Next.js (App Router) + TypeScript + Tailwind CSS + Prisma + PostgreSQL (Supabase) + NextAuth (Credentials).
