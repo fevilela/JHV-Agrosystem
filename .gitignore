@@ -44,3 +44,8 @@ next-env.d.ts
 
 # uploaded files
 /public/uploads
+
+# Claude Code: settings.json é compartilhado (permissões da equipe),
+# settings.local.json é pessoal de cada máquina e pode acumular tokens/segredos
+# usados em sessões de debug — nunca deve ser versionado.
+.claude/settings.local.json
