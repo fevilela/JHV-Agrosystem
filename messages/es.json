@@ -73,6 +73,14 @@
         "armazenagem": "Almacenamiento"
       }
     },
+    "viveiro": {
+      "group": "Vivero de Plantines",
+      "items": {
+        "especies": "Especies y Cultivares",
+        "estrutura": "Estructura Física",
+        "lotes": "Lotes de Producción"
+      }
+    },
     "maquinas": {
       "group": "Máquinas y Equipos",
       "items": {
