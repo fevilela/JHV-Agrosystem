@@ -73,6 +73,14 @@
         "armazenagem": "Storage"
       }
     },
+    "viveiro": {
+      "group": "Nursery",
+      "items": {
+        "especies": "Species & Cultivars",
+        "estrutura": "Physical Structure",
+        "lotes": "Production Batches"
+      }
+    },
     "maquinas": {
       "group": "Machinery & Equipment",
       "items": {

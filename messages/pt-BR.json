@@ -73,6 +73,14 @@
         "armazenagem": "Armazenagem"
       }
     },
+    "viveiro": {
+      "group": "Viveiro de Mudas",
+      "items": {
+        "especies": "Espécies e Cultivares",
+        "estrutura": "Estrutura Física",
+        "lotes": "Lotes de Produção"
+      }
+    },
     "maquinas": {
       "group": "Máquinas e Equipamentos",
       "items": {
