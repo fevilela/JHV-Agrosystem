@@ -26,6 +26,7 @@ export const RETROFITTED_MODULES = [
   "financeiro",
   "agricultura",
   "pecuaria",
+  "viveiro",
 ];
 
 export const navGroups: NavGroup[] = [
@@ -88,6 +89,15 @@ export const navGroups: NavGroup[] = [
       { label: "Irrigação", href: "/agricultura/irrigacao" },
       { label: "Colheita", href: "/agricultura/colheita" },
       { label: "Armazenagem", href: "/agricultura/armazenagem" },
+    ],
+  },
+  {
+    key: "viveiro",
+    label: "Viveiro de Mudas",
+    items: [
+      { label: "Espécies e Cultivares", href: "/viveiro/especies" },
+      { label: "Estrutura Física", href: "/viveiro/estrutura" },
+      { label: "Lotes de Produção", href: "/viveiro/lotes" },
     ],
   },
   {

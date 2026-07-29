@@ -320,6 +320,46 @@ export const journalEntryLineTypeLabels: Record<string, string> = {
   CREDITO: "Crédito",
 };
 
+export const propagacaoTipoLabels: Record<string, string> = {
+  SEMENTE: "Semente",
+  ESTACA: "Estaca",
+  MUDA_MICROPROPAGADA: "Muda Micropropagada",
+  ENXERTIA: "Enxertia",
+  ALPORQUIA: "Alporquia",
+  OUTRO: "Outro",
+};
+
+export const coberturaTipoLabels: Record<string, string> = {
+  SOMBRITE: "Sombrite",
+  PLASTICO: "Plástico",
+  CASA_VEGETACAO: "Casa de Vegetação",
+  CEU_ABERTO: "Céu Aberto",
+  OUTRO: "Outro",
+};
+
+export const origemPropaguloLabels: Record<string, string> = {
+  SEMENTEIRA_PROPRIA: "Sementeira Própria",
+  COMPRADO: "Comprado",
+  DOADO: "Doado",
+};
+
+export const mudaLoteStatusLabels: Record<string, string> = {
+  ATIVO: "Ativo",
+  DESCARTADO: "Descartado",
+  VENDIDO: "Vendido",
+  DOADO: "Doado",
+  PERDIDO: "Perdido",
+};
+
+export const faseMudaLabels: Record<string, string> = {
+  SEMEADURA_ESTAQUEAMENTO: "Semeadura/Estaqueamento",
+  GERMINACAO_ENRAIZAMENTO: "Germinação/Enraizamento",
+  REPICAGEM: "Repicagem",
+  CRESCIMENTO: "Crescimento",
+  RUSTIFICACAO: "Rustificação",
+  PRONTA_EXPEDICAO: "Pronta para Expedição",
+};
+
 export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }

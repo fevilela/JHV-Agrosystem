@@ -113,6 +113,10 @@ model Organization {
   properties        Property[]
   apiKeys           ApiKey[]
 
+  mudaEspecies MudaEspecie[]
+  viveiros     Viveiro[]
+  mudaLotes    MudaLote[]
+
   @@map("organizations")
 }
 
@@ -136,6 +140,7 @@ model Property {
   talhoes  Talhao[]
   pastures Pasture[]
   piquetes Piquete[]
+  viveiros Viveiro[]
 
   @@map("properties")
 }
@@ -185,6 +190,7 @@ model Employee {
   schedules    Schedule[]
   trainings    Training[]
   epiIssuances EpiIssuance[]
+  mudaLotes    MudaLote[]
 
   @@map("employees")
 }
@@ -311,6 +317,7 @@ model Supplier {
   quotations     Quotation[]
   purchaseOrders PurchaseOrder[]
   financeEntries FinanceEntry[]
+  mudaEspecies   MudaEspecie[]
 
   @@map("suppliers")
 }
@@ -1789,6 +1796,148 @@ model Contract {
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("contracts")
+}
+
+// ---------- Viveiro de Mudas ----------
+
+enum PropagacaoTipo {
+  SEMENTE
+  ESTACA
+  MUDA_MICROPROPAGADA
+  ENXERTIA
+  ALPORQUIA
+  OUTRO
+}
+
+model MudaEspecie {
+  id                     String         @id @default(cuid())
+  nomeCientifico         String?
+  nomePopular            String
+  familiaBotanica        String?
+  cultivar               String?
+  tipoPropagacao         PropagacaoTipo @default(SEMENTE)
+  cicloMedioDias         Int?
+  temperaturaIdeal       String?
+  umidadeIdeal           String?
+  espacamentoRecomendado String?
+  fichaTecnica           String?
+  notes                  String?
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  fornecedorId String?
+  fornecedor   Supplier? @relation(fields: [fornecedorId], references: [id])
+
+  lotes MudaLote[]
+
+  @@map("muda_especies")
+}
+
+enum CoberturaTipo {
+  SOMBRITE
+  PLASTICO
+  CASA_VEGETACAO
+  CEU_ABERTO
+  OUTRO
+}
+
+model Viveiro {
+  id                 String        @id @default(cuid())
+  code               String        @unique
+  name               String
+  areaM2             Decimal?      @db.Decimal(10, 2)
+  tipoCobertura      CoberturaTipo @default(OUTRO)
+  percentualSombrite Decimal?      @db.Decimal(5, 2)
+  sistemaIrrigacao   String?
+  capacidadeMaxima   Int?
+  boundary           Json?
+  notes              String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id])
+
+  lotes MudaLote[]
+
+  @@map("viveiros")
+}
+
+enum OrigemPropagulo {
+  SEMENTEIRA_PROPRIA
+  COMPRADO
+  DOADO
+}
+
+enum MudaLoteStatus {
+  ATIVO
+  DESCARTADO
+  VENDIDO
+  DOADO
+  PERDIDO
+}
+
+enum FaseMuda {
+  SEMEADURA_ESTAQUEAMENTO
+  GERMINACAO_ENRAIZAMENTO
+  REPICAGEM
+  CRESCIMENTO
+  RUSTIFICACAO
+  PRONTA_EXPEDICAO
+}
+
+model MudaLote {
+  id                         String          @id @default(cuid())
+  code                       String
+  especieId                  String
+  especie                    MudaEspecie     @relation(fields: [especieId], references: [id])
+  dataSemeaduraEstaqueamento DateTime
+  origemPropagulo            OrigemPropagulo @default(SEMENTEIRA_PROPRIA)
+  numeroNotaCertificado      String?
+  quantidadeInicial          Int
+  quantidadeAtual            Int
+  faseAtual                  FaseMuda        @default(SEMEADURA_ESTAQUEAMENTO)
+  substrato                  String?
+  recipiente                 String?
+  status                     MudaLoteStatus  @default(ATIVO)
+  previsaoConclusao          DateTime?
+  notes                      String?
+  createdAt                  DateTime        @default(now())
+  updatedAt                  DateTime        @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  viveiroId String
+  viveiro   Viveiro @relation(fields: [viveiroId], references: [id])
+
+  responsavelId String?
+  responsavel   Employee? @relation(fields: [responsavelId], references: [id])
+
+  faseEventos MudaFaseEvento[]
+
+  @@unique([organizationId, code])
+  @@map("muda_lotes")
+}
+
+model MudaFaseEvento {
+  id                String   @id @default(cuid())
+  loteId            String
+  lote              MudaLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  fase              FaseMuda
+  dataEntrada       DateTime @default(now())
+  dataSaida         DateTime?
+  quantidadePerdida Int?     @default(0)
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  @@map("muda_fase_eventos")
 }
 
 // ---------- Log de Auditoria ----------
