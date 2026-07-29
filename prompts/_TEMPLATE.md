@@ -24,6 +24,7 @@ git checkout -b tipo/nome-curto
 - Não commitar direto na `master`.
 - Não mexer em `.env`, `.env.example` com segredos reais, nem em `.claude/settings.local.json`.
 - Se a tarefa envolver mudança no `prisma/schema.prisma`, gerar a migration com `npx prisma migrate dev` (nunca `db:push` em cima de dado real).
+- Nunca aponte comandos de diff/resolve do Prisma (`--shadow-database-url` ou similar) para o `DATABASE_URL` real — o shadow database recria o schema do zero pra comparar, e se apontar pro banco de verdade por engano ele é apagado (já aconteceu neste projeto, ver `docs/DATABASE.md`). Se encontrar drift entre migrations e o banco, pare e pergunte antes de rodar qualquer comando de correção.
 - Rodar `npm test` e `npm run lint` antes de considerar terminado.
 
 # Ao final, responda com um resumo neste formato (para eu colar no Cowork):
