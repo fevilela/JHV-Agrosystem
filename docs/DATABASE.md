@@ -13,6 +13,8 @@ npm run db:seed             # recria o usuário admin + plano de contas padrão 
 
 Toda alteração de schema que for para produção deve passar por `prisma migrate dev` (gera uma migration versionada em `prisma/migrations/`) — não usar `db:push` em cima do banco de produção, porque não fica registrado no histórico de migrations e pode divergir do que os outros colaboradores têm localmente.
 
+> ⚠️ **Nunca aponte `--shadow-database-url` (ou qualquer comando de diff/resolve do Prisma) para o `DATABASE_URL` real.** O shadow database é onde o Prisma testa migrations recriando o schema do zero — se ele apontar sem querer para o banco de verdade, os dados são apagados. Se encontrar um drift entre `prisma/migrations/` e o banco real (tabelas criadas por `db push` fora do histórico, por exemplo), pare e peça confirmação antes de rodar qualquer comando de correção — idealmente com um backup (`pg_dump`) tirado antes. Isso já aconteceu uma vez neste projeto (ver nota em [Migrations](#migrations)).
+
 ## Modelos centrais
 
 - **`Organization`** — um cliente da JHV. Guarda `allowedModules`, moeda de exibição, credenciais de integração por organização (Mercado Pago, Resend), e é o ponto de isolamento de todos os módulos.
@@ -38,6 +40,7 @@ Toda alteração de schema que for para produção deve passar por `prisma migra
 | Recursos Humanos | `Attendance`, `Schedule`, `Training`, `EpiIssuance` (todos ligados a `Employee`) |
 | Oficina | `Mechanic`, `ServiceOrder`/`ServiceOrderPart` |
 | Integrações | `WhatsappConnection`, `WhatsappMessage` |
+| Viveiro de Mudas *(fase 1 de 3 — ver [MODULES.md](./MODULES.md))* | `MudaEspecie`, `Viveiro`, `MudaLote`, `MudaFaseEvento` |
 
 ## Relações que cruzam módulos
 
@@ -52,4 +55,6 @@ Vale ter em mente ao mexer no schema, porque não são óbvias:
 
 ## Migrations
 
-Uma migration por módulo (ordem cronológica em `prisma/migrations/`): `init` (Cadastro/base) → `hipica` → `pecuaria` → `agricultura` → `maquinas` → `estoque` → `compras` → `financeiro` → `rh` → `oficina`. Módulos adicionados depois (Contabilidade, Piquetes/Contratos, multi-propriedade, WhatsApp, API pública etc.) têm suas próprias migrations subsequentes — sempre rode `npx prisma migrate dev` para gerá-las, nunca edite uma migration já aplicada em produção.
+Uma migration por módulo (ordem cronológica em `prisma/migrations/`): `init` (Cadastro/base) → `hipica` → `pecuaria` → `agricultura` → `maquinas` → `estoque` → `compras` → `financeiro` → `rh` → `oficina`. Módulos adicionados depois (Contabilidade, Piquetes/Contratos, multi-propriedade, WhatsApp, API pública, Viveiro de Mudas etc.) têm suas próprias migrations subsequentes — sempre rode `npx prisma migrate dev` para gerá-las, nunca edite uma migration já aplicada em produção.
+
+> **Nota (29/07/2026):** havia um drift entre `prisma/migrations/` e o banco real — várias tabelas (organizations, contracts, piquetes etc.) tinham sido criadas em algum momento via `db push`, fora do histórico de migrations rastreado. Ao resolver esse drift, um comando de diff apontou por engano `--shadow-database-url` para o banco de produção (Supabase), o que apagou os dados de todas as tabelas (só dados de teste, sem impacto real). O schema completo — as tabelas que faltavam no histórico + as 4 novas do Viveiro de Mudas (`migration 20260729115806_viveiro_cadastros_lotes_fases`) — foi recriado numa migration única, e o seed foi rodado de novo. A partir dessa migration, o histórico em `prisma/migrations/` e o banco real estão consistentes. Ver o aviso sobre `--shadow-database-url` acima — vale mais cuidado em qualquer resolução de drift futura, idealmente com backup antes.

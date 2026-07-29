@@ -1,6 +1,6 @@
 # Módulos
 
-O sistema tem 12 chaves de módulo (constante `RETROFITTED_MODULES` + `cadastro`, em `src/lib/nav.ts`), controladas por `Organization.allowedModules` e `User.allowedModules` (ver [ARCHITECTURE.md](./ARCHITECTURE.md#multi-tenancy-organizações)). `cadastro` e `configuracoes` ficam sempre visíveis, independente de liberação.
+O sistema tem 13 chaves de módulo (constante `RETROFITTED_MODULES` + `cadastro`, em `src/lib/nav.ts`), controladas por `Organization.allowedModules` e `User.allowedModules` (ver [ARCHITECTURE.md](./ARCHITECTURE.md#multi-tenancy-organizações)). `cadastro` e `configuracoes` ficam sempre visíveis, independente de liberação.
 
 ## Cadastro (`cadastro`)
 
@@ -45,6 +45,14 @@ Rotas em `/rh/*`: Funcionários (redireciona pro cadastro), Ponto e Escalas, Tre
 ## Oficina (`oficina`)
 
 Rotas em `/oficina/*`: Ordens de Serviço (vinculadas a máquina e mecânico, peças decrementam estoque automaticamente), Peças e Mecânicos.
+
+## Viveiro de Mudas (`viveiro`)
+
+🚧 **Em desenvolvimento (fase 1 de 3, branch `feat/viveiro-cadastros-lotes-fases`, ainda não mesclada na `master`).**
+
+Rotas em `/viveiro/*`: Espécies e Cultivares (`/viveiro/especies`), Estrutura Física (`/viveiro/estrutura` — viveiros/setores, com campo pronto pro editor de mapa mas ainda sem UI de mapa), Lotes de Produção (`/viveiro/lotes` — com histórico de fases de produção e cálculo de taxa de perda por fase). Reaproveita `Client`/`Supplier`/`Employee` do Cadastro; não duplica nada do Estoque ou Financeiro.
+
+Fases planejadas, ainda não implementadas: insumos/substrato (via Estoque), irrigação, fitossanidade e mão de obra por lote (fase 2); estoque de mudas prontas, pedido de venda, custos e rastreabilidade/certificação (fase 3). Ver os modelos em [DATABASE.md](./DATABASE.md).
 
 ## Configurações (`configuracoes`)
 

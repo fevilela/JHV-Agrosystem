@@ -48,6 +48,7 @@ chore: ...
 - Se sua branch ficar velha, atualize com `git rebase master` (ou `git merge master`) antes de abrir o PR, e resolva conflitos localmente.
 - Migrations do Prisma são o ponto mais sensível de conflito: se duas pessoas criarem migrations em paralelo, a ordem de aplicação importa. Sempre rode `git pull` na `master` e `npx prisma migrate dev` **depois** de já estar com o schema mais recente, para a nova migration nascer em cima da última.
 - Nunca edite uma migration já commitada/aplicada — crie uma nova.
+- **Nunca aponte comandos de diff/resolve do Prisma (`--shadow-database-url` ou similar) para o `DATABASE_URL` real.** O shadow database recria o schema do zero pra comparar — se apontar pro banco de verdade por engano, ele é apagado (já aconteceu neste projeto, ver nota em [DATABASE.md](./DATABASE.md#migrations)). Se aparecer um drift entre `prisma/migrations/` e o banco (tabelas criadas fora do histórico, por exemplo), pare e peça confirmação antes de rodar qualquer comando de correção, e tire um backup (`pg_dump`) antes de mexer.
 
 ## Proteção da branch `master` no GitHub
 
