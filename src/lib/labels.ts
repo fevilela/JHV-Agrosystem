@@ -360,6 +360,50 @@ export const faseMudaLabels: Record<string, string> = {
   PRONTA_EXPEDICAO: "Pronta para Expedição",
 };
 
+export const produtorTipoLabels: Record<string, string> = {
+  PRODUTOR_RURAL: "Produtor Rural",
+  COOPERATIVA: "Cooperativa",
+  EMPRESA: "Empresa",
+  CONSULTOR_AGRONOMICO: "Consultor Agronômico",
+};
+
+export const registroProfissionalTipoLabels: Record<string, string> = {
+  CREA: "CREA",
+  CRQ: "CRQ",
+  OUTRO: "Outro",
+};
+
+export const amostraTipoLabels: Record<string, string> = {
+  SOLO: "Solo",
+  FOLHA: "Folha",
+  AGUA: "Água",
+  ADUBO: "Adubo",
+  SEMENTE: "Semente",
+  TECIDO_VEGETAL: "Tecido Vegetal",
+  RESIDUO: "Resíduo",
+};
+
+export const condicaoRecebimentoLabels: Record<string, string> = {
+  INTEGRA: "Íntegra",
+  VIOLADA: "Violada",
+  REFRIGERADA: "Refrigerada",
+  OUTRO: "Outro",
+};
+
+export const amostraStatusLabels: Record<string, string> = {
+  RECEBIDA: "Recebida",
+  EM_ANALISE: "Em Análise",
+  CONCLUIDA: "Concluída",
+  CANCELADA: "Cancelada",
+};
+
+export const custodiaLocalLabels: Record<string, string> = {
+  RECEPCAO: "Recepção",
+  SETOR_ANALISE: "Setor de Análise",
+  ARQUIVO: "Arquivo",
+  OUTRO: "Outro",
+};
+
 export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }

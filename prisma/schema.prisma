@@ -92,8 +92,8 @@ model Organization {
   quotations       Quotation[]
   purchaseOrders   PurchaseOrder[]
 
-  costCenters   CostCenter[]
-  chartAccounts ChartAccount[]
+  costCenters    CostCenter[]
+  chartAccounts  ChartAccount[]
   journalEntries JournalEntry[]
 
   financeEntries    FinanceEntry[]
@@ -107,8 +107,8 @@ model Organization {
   livestockAnimals    LivestockAnimal[]
   managementMovements ManagementMovement[]
 
-  auditLogs     AuditLog[]
-  notifications Notification[]
+  auditLogs         AuditLog[]
+  notifications     Notification[]
   pushSubscriptions PushSubscription[]
   properties        Property[]
   apiKeys           ApiKey[]
@@ -116,6 +116,11 @@ model Organization {
   mudaEspecies MudaEspecie[]
   viveiros     Viveiro[]
   mudaLotes    MudaLote[]
+
+  produtores           Produtor[]
+  propriedadesProdutor PropriedadeProdutor[]
+  responsaveisTecnicos ResponsavelTecnico[]
+  amostras             Amostra[]
 
   @@map("organizations")
 }
@@ -186,11 +191,12 @@ model Employee {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  attendances  Attendance[]
-  schedules    Schedule[]
-  trainings    Training[]
-  epiIssuances EpiIssuance[]
-  mudaLotes    MudaLote[]
+  attendances        Attendance[]
+  schedules          Schedule[]
+  trainings          Training[]
+  epiIssuances       EpiIssuance[]
+  mudaLotes          MudaLote[]
+  responsavelTecnico ResponsavelTecnico?
 
   @@map("employees")
 }
@@ -722,8 +728,8 @@ model Lote {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   animals   LivestockAnimal[]
   feedings  LivestockFeeding[]
@@ -754,8 +760,8 @@ model Pasture {
   propertyId String?
   property   Property? @relation(fields: [propertyId], references: [id])
 
-  createdAt      DateTime              @default(now())
-  updatedAt      DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   animals LivestockAnimal[]
 
@@ -778,8 +784,8 @@ model LivestockAnimal {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   loteId String?
   lote   Lote?   @relation(fields: [loteId], references: [id])
@@ -925,7 +931,7 @@ model ManagementMovement {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt        DateTime               @default(now())
+  createdAt DateTime @default(now())
 
   @@map("management_movements")
 }
@@ -948,8 +954,8 @@ model Talhao {
   propertyId String?
   property   Property? @relation(fields: [propertyId], references: [id])
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   safras      Safra[]
   fertilities Fertility[]
@@ -1097,8 +1103,8 @@ model Storage {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   movements StorageMovement[]
 
@@ -1363,8 +1369,8 @@ model PurchaseOrder {
 // ---------- Financeiro ----------
 
 model CostCenter {
-  id             String        @id @default(cuid())
-  code           String        @unique
+  id             String       @id @default(cuid())
+  code           String       @unique
   name           String
   description    String?
   notes          String?
@@ -1426,28 +1432,28 @@ model FinanceEntry {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("finance_entries")
 }
 
 model RecurringBilling {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   clientId    String
-  client      Client   @relation(fields: [clientId], references: [id])
+  client      Client  @relation(fields: [clientId], references: [id])
   description String
-  amount      Decimal  @db.Decimal(12, 2)
+  amount      Decimal @db.Decimal(12, 2)
   dayOfMonth  Int
   dueDay      Int?
-  active      Boolean  @default(true)
+  active      Boolean @default(true)
   notes       String?
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   entries FinanceEntry[]
 
@@ -1719,16 +1725,16 @@ enum PiqueteStatus {
 }
 
 model Piquete {
-  id        String        @id @default(cuid())
-  code      String        @unique
-  location  String?
-  capacity  Int           @default(1)
-  status    PiqueteStatus @default(LIVRE)
-  boundary  Json?
-  areaHectares Decimal? @db.Decimal(10, 2)
-  notes     String?
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id           String        @id @default(cuid())
+  code         String        @unique
+  location     String?
+  capacity     Int           @default(1)
+  status       PiqueteStatus @default(LIVRE)
+  boundary     Json?
+  areaHectares Decimal?      @db.Decimal(10, 2)
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
@@ -1927,17 +1933,196 @@ model MudaLote {
 }
 
 model MudaFaseEvento {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   loteId            String
-  lote              MudaLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  lote              MudaLote  @relation(fields: [loteId], references: [id], onDelete: Cascade)
   fase              FaseMuda
-  dataEntrada       DateTime @default(now())
+  dataEntrada       DateTime  @default(now())
   dataSaida         DateTime?
-  quantidadePerdida Int?     @default(0)
+  quantidadePerdida Int?      @default(0)
   notes             String?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime  @default(now())
 
   @@map("muda_fase_eventos")
+}
+
+// ---------- Laboratório Agrícola ----------
+
+enum ProdutorTipo {
+  PRODUTOR_RURAL
+  COOPERATIVA
+  EMPRESA
+  CONSULTOR_AGRONOMICO
+}
+
+model Produtor {
+  id                     String       @id @default(cuid())
+  name                   String
+  cpfCnpj                String?
+  tipo                   ProdutorTipo @default(PRODUTOR_RURAL)
+  inscricaoEstadual      String?
+  numeroProdutorRural    String?
+  phone                  String?
+  email                  String?
+  address                String?
+  city                   String?
+  state                  String?
+  responsavelTecnicoNome String?
+  responsavelTecnicoCrea String?
+  notes                  String?
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime     @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  propriedades PropriedadeProdutor[]
+
+  @@map("produtores")
+}
+
+model PropriedadeProdutor {
+  id          String   @id @default(cuid())
+  name        String
+  latitude    Decimal? @db.Decimal(10, 6)
+  longitude   Decimal? @db.Decimal(10, 6)
+  areaTotalHa Decimal? @db.Decimal(10, 2)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  produtorId String
+  produtor   Produtor @relation(fields: [produtorId], references: [id], onDelete: Cascade)
+
+  talhoes  TalhaoProdutor[]
+  amostras Amostra[]
+
+  @@map("propriedades_produtor")
+}
+
+model TalhaoProdutor {
+  id                String   @id @default(cuid())
+  code              String
+  areaHa            Decimal? @db.Decimal(10, 2)
+  culturaImplantada String?
+  tipoSolo          String?
+  historicoUso      String?
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  propriedadeProdutorId String
+  propriedadeProdutor   PropriedadeProdutor @relation(fields: [propriedadeProdutorId], references: [id], onDelete: Cascade)
+
+  amostras Amostra[]
+
+  @@map("talhoes_produtor")
+}
+
+enum RegistroProfissionalTipo {
+  CREA
+  CRQ
+  OUTRO
+}
+
+model ResponsavelTecnico {
+  id                   String                   @id @default(cuid())
+  registroProfissional String
+  tipoRegistro         RegistroProfissionalTipo @default(CREA)
+  setor                String?
+  assinaturaDigitalRef String?
+  active               Boolean                  @default(true)
+  notes                String?
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  employeeId String   @unique
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("responsaveis_tecnicos")
+}
+
+enum AmostraTipo {
+  SOLO
+  FOLHA
+  AGUA
+  ADUBO
+  SEMENTE
+  TECIDO_VEGETAL
+  RESIDUO
+}
+
+enum CondicaoRecebimento {
+  INTEGRA
+  VIOLADA
+  REFRIGERADA
+  OUTRO
+}
+
+enum AmostraStatus {
+  RECEBIDA
+  EM_ANALISE
+  CONCLUIDA
+  CANCELADA
+}
+
+model Amostra {
+  id                    String               @id @default(cuid())
+  code                  String
+  tipo                  AmostraTipo
+  dataColeta            DateTime
+  profundidadeColeta    String?
+  responsavelColetaNome String?
+  metodoColeta          String?
+  dataRecebimento       DateTime?
+  condicaoRecebimento   CondicaoRecebimento?
+  numeroSubAmostras     Int?
+  status                AmostraStatus        @default(RECEBIDA)
+  prazoEntregaPrevisto  DateTime?
+  notes                 String?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  propriedadeProdutorId String
+  propriedadeProdutor   PropriedadeProdutor @relation(fields: [propriedadeProdutorId], references: [id])
+
+  talhaoProdutorId String?
+  talhaoProdutor   TalhaoProdutor? @relation(fields: [talhaoProdutorId], references: [id])
+
+  custodiaEventos CadeiaCustodiaEvento[]
+
+  @@unique([organizationId, code])
+  @@map("amostras")
+}
+
+enum CustodiaLocal {
+  RECEPCAO
+  SETOR_ANALISE
+  ARQUIVO
+  OUTRO
+}
+
+model CadeiaCustodiaEvento {
+  id                       String        @id @default(cuid())
+  amostraId                String
+  amostra                  Amostra       @relation(fields: [amostraId], references: [id], onDelete: Cascade)
+  dataHora                 DateTime      @default(now())
+  responsavelMovimentacao  String?
+  local                    CustodiaLocal @default(RECEPCAO)
+  temperaturaArmazenamento Decimal?      @db.Decimal(5, 2)
+  notes                    String?
+  createdAt                DateTime      @default(now())
+
+  @@map("cadeia_custodia_eventos")
 }
 
 // ---------- Log de Auditoria ----------
@@ -1973,15 +2158,15 @@ enum NotificationSeverity {
 }
 
 model Notification {
-  id         String               @id @default(cuid())
-  category   String
-  title      String
-  detail     String?
-  href       String?
-  severity   NotificationSeverity
-  sourceKey  String
-  read       Boolean              @default(false)
-  createdAt  DateTime             @default(now())
+  id        String               @id @default(cuid())
+  category  String
+  title     String
+  detail    String?
+  href      String?
+  severity  NotificationSeverity
+  sourceKey String
+  read      Boolean              @default(false)
+  createdAt DateTime             @default(now())
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
