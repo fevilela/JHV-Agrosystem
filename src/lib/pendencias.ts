@@ -69,6 +69,9 @@ export async function getPendencias(organizationId: string): Promise<Pendencia[]
     where: { nextDoseDate: { lte: in30 }, animal: { organizationId } },
     include: { animal: true },
   });
+  const calibracoes = await prisma.equipamento.findMany({
+    where: { organizationId, dataProximaCalibracao: { lte: in30 } },
+  });
 
   const pendencias: Pendencia[] = [];
 
@@ -180,6 +183,17 @@ export async function getPendencias(organizationId: string): Promise<Pendencia[]
       date: r.nextDoseDate,
       severity: new Date(r.nextDoseDate!) < now ? "vencido" : "vencendo",
       href: "/pecuaria/sanidade",
+    });
+  }
+
+  for (const eq of calibracoes) {
+    pendencias.push({
+      id: `calibracao:${eq.id}`,
+      category: "Calibração de Equipamento",
+      title: eq.nome,
+      date: eq.dataProximaCalibracao,
+      severity: new Date(eq.dataProximaCalibracao!) < now ? "vencido" : "vencendo",
+      href: "/laboratorio/equipamentos",
     });
   }
 

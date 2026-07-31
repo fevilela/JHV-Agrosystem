@@ -87,7 +87,9 @@
         "produtores": "Produtores",
         "propriedades": "Propriedades e Talhões",
         "responsaveisTecnicos": "Responsáveis Técnicos",
-        "amostras": "Amostras"
+        "amostras": "Amostras",
+        "metodos": "Métodos Analíticos",
+        "equipamentos": "Equipamentos e Calibração"
       }
     },
     "maquinas": {

@@ -3,8 +3,24 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { amostraFields } from "../fields";
-import { updateAmostraAction, updateAmostraStatusAction, addCustodiaEventoAction, deleteAmostraAction } from "../actions";
-import { amostraStatusLabels, custodiaLocalLabels, formatDate } from "@/lib/labels";
+import {
+  updateAmostraAction,
+  updateAmostraStatusAction,
+  addCustodiaEventoAction,
+  deleteAmostraAction,
+  createResultadoAction,
+  updateResultadoStatusAction,
+  deleteResultadoAction,
+  addControleQualidadeAction,
+} from "../actions";
+import {
+  amostraStatusLabels,
+  custodiaLocalLabels,
+  resultadoStatusLabels,
+  controleQualidadeTipoLabels,
+  controleQualidadeResultadoLabels,
+  formatDate,
+} from "@/lib/labels";
 import { getStatusTransitions } from "@/lib/amostra";
 import { requireModule } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
@@ -23,6 +39,16 @@ export default async function AmostraDetailPage({
       propriedadeProdutor: { include: { produtor: true } },
       talhaoProdutor: true,
       custodiaEventos: { orderBy: { dataHora: "asc" } },
+      resultados: {
+        orderBy: { dataAnalise: "desc" },
+        include: {
+          metodoAnalitico: true,
+          analista: true,
+          equipamento: true,
+          loteReagente: { include: { stockItem: true } },
+          controlesQualidade: { orderBy: { data: "desc" } },
+        },
+      },
     },
   });
   if (!amostra) notFound();
@@ -35,6 +61,17 @@ export default async function AmostraDetailPage({
   const talhoes = propriedades.flatMap((p) =>
     p.talhoes.map((t) => ({ id: t.id, label: `${p.name} / ${t.code}` }))
   );
+
+  const [metodos, analistas, equipamentos, lotesReagente] = await Promise.all([
+    prisma.metodoAnalitico.findMany({ where: { organizationId, active: true }, orderBy: { nomeParametro: "asc" } }),
+    prisma.employee.findMany({ where: { organizationId, active: true }, orderBy: { name: "asc" } }),
+    prisma.equipamento.findMany({ where: { organizationId }, orderBy: { nome: "asc" } }),
+    prisma.stockBatch.findMany({
+      where: { status: "DISPONIVEL", stockItem: { organizationId, category: "REAGENTE" } },
+      include: { stockItem: true },
+      orderBy: { entryDate: "desc" },
+    }),
+  ]);
 
   const inputClass =
     "w-full rounded-lg border border-neutral-300 px-3 py-1.5 text-sm outline-none focus:border-brand-600";
@@ -155,6 +192,190 @@ export default async function AmostraDetailPage({
             </form>
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+          Resultados de Análise
+        </h2>
+
+        {amostra.resultados.length === 0 ? (
+          <p className="mb-4 text-sm text-neutral-400">Nenhum resultado registrado ainda.</p>
+        ) : (
+          <div className="mb-6 space-y-4">
+            {amostra.resultados.map((r) => (
+              <div key={r.id} className="rounded-xl border border-neutral-100 p-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-medium text-neutral-800">
+                      {r.metodoAnalitico.nomeParametro}: {String(r.valor)}
+                      {r.metodoAnalitico.unidadeMedida ? ` ${r.metodoAnalitico.unidadeMedida}` : ""}
+                    </p>
+                    <p className="text-xs text-neutral-500">
+                      {formatDate(r.dataAnalise)}
+                      {r.analista ? ` · Analista: ${r.analista.name}` : ""}
+                      {r.equipamento ? ` · Equip.: ${r.equipamento.nome}` : ""}
+                      {r.loteReagente ? ` · Reagente: ${r.loteReagente.stockItem.name}` : ""}
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      r.status === "VALIDADO"
+                        ? "bg-green-50 text-green-700"
+                        : r.status === "REPROVADO"
+                          ? "bg-red-50 text-red-700"
+                          : "bg-neutral-100 text-neutral-600"
+                    }`}
+                  >
+                    {resultadoStatusLabels[r.status]}
+                  </span>
+                </div>
+
+                {r.observacoes && <p className="mt-2 text-xs text-neutral-500">{r.observacoes}</p>}
+
+                {r.controlesQualidade.length > 0 && (
+                  <ul className="mt-3 space-y-1 border-t border-neutral-100 pt-2">
+                    {r.controlesQualidade.map((c) => (
+                      <li key={c.id} className="text-xs text-neutral-600">
+                        {controleQualidadeTipoLabels[c.tipo]} —{" "}
+                        <span
+                          className={c.resultadoControle === "DENTRO_FAIXA" ? "text-green-700" : "text-red-600"}
+                        >
+                          {controleQualidadeResultadoLabels[c.resultadoControle]}
+                        </span>
+                        {c.acaoCorretiva ? ` · Ação: ${c.acaoCorretiva}` : ""}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <div className="mt-3 flex flex-wrap gap-2 border-t border-neutral-100 pt-3">
+                  {r.status !== "VALIDADO" && (
+                    <form action={updateResultadoStatusAction.bind(null, id, r.id, "VALIDADO")}>
+                      <button
+                        type="submit"
+                        className="rounded-lg border border-neutral-300 px-2.5 py-1 text-xs text-neutral-700 transition hover:bg-neutral-100"
+                      >
+                        Validar
+                      </button>
+                    </form>
+                  )}
+                  {r.status !== "REPROVADO" && (
+                    <form action={updateResultadoStatusAction.bind(null, id, r.id, "REPROVADO")}>
+                      <button
+                        type="submit"
+                        className="rounded-lg border border-neutral-300 px-2.5 py-1 text-xs text-neutral-700 transition hover:bg-neutral-100"
+                      >
+                        Reprovar
+                      </button>
+                    </form>
+                  )}
+                  <DeleteButton onDelete={deleteResultadoAction.bind(null, id, r.id)} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <form
+          action={createResultadoAction.bind(null, id)}
+          className="grid grid-cols-1 gap-2 border-t border-neutral-100 pt-4 sm:grid-cols-3"
+        >
+          <select name="metodoAnaliticoId" required className={inputClass}>
+            <option value="">Parâmetro/Método</option>
+            {metodos.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nomeParametro}
+              </option>
+            ))}
+          </select>
+          <input name="valor" type="number" step="0.0001" placeholder="Valor obtido" required className={inputClass} />
+          <input name="dataAnalise" type="date" required className={inputClass} />
+          <select name="analistaId" className={inputClass}>
+            <option value="">Analista responsável</option>
+            {analistas.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
+            ))}
+          </select>
+          <select name="equipamentoId" className={inputClass}>
+            <option value="">Equipamento utilizado</option>
+            {equipamentos.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.nome}
+              </option>
+            ))}
+          </select>
+          <select name="loteReagenteId" className={inputClass}>
+            <option value="">Lote de reagente</option>
+            {lotesReagente.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.stockItem.name}
+                {b.batchNumber ? ` — Lote ${b.batchNumber}` : ""}
+              </option>
+            ))}
+          </select>
+          <input name="repeticoes" type="number" placeholder="Repetições" className={inputClass} />
+          <input
+            name="observacoes"
+            placeholder="Observações técnicas"
+            className={`${inputClass} sm:col-span-2`}
+          />
+          <button
+            type="submit"
+            className="rounded-lg bg-brand-700 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand-800 sm:col-span-1"
+          >
+            Registrar Resultado
+          </button>
+        </form>
+
+        {amostra.resultados.length > 0 && (
+          <form
+            action={addControleQualidadeAction.bind(null, id)}
+            className="mt-6 grid grid-cols-1 gap-2 border-t border-neutral-100 pt-4 sm:grid-cols-3"
+          >
+            <p className="text-xs font-medium text-neutral-500 sm:col-span-3">
+              Controle de Qualidade (branco, duplicata, padrão de referência)
+            </p>
+            <select name="resultadoId" required className={inputClass}>
+              <option value="">Resultado verificado</option>
+              {amostra.resultados.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.metodoAnalitico.nomeParametro} ({String(r.valor)})
+                </option>
+              ))}
+            </select>
+            <select name="tipo" required className={inputClass}>
+              {Object.entries(controleQualidadeTipoLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <select name="resultadoControle" required className={inputClass}>
+              {Object.entries(controleQualidadeResultadoLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <input name="valorObtido" type="number" step="0.0001" placeholder="Valor obtido" className={inputClass} />
+            <input name="faixaAceitavelMin" type="number" step="0.0001" placeholder="Faixa mín." className={inputClass} />
+            <input name="faixaAceitavelMax" type="number" step="0.0001" placeholder="Faixa máx." className={inputClass} />
+            <input
+              name="acaoCorretiva"
+              placeholder="Ação corretiva (se reprovado)"
+              className={`${inputClass} sm:col-span-2`}
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-brand-700 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand-800"
+            >
+              Registrar Controle
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

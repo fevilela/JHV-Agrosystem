@@ -404,6 +404,30 @@ export const custodiaLocalLabels: Record<string, string> = {
   OUTRO: "Outro",
 };
 
+export const equipamentoStatusLabels: Record<string, string> = {
+  EM_USO: "Em Uso",
+  MANUTENCAO: "Manutenção",
+  FORA_OPERACAO: "Fora de Operação",
+};
+
+export const resultadoStatusLabels: Record<string, string> = {
+  PENDENTE: "Pendente",
+  VALIDADO: "Validado",
+  REPROVADO: "Reprovado",
+};
+
+export const controleQualidadeTipoLabels: Record<string, string> = {
+  BRANCO: "Branco",
+  DUPLICATA: "Duplicata",
+  PADRAO_REFERENCIA_CRM: "Padrão de Referência (CRM)",
+  OUTRO: "Outro",
+};
+
+export const controleQualidadeResultadoLabels: Record<string, string> = {
+  DENTRO_FAIXA: "Dentro da Faixa",
+  FORA_FAIXA: "Fora da Faixa",
+};
+
 export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }

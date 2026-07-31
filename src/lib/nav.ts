@@ -109,6 +109,8 @@ export const navGroups: NavGroup[] = [
       { label: "Propriedades e Talhões", href: "/laboratorio/propriedades" },
       { label: "Responsáveis Técnicos", href: "/laboratorio/responsaveis-tecnicos" },
       { label: "Amostras", href: "/laboratorio/amostras" },
+      { label: "Métodos Analíticos", href: "/laboratorio/metodos" },
+      { label: "Equipamentos e Calibração", href: "/laboratorio/equipamentos" },
     ],
   },
   {

@@ -87,7 +87,9 @@
         "produtores": "Producers",
         "propriedades": "Properties & Plots",
         "responsaveisTecnicos": "Technical Officers",
-        "amostras": "Samples"
+        "amostras": "Samples",
+        "metodos": "Analytical Methods",
+        "equipamentos": "Equipment & Calibration"
       }
     },
     "maquinas": {
