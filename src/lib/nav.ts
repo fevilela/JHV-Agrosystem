@@ -27,6 +27,7 @@ export const RETROFITTED_MODULES = [
   "agricultura",
   "pecuaria",
   "viveiro",
+  "laboratorio",
 ];
 
 export const navGroups: NavGroup[] = [
@@ -98,6 +99,16 @@ export const navGroups: NavGroup[] = [
       { label: "Espécies e Cultivares", href: "/viveiro/especies" },
       { label: "Estrutura Física", href: "/viveiro/estrutura" },
       { label: "Lotes de Produção", href: "/viveiro/lotes" },
+    ],
+  },
+  {
+    key: "laboratorio",
+    label: "Laboratório Agrícola",
+    items: [
+      { label: "Produtores", href: "/laboratorio/produtores" },
+      { label: "Propriedades e Talhões", href: "/laboratorio/propriedades" },
+      { label: "Responsáveis Técnicos", href: "/laboratorio/responsaveis-tecnicos" },
+      { label: "Amostras", href: "/laboratorio/amostras" },
     ],
   },
   {

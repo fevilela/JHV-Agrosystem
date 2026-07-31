@@ -81,6 +81,15 @@
         "lotes": "Lotes de Producción"
       }
     },
+    "laboratorio": {
+      "group": "Laboratorio Agrícola",
+      "items": {
+        "produtores": "Productores",
+        "propriedades": "Propiedades y Parcelas",
+        "responsaveisTecnicos": "Responsables Técnicos",
+        "amostras": "Muestras"
+      }
+    },
     "maquinas": {
       "group": "Máquinas y Equipos",
       "items": {

@@ -81,6 +81,15 @@
         "lotes": "Production Batches"
       }
     },
+    "laboratorio": {
+      "group": "Agricultural Laboratory",
+      "items": {
+        "produtores": "Producers",
+        "propriedades": "Properties & Plots",
+        "responsaveisTecnicos": "Technical Officers",
+        "amostras": "Samples"
+      }
+    },
     "maquinas": {
       "group": "Machinery & Equipment",
       "items": {
