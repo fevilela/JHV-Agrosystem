@@ -87,7 +87,20 @@
         "produtores": "Productores",
         "propriedades": "Propiedades y Parcelas",
         "responsaveisTecnicos": "Responsables Técnicos",
-        "amostras": "Muestras"
+        "amostras": "Muestras",
+        "metodos": "Métodos Analíticos",
+        "equipamentos": "Equipos y Calibración",
+        "laudos": "Informes Técnicos",
+        "normas": "Normas de Referencia",
+        "pedidos": "Pedidos y Facturación",
+        "acreditacao": "Acreditación del Laboratorio"
+      }
+    },
+    "auditoria": {
+      "group": "Auditoría Agrícola",
+      "items": {
+        "auditorias": "Auditorías",
+        "naoConformidades": "No Conformidades"
       }
     },
     "maquinas": {

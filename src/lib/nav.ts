@@ -28,6 +28,7 @@ export const RETROFITTED_MODULES = [
   "pecuaria",
   "viveiro",
   "laboratorio",
+  "auditoria",
 ];
 
 export const navGroups: NavGroup[] = [
@@ -109,6 +110,20 @@ export const navGroups: NavGroup[] = [
       { label: "Propriedades e Talhões", href: "/laboratorio/propriedades" },
       { label: "Responsáveis Técnicos", href: "/laboratorio/responsaveis-tecnicos" },
       { label: "Amostras", href: "/laboratorio/amostras" },
+      { label: "Métodos Analíticos", href: "/laboratorio/metodos" },
+      { label: "Equipamentos e Calibração", href: "/laboratorio/equipamentos" },
+      { label: "Laudos Técnicos", href: "/laboratorio/laudos" },
+      { label: "Normas de Referência", href: "/laboratorio/normas" },
+      { label: "Pedidos e Faturamento", href: "/laboratorio/pedidos" },
+      { label: "Acreditação do Laboratório", href: "/laboratorio/acreditacao" },
+    ],
+  },
+  {
+    key: "auditoria",
+    label: "Auditoria Agrícola",
+    items: [
+      { label: "Auditorias", href: "/auditoria/auditorias" },
+      { label: "Não Conformidades", href: "/auditoria/nao-conformidades" },
     ],
   },
   {

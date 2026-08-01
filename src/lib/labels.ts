@@ -404,6 +404,82 @@ export const custodiaLocalLabels: Record<string, string> = {
   OUTRO: "Outro",
 };
 
+export const equipamentoStatusLabels: Record<string, string> = {
+  EM_USO: "Em Uso",
+  MANUTENCAO: "Manutenção",
+  FORA_OPERACAO: "Fora de Operação",
+};
+
+export const resultadoStatusLabels: Record<string, string> = {
+  PENDENTE: "Pendente",
+  VALIDADO: "Validado",
+  REPROVADO: "Reprovado",
+};
+
+export const controleQualidadeTipoLabels: Record<string, string> = {
+  BRANCO: "Branco",
+  DUPLICATA: "Duplicata",
+  PADRAO_REFERENCIA_CRM: "Padrão de Referência (CRM)",
+  OUTRO: "Outro",
+};
+
+export const controleQualidadeResultadoLabels: Record<string, string> = {
+  DENTRO_FAIXA: "Dentro da Faixa",
+  FORA_FAIXA: "Fora da Faixa",
+};
+
+export const laudoStatusLabels: Record<string, string> = {
+  RASCUNHO: "Rascunho",
+  EMITIDO: "Emitido",
+  CANCELADO: "Cancelado",
+  REEMITIDO: "Reemitido",
+};
+
+export const pedidoAnaliseStatusFinanceiroLabels: Record<string, string> = {
+  PENDENTE: "Pendente",
+  PAGO: "Pago",
+  VENCIDO: "Vencido",
+};
+
+export const auditoriaTipoLabels: Record<string, string> = {
+  INTERNA: "Interna",
+  GLOBALGAP: "GLOBALG.A.P.",
+  ORGANICO: "Orgânico",
+  RAINFOREST_ALLIANCE: "Rainforest Alliance",
+  BPA: "BPA (Boas Práticas Agrícolas)",
+  OUTRO: "Outro",
+};
+
+export const auditoriaStatusLabels: Record<string, string> = {
+  EM_ANDAMENTO: "Em Andamento",
+  APROVADA: "Aprovada",
+  REPROVADA: "Reprovada",
+  PENDENTE_ACAO: "Pendente de Ação",
+};
+
+export const conformidadeStatusLabels: Record<string, string> = {
+  CONFORME: "Conforme",
+  NAO_CONFORME: "Não Conforme",
+  NAO_APLICAVEL: "Não Aplicável",
+};
+
+export const naoConformidadeOrigemLabels: Record<string, string> = {
+  ANALISE_LABORATORIAL: "Análise Laboratorial",
+  AUDITORIA: "Auditoria",
+};
+
+export const naoConformidadeSeveridadeLabels: Record<string, string> = {
+  CRITICA: "Crítica",
+  MAIOR: "Maior",
+  MENOR: "Menor",
+};
+
+export const naoConformidadeStatusLabels: Record<string, string> = {
+  ABERTA: "Aberta",
+  EM_TRATATIVA: "Em Tratativa",
+  RESOLVIDA: "Resolvida",
+};
+
 export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }

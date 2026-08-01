@@ -87,7 +87,20 @@
         "produtores": "Producers",
         "propriedades": "Properties & Plots",
         "responsaveisTecnicos": "Technical Officers",
-        "amostras": "Samples"
+        "amostras": "Samples",
+        "metodos": "Analytical Methods",
+        "equipamentos": "Equipment & Calibration",
+        "laudos": "Technical Reports",
+        "normas": "Reference Standards",
+        "pedidos": "Orders & Billing",
+        "acreditacao": "Laboratory Accreditation"
+      }
+    },
+    "auditoria": {
+      "group": "Agricultural Audits",
+      "items": {
+        "auditorias": "Audits",
+        "naoConformidades": "Non-Conformities"
       }
     },
     "maquinas": {

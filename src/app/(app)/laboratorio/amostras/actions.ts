@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
 import { requireModule } from "@/lib/tenant";
 import { amostraFields } from "./fields";
+import { checkFaixaAceitavel } from "@/lib/controle-qualidade";
 
 type FormState = { error?: string } | undefined;
 
@@ -105,6 +106,95 @@ export async function addCustodiaEventoAction(amostraId: string, formData: FormD
       responsavelMovimentacao,
       temperaturaArmazenamento,
       notes,
+    },
+  });
+
+  revalidatePath(`/laboratorio/amostras/${amostraId}`);
+}
+
+function str(formData: FormData, name: string) {
+  const value = formData.get(name);
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
+
+function num(formData: FormData, name: string) {
+  const value = str(formData, name);
+  return value === null ? null : Number(value);
+}
+
+export async function createResultadoAction(amostraId: string, formData: FormData) {
+  const { organizationId } = await requireModule("laboratorio");
+  const amostra = await prisma.amostra.findFirst({ where: { id: amostraId, organizationId } });
+  if (!amostra) return;
+
+  const metodoAnaliticoId = str(formData, "metodoAnaliticoId");
+  const valor = num(formData, "valor");
+  const dataAnalise = str(formData, "dataAnalise");
+  if (!metodoAnaliticoId || valor === null || !dataAnalise) return;
+
+  await prisma.resultado.create({
+    data: {
+      organizationId,
+      amostraId,
+      metodoAnaliticoId,
+      valor,
+      dataAnalise: new Date(dataAnalise),
+      analistaId: str(formData, "analistaId"),
+      equipamentoId: str(formData, "equipamentoId"),
+      loteReagenteId: str(formData, "loteReagenteId"),
+      repeticoes: num(formData, "repeticoes"),
+      observacoes: str(formData, "observacoes"),
+    },
+  });
+
+  revalidatePath(`/laboratorio/amostras/${amostraId}`);
+}
+
+export async function updateResultadoStatusAction(
+  amostraId: string,
+  resultadoId: string,
+  status: "PENDENTE" | "VALIDADO" | "REPROVADO"
+) {
+  const { organizationId } = await requireModule("laboratorio");
+  await prisma.resultado.updateMany({ where: { id: resultadoId, organizationId }, data: { status } });
+  revalidatePath(`/laboratorio/amostras/${amostraId}`);
+}
+
+export async function deleteResultadoAction(amostraId: string, resultadoId: string) {
+  const { organizationId } = await requireModule("laboratorio");
+  await prisma.resultado.deleteMany({ where: { id: resultadoId, organizationId } });
+  revalidatePath(`/laboratorio/amostras/${amostraId}`);
+}
+
+export async function addControleQualidadeAction(amostraId: string, formData: FormData) {
+  const { organizationId } = await requireModule("laboratorio");
+  const resultadoId = str(formData, "resultadoId");
+  const tipo = str(formData, "tipo");
+  const resultadoControleManual = str(formData, "resultadoControle");
+  const valorObtido = num(formData, "valorObtido");
+  const faixaAceitavelMin = num(formData, "faixaAceitavelMin");
+  const faixaAceitavelMax = num(formData, "faixaAceitavelMax");
+
+  // Quando valor + faixa estão todos preenchidos, o veredito é calculado
+  // em vez de confiar na seleção manual (ver src/lib/controle-qualidade.ts).
+  const resultadoControle =
+    checkFaixaAceitavel(valorObtido, faixaAceitavelMin, faixaAceitavelMax) ?? resultadoControleManual;
+  if (!resultadoId || !tipo || !resultadoControle) return;
+
+  const resultado = await prisma.resultado.findFirst({ where: { id: resultadoId, organizationId } });
+  if (!resultado) return;
+
+  await prisma.controleQualidade.create({
+    data: {
+      organizationId,
+      resultadoId,
+      tipo: tipo as Prisma.ControleQualidadeUncheckedCreateInput["tipo"],
+      resultadoControle: resultadoControle as Prisma.ControleQualidadeUncheckedCreateInput["resultadoControle"],
+      valorObtido,
+      faixaAceitavelMin,
+      faixaAceitavelMax,
+      acaoCorretiva: str(formData, "acaoCorretiva"),
+      notes: str(formData, "notes"),
     },
   });
 
