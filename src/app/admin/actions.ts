@@ -154,7 +154,6 @@ export async function createOrgUserAction(
 
   const { link } = await criarTokenSenha(user.id, "INVITE");
   const resultado = await enviarConviteSenhaEmail({
-    organizationId,
     email: user.email,
     nomeUsuario: user.name,
     link,
@@ -222,7 +221,6 @@ export async function sendPasswordResetLinkAction(organizationId: string, userId
 
   const { link } = await criarTokenSenha(user.id, "RESET");
   const resultado = await enviarRedefinicaoSenhaEmail({
-    organizationId,
     email: user.email,
     nomeUsuario: user.name,
     link,
