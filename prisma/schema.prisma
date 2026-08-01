@@ -132,6 +132,9 @@ model Organization {
   pedidosAnalise          PedidoAnalise[]
   acreditacoesLaboratorio AcreditacaoLaboratorio[]
 
+  auditoriasAgricolas AuditoriaAgricola[]
+  naoConformidades    NaoConformidade[]
+
   @@map("organizations")
 }
 
@@ -2013,8 +2016,9 @@ model PropriedadeProdutor {
   produtorId String
   produtor   Produtor @relation(fields: [produtorId], references: [id], onDelete: Cascade)
 
-  talhoes  TalhaoProdutor[]
-  amostras Amostra[]
+  talhoes    TalhaoProdutor[]
+  amostras   Amostra[]
+  auditorias AuditoriaAgricola[]
 
   @@map("propriedades_produtor")
 }
@@ -2248,6 +2252,7 @@ model Resultado {
   loteReagente   StockBatch? @relation(fields: [loteReagenteId], references: [id])
 
   controlesQualidade ControleQualidade[]
+  naoConformidades   NaoConformidade[]
 
   @@map("resultados")
 }
@@ -2420,6 +2425,116 @@ model AcreditacaoAuditoriaEvento {
   createdAt                DateTime               @default(now())
 
   @@map("acreditacao_auditoria_eventos")
+}
+
+// ---------- Auditoria Agrícola (módulo separado, fase 4/4 do Laboratório) ----------
+// Audita a PROPRIEDADE do produtor (certificação GLOBALG.A.P., orgânico, BPA
+// etc.) — não a amostra. Reaproveita PropriedadeProdutor/Produtor/Resultado
+// do Laboratório em vez de duplicar cadastro.
+
+enum AuditoriaTipo {
+  INTERNA
+  GLOBALGAP
+  ORGANICO
+  RAINFOREST_ALLIANCE
+  BPA
+  OUTRO
+}
+
+enum AuditoriaStatus {
+  EM_ANDAMENTO
+  APROVADA
+  REPROVADA
+  PENDENTE_ACAO
+}
+
+model AuditoriaAgricola {
+  id                       String          @id @default(cuid())
+  tipo                     AuditoriaTipo
+  dataAuditoria            DateTime
+  auditorNome              String?
+  checklistNormaReferencia String?
+  status                   AuditoriaStatus @default(EM_ANDAMENTO)
+  dataReavaliacao          DateTime?
+  certificadoGeradoUrl     String?
+  certificadoValidade      DateTime?
+  notes                    String?
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  propriedadeProdutorId String
+  propriedadeProdutor   PropriedadeProdutor @relation(fields: [propriedadeProdutorId], references: [id])
+
+  itens            ChecklistItem[]
+  naoConformidades NaoConformidade[]
+
+  @@map("auditorias_agricolas")
+}
+
+enum ConformidadeStatus {
+  CONFORME
+  NAO_CONFORME
+  NAO_APLICAVEL
+}
+
+model ChecklistItem {
+  id           String             @id @default(cuid())
+  auditoriaId  String
+  auditoria    AuditoriaAgricola  @relation(fields: [auditoriaId], references: [id], onDelete: Cascade)
+  descricao    String
+  conformidade ConformidadeStatus @default(NAO_APLICAVEL)
+  evidenciaUrl String?
+  notes        String?
+  createdAt    DateTime           @default(now())
+
+  @@map("checklist_itens")
+}
+
+enum NaoConformidadeOrigem {
+  ANALISE_LABORATORIAL
+  AUDITORIA
+}
+
+enum NaoConformidadeSeveridade {
+  CRITICA
+  MAIOR
+  MENOR
+}
+
+enum NaoConformidadeStatus {
+  ABERTA
+  EM_TRATATIVA
+  RESOLVIDA
+}
+
+model NaoConformidade {
+  id                          String                    @id @default(cuid())
+  origem                      NaoConformidadeOrigem
+  descricao                   String
+  severidade                  NaoConformidadeSeveridade
+  responsavelInvestigacaoNome String?
+  causaRaiz                   String?
+  acaoCorretivaPreventiva     String?
+  prazoResolucao              DateTime?
+  status                      NaoConformidadeStatus     @default(ABERTA)
+  reincidente                 Boolean                   @default(false)
+  notes                       String?
+  createdAt                   DateTime                  @default(now())
+  updatedAt                   DateTime                  @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  auditoriaId String?
+  auditoria   AuditoriaAgricola? @relation(fields: [auditoriaId], references: [id])
+
+  resultadoId String?
+  resultado   Resultado? @relation(fields: [resultadoId], references: [id])
+
+  @@map("nao_conformidades")
 }
 
 // ---------- Log de Auditoria ----------

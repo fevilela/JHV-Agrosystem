@@ -96,6 +96,13 @@
         "acreditacao": "Laboratory Accreditation"
       }
     },
+    "auditoria": {
+      "group": "Agricultural Audits",
+      "items": {
+        "auditorias": "Audits",
+        "naoConformidades": "Non-Conformities"
+      }
+    },
     "maquinas": {
       "group": "Machinery & Equipment",
       "items": {

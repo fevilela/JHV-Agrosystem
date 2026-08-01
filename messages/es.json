@@ -96,6 +96,13 @@
         "acreditacao": "Acreditación del Laboratorio"
       }
     },
+    "auditoria": {
+      "group": "Auditoría Agrícola",
+      "items": {
+        "auditorias": "Auditorías",
+        "naoConformidades": "No Conformidades"
+      }
+    },
     "maquinas": {
       "group": "Máquinas y Equipos",
       "items": {

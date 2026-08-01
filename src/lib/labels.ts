@@ -441,6 +441,45 @@ export const pedidoAnaliseStatusFinanceiroLabels: Record<string, string> = {
   VENCIDO: "Vencido",
 };
 
+export const auditoriaTipoLabels: Record<string, string> = {
+  INTERNA: "Interna",
+  GLOBALGAP: "GLOBALG.A.P.",
+  ORGANICO: "Orgânico",
+  RAINFOREST_ALLIANCE: "Rainforest Alliance",
+  BPA: "BPA (Boas Práticas Agrícolas)",
+  OUTRO: "Outro",
+};
+
+export const auditoriaStatusLabels: Record<string, string> = {
+  EM_ANDAMENTO: "Em Andamento",
+  APROVADA: "Aprovada",
+  REPROVADA: "Reprovada",
+  PENDENTE_ACAO: "Pendente de Ação",
+};
+
+export const conformidadeStatusLabels: Record<string, string> = {
+  CONFORME: "Conforme",
+  NAO_CONFORME: "Não Conforme",
+  NAO_APLICAVEL: "Não Aplicável",
+};
+
+export const naoConformidadeOrigemLabels: Record<string, string> = {
+  ANALISE_LABORATORIAL: "Análise Laboratorial",
+  AUDITORIA: "Auditoria",
+};
+
+export const naoConformidadeSeveridadeLabels: Record<string, string> = {
+  CRITICA: "Crítica",
+  MAIOR: "Maior",
+  MENOR: "Menor",
+};
+
+export const naoConformidadeStatusLabels: Record<string, string> = {
+  ABERTA: "Aberta",
+  EM_TRATATIVA: "Em Tratativa",
+  RESOLVIDA: "Resolvida",
+};
+
 export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }
