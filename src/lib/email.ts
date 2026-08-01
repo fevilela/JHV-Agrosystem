@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
+import { INVITE_TOKEN_EXPIRY_DAYS, RESET_TOKEN_EXPIRY_HOURS } from "@/lib/password-reset";
 
 async function getEmailCredentials(organizationId: string) {
   const organization = await prisma.organization.findUnique({
@@ -38,6 +39,66 @@ export async function enviarBoletoEmail(params: {
           <li>Vencimento: <strong>${params.vencimentoFormatado}</strong></li>
         </ul>
         <p><a href="${params.boletoUrl}">Clique aqui para acessar o boleto</a></p>
+      `,
+    });
+
+    if (error) return { error: error.message };
+    return { success: true };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Erro ao enviar e-mail." };
+  }
+}
+
+export async function enviarConviteSenhaEmail(params: {
+  organizationId: string;
+  email: string;
+  nomeUsuario: string;
+  link: string;
+}): Promise<{ success?: true; skipped?: true; error?: string }> {
+  const { apiKey, fromEmail } = await getEmailCredentials(params.organizationId);
+  if (!apiKey || !fromEmail) return { skipped: true };
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to: params.email,
+      subject: "Defina sua senha de acesso",
+      html: `
+        <p>Olá, ${params.nomeUsuario}!</p>
+        <p>Sua conta no sistema foi criada. Clique no link abaixo para definir sua senha de acesso:</p>
+        <p><a href="${params.link}">Definir minha senha</a></p>
+        <p>Esse link expira em ${INVITE_TOKEN_EXPIRY_DAYS} dias.</p>
+      `,
+    });
+
+    if (error) return { error: error.message };
+    return { success: true };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Erro ao enviar e-mail." };
+  }
+}
+
+export async function enviarRedefinicaoSenhaEmail(params: {
+  organizationId: string;
+  email: string;
+  nomeUsuario: string;
+  link: string;
+}): Promise<{ success?: true; skipped?: true; error?: string }> {
+  const { apiKey, fromEmail } = await getEmailCredentials(params.organizationId);
+  if (!apiKey || !fromEmail) return { skipped: true };
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to: params.email,
+      subject: "Redefinição de senha",
+      html: `
+        <p>Olá, ${params.nomeUsuario}!</p>
+        <p>Recebemos um pedido para redefinir sua senha de acesso. Clique no link abaixo para criar uma nova senha:</p>
+        <p><a href="${params.link}">Redefinir minha senha</a></p>
+        <p>Esse link expira em ${RESET_TOKEN_EXPIRY_HOURS} hora(s). Se você não pediu essa redefinição, ignore este e-mail.</p>
       `,
     });
 

@@ -6,6 +6,7 @@ import { OrganizationForm } from "../organization-form";
 import { updateOrganizationAction, createOrgUserAction, deleteOrgUserAction } from "../actions";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { UserForm } from "./add-user-form";
+import { InviteLinkBanner } from "../invite-link-banner";
 import { navGroups, ALWAYS_ON_MODULES } from "@/lib/nav";
 
 const roleLabels: Record<string, string> = {
@@ -18,10 +19,13 @@ const moduleLabels = new Map(navGroups.map((g) => [g.key, g.label]));
 
 export default async function OrganizationDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ inviteLink?: string; inviteEmail?: string; inviteStatus?: string }>;
 }) {
   const { id } = await params;
+  const { inviteLink, inviteEmail, inviteStatus } = await searchParams;
 
   const organization = await prisma.organization.findUnique({
     where: { id },
@@ -40,6 +44,10 @@ export default async function OrganizationDetailPage({
         ← Clientes da JHV
       </Link>
       <h1 className="mt-1 mb-6 text-xl font-semibold text-neutral-900">{organization.name}</h1>
+
+      {inviteLink && inviteEmail && (
+        <InviteLinkBanner link={inviteLink} email={inviteEmail} status={inviteStatus ?? "skipped"} />
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="max-w-3xl">
@@ -141,7 +149,7 @@ export default async function OrganizationDetailPage({
             </h2>
             <UserForm
               action={createOrgUserAction.bind(null, id)}
-              passwordRequired
+              mode="create"
               submitLabel="Adicionar Usuário"
               availableModules={availableModules}
             />

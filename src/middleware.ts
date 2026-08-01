@@ -7,6 +7,8 @@ export default auth((req) => {
   const isPublicPage =
     req.nextUrl.pathname.startsWith("/privacidade") ||
     req.nextUrl.pathname.startsWith("/contrato-publico") ||
+    req.nextUrl.pathname.startsWith("/esqueci-senha") ||
+    req.nextUrl.pathname.startsWith("/redefinir-senha") ||
     req.nextUrl.pathname === "/offline" ||
     req.nextUrl.pathname === "/sw.js" ||
     req.nextUrl.pathname === "/manifest.webmanifest";

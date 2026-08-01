@@ -22,13 +22,13 @@ const moduleLabels = new Map(navGroups.map((g) => [g.key, g.label]));
 export function UserForm({
   action,
   initialValues,
-  passwordRequired,
+  mode,
   submitLabel,
   availableModules,
 }: {
   action: FormAction;
   initialValues?: UserFormValues;
-  passwordRequired: boolean;
+  mode: "create" | "edit";
   submitLabel: string;
   availableModules: string[];
 }) {
@@ -57,18 +57,12 @@ export function UserForm({
             className={inputClass}
           />
         </div>
-        <div>
-          <label className={labelClass}>
-            Senha{!passwordRequired && " (deixe em branco pra manter a atual)"}
-          </label>
-          <input
-            type="password"
-            name="password"
-            required={passwordRequired}
-            minLength={6}
-            className={inputClass}
-          />
-        </div>
+        {mode === "edit" && (
+          <div>
+            <label className={labelClass}>Senha (deixe em branco pra manter a atual)</label>
+            <input type="password" name="password" minLength={6} className={inputClass} />
+          </div>
+        )}
         <div>
           <label className={labelClass}>Função</label>
           <select name="role" defaultValue={initialValues?.role ?? "FUNCIONARIO"} className={inputClass}>
@@ -106,6 +100,14 @@ export function UserForm({
           independente dessas caixinhas — elas só valem pra Gerente/Funcionário.
         </p>
       </div>
+
+      {mode === "create" && (
+        <p className="text-xs text-neutral-400">
+          O cliente não digita a senha aqui — depois de salvar, um link de convite é enviado por
+          e-mail (ou exibido pra você copiar, se a organização ainda não tiver e-mail configurado)
+          pra ele mesmo definir a senha.
+        </p>
+      )}
 
       {state?.error && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
