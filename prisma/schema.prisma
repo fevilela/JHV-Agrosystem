@@ -27,7 +27,8 @@ model User {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  pushSubscriptions PushSubscription[]
+  pushSubscriptions   PushSubscription[]
+  passwordResetTokens PasswordResetToken[]
 
   @@map("users")
 }
@@ -2621,4 +2622,24 @@ model ApiKey {
 
   @@index([organizationId])
   @@map("api_keys")
+}
+
+// ---------- Convite e redefinição de senha ----------
+
+enum PasswordResetTokenKind {
+  INVITE
+  RESET
+}
+
+model PasswordResetToken {
+  id        String                 @id @default(cuid())
+  userId    String
+  user      User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String                 @unique
+  kind      PasswordResetTokenKind
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime               @default(now())
+
+  @@map("password_reset_tokens")
 }

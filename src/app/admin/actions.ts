@@ -1,11 +1,14 @@
 "use server";
 
+import crypto from "crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { RETROFITTED_MODULES, navGroups } from "@/lib/nav";
 import { seedChartOfAccounts } from "@/lib/chart-of-accounts";
+import { criarTokenSenha } from "@/lib/password-reset";
+import { enviarConviteSenhaEmail, enviarRedefinicaoSenhaEmail } from "@/lib/email";
 
 type FormState = { error?: string } | undefined;
 
@@ -123,21 +126,22 @@ export async function createOrgUserAction(
 ): Promise<FormState> {
   const name = str(formData, "name");
   const email = str(formData, "email");
-  const password = str(formData, "password");
   const role = str(formData, "role") || "FUNCIONARIO";
 
   if (!name) return { error: "Informe o nome." };
   if (!email) return { error: "Informe o e-mail." };
-  if (!password || password.length < 6) {
-    return { error: "A senha precisa ter pelo menos 6 caracteres." };
-  }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) return { error: "Já existe uma conta com esse e-mail." };
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  // A criação de usuário não pede mais senha ao admin — o cliente define a própria
+  // senha pelo link de convite. O campo passwordHash continua obrigatório no schema
+  // (usado por todo o fluxo de login em src/lib/auth.ts), então geramos um hash de
+  // senha aleatória inutilizável só pra satisfazer essa constraint; ninguém consegue
+  // logar com ela porque a senha em si nunca é salva nem exibida.
+  const passwordHash = await bcrypt.hash(crypto.randomBytes(32).toString("hex"), 10);
 
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       name,
       email,
@@ -148,8 +152,22 @@ export async function createOrgUserAction(
     },
   });
 
+  const { link } = await criarTokenSenha(user.id, "INVITE");
+  const resultado = await enviarConviteSenhaEmail({
+    organizationId,
+    email: user.email,
+    nomeUsuario: user.name,
+    link,
+  });
+
   revalidatePath(`/admin/${organizationId}`);
-  redirect(`/admin/${organizationId}`);
+
+  const params = new URLSearchParams({
+    inviteLink: link,
+    inviteEmail: user.email,
+    inviteStatus: resultado.success ? "sent" : resultado.skipped ? "skipped" : "error",
+  });
+  redirect(`/admin/${organizationId}?${params.toString()}`);
 }
 
 export async function updateOrgUserAction(
@@ -192,4 +210,28 @@ export async function updateOrgUserAction(
 export async function deleteOrgUserAction(organizationId: string, userId: string) {
   await prisma.user.delete({ where: { id: userId } });
   revalidatePath(`/admin/${organizationId}`);
+}
+
+// Gera um novo link a qualquer momento — útil se o convite expirou ou se o admin
+// quer resetar a senha de alguém sem saber a senha atual. Sempre usa kind "RESET"
+// porque esse botão fica na tela de edição de um usuário já existente (o convite
+// inicial, kind "INVITE", só acontece uma vez, na criação).
+export async function sendPasswordResetLinkAction(organizationId: string, userId: string) {
+  const user = await prisma.user.findFirst({ where: { id: userId, organizationId } });
+  if (!user) return;
+
+  const { link } = await criarTokenSenha(user.id, "RESET");
+  const resultado = await enviarRedefinicaoSenhaEmail({
+    organizationId,
+    email: user.email,
+    nomeUsuario: user.name,
+    link,
+  });
+
+  const params = new URLSearchParams({
+    inviteLink: link,
+    inviteEmail: user.email,
+    inviteStatus: resultado.success ? "sent" : resultado.skipped ? "skipped" : "error",
+  });
+  redirect(`/admin/${organizationId}/usuarios/${userId}?${params.toString()}`);
 }
