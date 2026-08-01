@@ -13,6 +13,18 @@ async function getEmailCredentials(organizationId: string) {
   };
 }
 
+// E-mails de sistema (convite/redefinição de senha) usam a conta Resend da própria
+// plataforma JHV, não a de cada organização — senão toda organização nova cairia
+// sempre no fallback de "mostrar link na tela" no primeiro convite, já que ela ainda
+// não teria configurado o Resend dela. O Resend por organização (getEmailCredentials
+// acima) continua existindo só pros e-mails de negócio (boleto/contrato).
+export function getPlatformEmailCredentials() {
+  return {
+    apiKey: process.env.RESEND_API_KEY || undefined,
+    fromEmail: process.env.RESEND_FROM_EMAIL || undefined,
+  };
+}
+
 export async function enviarBoletoEmail(params: {
   organizationId: string;
   email: string;
@@ -50,12 +62,11 @@ export async function enviarBoletoEmail(params: {
 }
 
 export async function enviarConviteSenhaEmail(params: {
-  organizationId: string;
   email: string;
   nomeUsuario: string;
   link: string;
 }): Promise<{ success?: true; skipped?: true; error?: string }> {
-  const { apiKey, fromEmail } = await getEmailCredentials(params.organizationId);
+  const { apiKey, fromEmail } = getPlatformEmailCredentials();
   if (!apiKey || !fromEmail) return { skipped: true };
 
   try {
@@ -80,12 +91,11 @@ export async function enviarConviteSenhaEmail(params: {
 }
 
 export async function enviarRedefinicaoSenhaEmail(params: {
-  organizationId: string;
   email: string;
   nomeUsuario: string;
   link: string;
 }): Promise<{ success?: true; skipped?: true; error?: string }> {
-  const { apiKey, fromEmail } = await getEmailCredentials(params.organizationId);
+  const { apiKey, fromEmail } = getPlatformEmailCredentials();
   if (!apiKey || !fromEmail) return { skipped: true };
 
   try {

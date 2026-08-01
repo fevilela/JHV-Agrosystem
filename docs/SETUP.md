@@ -31,6 +31,7 @@ Troque em produção assim que possível (ainda não há tela própria de troca 
 | `DATABASE_URL` | Sim | Conexão PostgreSQL (Supabase) |
 | `AUTH_SECRET` | Sim | Secret do NextAuth — gerar com `openssl rand -base64 32` |
 | `NEXTAUTH_URL` | Sim | URL base da aplicação (`http://localhost:3000` em dev) |
+| `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | Só p/ convite e redefinição de senha | Resend da **plataforma** (conta JHV) — usado só pros e-mails de sistema (convite de senha na criação de usuário, "esqueci minha senha"). Diferente do Resend por organização (`resendApiKey`/`resendFromEmail`, configurado em `/admin/[id]`), que continua sendo só pros e-mails de negócio (boleto/contrato) de cada organização. Sem essas env vars, a tela mostra o link pra copiar em vez de enviar o e-mail |
 | `MERCADOPAGO_ACCESS_TOKEN` | Só p/ boleto | Token da API de Pagamentos do Mercado Pago (`APP_USR-...` prod, `TEST-...` sandbox) |
 | `MERCADOPAGO_PUBLIC_KEY` / `_CLIENT_ID` / `_CLIENT_SECRET` | Só p/ boleto | Demais credenciais Mercado Pago |
 | `CRON_SECRET` | Só p/ crons | Compara com o header `x-cron-secret` nos endpoints `/api/cron/*` — gerar com `openssl rand -hex 32` |
