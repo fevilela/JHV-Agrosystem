@@ -428,6 +428,19 @@ export const controleQualidadeResultadoLabels: Record<string, string> = {
   FORA_FAIXA: "Fora da Faixa",
 };
 
+export const laudoStatusLabels: Record<string, string> = {
+  RASCUNHO: "Rascunho",
+  EMITIDO: "Emitido",
+  CANCELADO: "Cancelado",
+  REEMITIDO: "Reemitido",
+};
+
+export const pedidoAnaliseStatusFinanceiroLabels: Record<string, string> = {
+  PENDENTE: "Pendente",
+  PAGO: "Pago",
+  VENCIDO: "Vencido",
+};
+
 export function toOptions(labels: Record<string, string>) {
   return Object.entries(labels).map(([value, label]) => ({ value, label }));
 }

@@ -89,7 +89,11 @@
         "responsaveisTecnicos": "Responsáveis Técnicos",
         "amostras": "Amostras",
         "metodos": "Métodos Analíticos",
-        "equipamentos": "Equipamentos e Calibração"
+        "equipamentos": "Equipamentos e Calibração",
+        "laudos": "Laudos Técnicos",
+        "normas": "Normas de Referência",
+        "pedidos": "Pedidos e Faturamento",
+        "acreditacao": "Acreditação do Laboratório"
       }
     },
     "maquinas": {

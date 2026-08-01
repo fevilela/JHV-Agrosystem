@@ -127,6 +127,11 @@ model Organization {
   resultados         Resultado[]
   controlesQualidade ControleQualidade[]
 
+  normasReferencia        NormaReferencia[]
+  laudosTecnicos          LaudoTecnico[]
+  pedidosAnalise          PedidoAnalise[]
+  acreditacoesLaboratorio AcreditacaoLaboratorio[]
+
   @@map("organizations")
 }
 
@@ -1985,7 +1990,9 @@ model Produtor {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  propriedades PropriedadeProdutor[]
+  propriedades   PropriedadeProdutor[]
+  laudosTecnicos LaudoTecnico[]
+  pedidosAnalise PedidoAnalise[]
 
   @@map("produtores")
 }
@@ -2054,6 +2061,8 @@ model ResponsavelTecnico {
   employeeId String   @unique
   employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
+  laudosAssinados LaudoTecnico[]
+
   @@map("responsaveis_tecnicos")
 }
 
@@ -2109,6 +2118,8 @@ model Amostra {
 
   custodiaEventos CadeiaCustodiaEvento[]
   resultados      Resultado[]
+  laudos          LaudoAmostra[]
+  itensPedido     PedidoAnaliseItem[]
 
   @@unique([organizationId, code])
   @@map("amostras")
@@ -2146,6 +2157,7 @@ model MetodoAnalitico {
   faixaDeteccaoMax      Decimal? @db.Decimal(12, 4)
   incertezaMedicao      Decimal? @db.Decimal(12, 4)
   tempoMedioAnaliseDias Int?
+  acreditado            Boolean  @default(false)
   active                Boolean  @default(true)
   notes                 String?
   createdAt             DateTime @default(now())
@@ -2154,7 +2166,8 @@ model MetodoAnalitico {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  resultados Resultado[]
+  resultados       Resultado[]
+  normasReferencia NormaReferencia[]
 
   @@map("metodos_analiticos")
 }
@@ -2270,6 +2283,143 @@ model ControleQualidade {
   resultado   Resultado @relation(fields: [resultadoId], references: [id], onDelete: Cascade)
 
   @@map("controles_qualidade")
+}
+
+// ---------- Laboratório Agrícola: fase 3 (laudos, normas, faturamento, acreditação) ----------
+
+model NormaReferencia {
+  id           String    @id @default(cuid())
+  nome         String
+  limiteLegal  String?
+  dataVigencia DateTime?
+  versao       String?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  metodoAnaliticoId String?
+  metodoAnalitico   MetodoAnalitico? @relation(fields: [metodoAnaliticoId], references: [id])
+
+  @@map("normas_referencia")
+}
+
+enum LaudoStatus {
+  RASCUNHO
+  EMITIDO
+  CANCELADO
+  REEMITIDO
+}
+
+model LaudoTecnico {
+  id                          String      @id @default(cuid())
+  numero                      String
+  dataEmissao                 DateTime?
+  interpretacaoAgronomica     String?
+  recomendacaoCalagemAdubacao String?
+  templateUtilizado           String?
+  versao                      Int         @default(1)
+  status                      LaudoStatus @default(RASCUNHO)
+  dataValidade                DateTime?
+  pdfUrl                      String?
+  createdAt                   DateTime    @default(now())
+  updatedAt                   DateTime    @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  produtorId String
+  produtor   Produtor @relation(fields: [produtorId], references: [id])
+
+  responsavelAssinanteId String
+  responsavelAssinante   ResponsavelTecnico @relation(fields: [responsavelAssinanteId], references: [id])
+
+  amostras LaudoAmostra[]
+
+  @@unique([organizationId, numero])
+  @@map("laudos_tecnicos")
+}
+
+model LaudoAmostra {
+  id        String       @id @default(cuid())
+  laudoId   String
+  laudo     LaudoTecnico @relation(fields: [laudoId], references: [id], onDelete: Cascade)
+  amostraId String
+  amostra   Amostra      @relation(fields: [amostraId], references: [id])
+
+  @@unique([laudoId, amostraId])
+  @@map("laudo_amostras")
+}
+
+enum PedidoAnaliseStatusFinanceiro {
+  PENDENTE
+  PAGO
+  VENCIDO
+}
+
+model PedidoAnalise {
+  id               String                        @id @default(cuid())
+  numero           String
+  valorTotal       Decimal?                      @db.Decimal(12, 2)
+  formaPagamento   String?
+  statusFinanceiro PedidoAnaliseStatusFinanceiro @default(PENDENTE)
+  notaFiscalUrl    String?
+  createdAt        DateTime                      @default(now())
+  updatedAt        DateTime                      @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  produtorId String
+  produtor   Produtor @relation(fields: [produtorId], references: [id])
+
+  itens PedidoAnaliseItem[]
+
+  @@unique([organizationId, numero])
+  @@map("pedidos_analise")
+}
+
+model PedidoAnaliseItem {
+  id              String        @id @default(cuid())
+  pedidoAnaliseId String
+  pedidoAnalise   PedidoAnalise @relation(fields: [pedidoAnaliseId], references: [id], onDelete: Cascade)
+  descricao       String
+  valor           Decimal?      @db.Decimal(12, 2)
+  amostraId       String?
+  amostra         Amostra?      @relation(fields: [amostraId], references: [id])
+
+  @@map("pedido_analise_itens")
+}
+
+model AcreditacaoLaboratorio {
+  id                String    @id @default(cuid())
+  escopoAcreditacao String?
+  orgaoAcreditador  String?
+  dataValidade      DateTime?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  auditorias AcreditacaoAuditoriaEvento[]
+
+  @@map("acreditacoes_laboratorio")
+}
+
+model AcreditacaoAuditoriaEvento {
+  id                       String                 @id @default(cuid())
+  acreditacaoLaboratorioId String
+  acreditacaoLaboratorio   AcreditacaoLaboratorio @relation(fields: [acreditacaoLaboratorioId], references: [id], onDelete: Cascade)
+  data                     DateTime               @default(now())
+  resultado                String?
+  notes                    String?
+  createdAt                DateTime               @default(now())
+
+  @@map("acreditacao_auditoria_eventos")
 }
 
 // ---------- Log de Auditoria ----------

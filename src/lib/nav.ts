@@ -111,6 +111,10 @@ export const navGroups: NavGroup[] = [
       { label: "Amostras", href: "/laboratorio/amostras" },
       { label: "Métodos Analíticos", href: "/laboratorio/metodos" },
       { label: "Equipamentos e Calibração", href: "/laboratorio/equipamentos" },
+      { label: "Laudos Técnicos", href: "/laboratorio/laudos" },
+      { label: "Normas de Referência", href: "/laboratorio/normas" },
+      { label: "Pedidos e Faturamento", href: "/laboratorio/pedidos" },
+      { label: "Acreditação do Laboratório", href: "/laboratorio/acreditacao" },
     ],
   },
   {

@@ -89,7 +89,11 @@
         "responsaveisTecnicos": "Technical Officers",
         "amostras": "Samples",
         "metodos": "Analytical Methods",
-        "equipamentos": "Equipment & Calibration"
+        "equipamentos": "Equipment & Calibration",
+        "laudos": "Technical Reports",
+        "normas": "Reference Standards",
+        "pedidos": "Orders & Billing",
+        "acreditacao": "Laboratory Accreditation"
       }
     },
     "maquinas": {
