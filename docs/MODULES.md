@@ -48,15 +48,13 @@ Rotas em `/oficina/*`: Ordens de Serviço (vinculadas a máquina e mecânico, pe
 
 ## Viveiro de Mudas (`viveiro`)
 
-🚧 **Em desenvolvimento (fases 1 e 2 de 3 implementadas; fase 3 ainda pendente.)**
+Rotas em `/viveiro/*`: Espécies e Cultivares (`/viveiro/especies`), Estrutura Física (`/viveiro/estrutura` — viveiros/setores, com campo pronto pro editor de mapa mas ainda sem UI de mapa), Lotes de Produção (`/viveiro/lotes` — com histórico de fases de produção, cálculo de taxa de perda por fase, e um filtro "Disponíveis pra Venda" pros lotes na fase `PRONTA_EXPEDICAO` com quantidade em estoque), Pedidos de Venda (`/viveiro/pedidos`). Reaproveita `Client`/`Supplier`/`Employee` do Cadastro; não duplica nada do Estoque ou Financeiro.
 
-Rotas em `/viveiro/*`: Espécies e Cultivares (`/viveiro/especies`), Estrutura Física (`/viveiro/estrutura` — viveiros/setores, com campo pronto pro editor de mapa mas ainda sem UI de mapa), Lotes de Produção (`/viveiro/lotes` — com histórico de fases de produção e cálculo de taxa de perda por fase). Reaproveita `Client`/`Supplier`/`Employee` do Cadastro; não duplica nada do Estoque ou Financeiro.
+Na página de detalhe de um lote (`/viveiro/lotes/[id]`), abas adicionais registram, por lote: Insumos consumidos (decrementa `StockItem.currentQuantity` do Estoque, mesmo padrão de `ServiceOrderPart`/Oficina — não deixa o estoque ficar negativo), Irrigação, Fitossanidade (praga/doença/tratamento preventivo), Mão de Obra apontada e Certificados (documentos anexados via Supabase Storage, mesmo padrão de `AnimalDocument`). `unitCost` (insumo) e `custoHora` (mão de obra) ficam gravados no momento do lançamento e alimentam o card de custo do lote (custo total e custo por muda, calculado sobre `quantidadeInicial` — sinaliza quando o custo está incompleto por faltar algum valor lançado).
 
-Na página de detalhe de um lote (`/viveiro/lotes/[id]`), abas adicionais registram, por lote: Insumos consumidos (decrementa `StockItem.currentQuantity` do Estoque, mesmo padrão de `ServiceOrderPart`/Oficina — não deixa o estoque ficar negativo), Irrigação, Fitossanidade (praga/doença/tratamento preventivo) e Mão de Obra apontada. `unitCost` (insumo) e `custoHora` (mão de obra) ficam gravados no momento do lançamento — base para o cálculo de custo por lote da fase 3, ainda não implementada.
+Pedido de Venda (`MudaPedidoVenda`/`MudaPedidoVendaItem`, mesmo padrão de header+itens de `PedidoAnalise`) só aceita itens de lotes na fase `PRONTA_EXPEDICAO`. Confirmar o pedido decrementa `MudaLote.quantidadeAtual` de cada lote envolvido (validando que a quantidade pedida ainda cabe no estoque do lote); cancelar um pedido confirmado reverte a baixa.
 
-Fase planejada, ainda não implementada: estoque de mudas prontas, pedido de venda, custo por lote e rastreabilidade/certificação (fase 3).
-
-Fases planejadas, ainda não implementadas: insumos/substrato (via Estoque), irrigação, fitossanidade e mão de obra por lote (fase 2); estoque de mudas prontas, pedido de venda, custos e rastreabilidade/certificação (fase 3). Ver os modelos em [DATABASE.md](./DATABASE.md).
+Cada lote tem um botão "Baixar PDF de Rastreabilidade" (`/viveiro/lotes/[id]/rastreabilidade/pdf`, autenticado) que reúne espécie/cultivar, viveiro, histórico de fases, insumos, irrigação, fitossanidade, mão de obra e os pedidos/clientes pra quem foi vendido — documento único de origem do lote, reaproveitando `@react-pdf/renderer` como o contrato da Hípica já faz.
 
 ## Configurações (`configuracoes`)
 

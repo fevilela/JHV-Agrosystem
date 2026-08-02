@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { RecordForm } from "@/components/crud/record-form";
 import { mudaLoteEditFields } from "../fields";
 import { updateMudaLoteAction, advanceFaseAction, deleteMudaLoteAction } from "../actions";
-import { faseMudaLabels, mudaLoteStatusLabels, origemPropaguloLabels, formatDate } from "@/lib/labels";
-import { nextFase, phaseLossRates, totalLossRate } from "@/lib/muda-lote";
+import { faseMudaLabels, mudaLoteStatusLabels, origemPropaguloLabels, formatDate, formatCurrency } from "@/lib/labels";
+import { nextFase, phaseLossRates, totalLossRate, calcularCustoLote, custoPorMuda } from "@/lib/muda-lote";
 import { requireModule } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { Tabs } from "@/components/tabs";
@@ -13,6 +14,7 @@ import { InsumosSection } from "./insumos-section";
 import { IrrigacaoSection } from "./irrigacao-section";
 import { FitossanidadeSection } from "./fitossanidade-section";
 import { MaoDeObraSection } from "./mao-de-obra-section";
+import { CertificadosSection } from "./certificados-section";
 
 export default async function MudaLoteDetailPage({
   params,
@@ -20,7 +22,8 @@ export default async function MudaLoteDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { organizationId } = await requireModule("viveiro");
+  const { organizationId, organization } = await requireModule("viveiro");
+  const locale = await getLocale();
 
   const lote = await prisma.mudaLote.findFirst({
     where: { id, organizationId },
@@ -31,6 +34,7 @@ export default async function MudaLoteDetailPage({
       irrigacoes: { include: { responsavel: true }, orderBy: { data: "desc" } },
       fitossanidades: { include: { responsavel: true }, orderBy: { data: "desc" } },
       maoDeObra: { include: { employee: true }, orderBy: { data: "desc" } },
+      certificados: { orderBy: { createdAt: "desc" } },
     },
   });
   if (!lote) notFound();
@@ -45,6 +49,15 @@ export default async function MudaLoteDetailPage({
   const perdaPorFase = phaseLossRates(lote.faseEventos, lote.quantidadeInicial);
   const perdaTotal = totalLossRate(lote.faseEventos, lote.quantidadeInicial);
 
+  const custo = calcularCustoLote(
+    lote.insumos.map((i) => ({ quantidade: i.quantidade.toString(), unitCost: i.unitCost?.toString() ?? null })),
+    lote.maoDeObra.map((m) => ({
+      horasTrabalhadas: m.horasTrabalhadas.toString(),
+      custoHora: m.custoHora?.toString() ?? null,
+    }))
+  );
+  const custoUnitario = custoPorMuda(custo.custoTotal, lote.quantidadeInicial);
+
   return (
     <div>
       <Link href="/viveiro/lotes" className="text-sm text-neutral-500 hover:text-neutral-800">
@@ -57,7 +70,17 @@ export default async function MudaLoteDetailPage({
             {lote.especie.nomePopular} · Origem: {origemPropaguloLabels[lote.origemPropagulo]}
           </p>
         </div>
-        <DeleteButton onDelete={deleteMudaLoteAction.bind(null, id)} />
+        <div className="flex items-center gap-2">
+          <a
+            href={`/viveiro/lotes/${id}/rastreabilidade/pdf`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50"
+          >
+            Baixar PDF de Rastreabilidade
+          </a>
+          <DeleteButton onDelete={deleteMudaLoteAction.bind(null, id)} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -118,6 +141,33 @@ export default async function MudaLoteDetailPage({
                 {lote.status !== "ATIVO"
                   ? "Lote não está ativo — sem avanço de fase disponível."
                   : "Lote já está na última fase (Pronta para Expedição)."}
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+              Custo do Lote
+            </h2>
+            <p className="text-sm text-neutral-600">
+              Insumos: <strong>{formatCurrency(custo.custoInsumos, locale, organization.currency)}</strong> · Mão de
+              obra: <strong>{formatCurrency(custo.custoMaoDeObra, locale, organization.currency)}</strong>
+            </p>
+            <p className="mt-1 text-sm text-neutral-600">
+              Custo total: <strong>{formatCurrency(custo.custoTotal, locale, organization.currency)}</strong>
+            </p>
+            <p className="mt-1 text-sm text-neutral-600">
+              Custo por muda:{" "}
+              <strong>
+                {custoUnitario === null
+                  ? "—"
+                  : formatCurrency(custoUnitario, locale, organization.currency)}
+              </strong>
+            </p>
+            {!custo.completo && (
+              <p className="mt-2 text-xs text-amber-700">
+                Custo parcial — há insumo(s) ou apontamento(s) de mão de obra sem custo informado,
+                não contabilizados aqui.
               </p>
             )}
           </div>
@@ -227,6 +277,11 @@ export default async function MudaLoteDetailPage({
               content: (
                 <MaoDeObraSection loteId={id} apontamentos={lote.maoDeObra} employees={employees} />
               ),
+            },
+            {
+              id: "certificados",
+              label: "Certificados",
+              content: <CertificadosSection loteId={id} certificados={lote.certificados} />,
             },
           ]}
         />

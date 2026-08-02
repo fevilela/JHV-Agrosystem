@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { buildRecordData } from "@/lib/record-data";
 import { requireModule } from "@/lib/tenant";
 import { buildAdvancePhasePayload, hasSufficientStock } from "@/lib/muda-lote";
+import { saveUploadedFile, deleteUploadedFile } from "@/lib/upload";
 import { mudaLoteCreateFields, mudaLoteEditFields } from "./fields";
 
 type FormState = { error?: string } | undefined;
@@ -299,5 +300,46 @@ export async function addMudaLoteMaoDeObraAction(loteId: string, formData: FormD
 export async function deleteMudaLoteMaoDeObraAction(loteId: string, id: string) {
   const { organizationId } = await requireModule("viveiro");
   await prisma.mudaLoteMaoDeObra.deleteMany({ where: { id, loteId, organizationId } });
+  revalidatePath(`/viveiro/lotes/${loteId}`);
+}
+
+// ---------- Certificados (rastreabilidade) ----------
+
+export async function addMudaLoteCertificadoAction(loteId: string, formData: FormData) {
+  const { organizationId } = await requireModule("viveiro");
+  const lote = await prisma.mudaLote.findFirst({ where: { id: loteId, organizationId } });
+  if (!lote) return;
+
+  const file = formData.get("file") as File | null;
+  if (!file || file.size === 0) return;
+
+  const emitidoEmRaw = formData.get("emitidoEm") as string | null;
+  const notes = (formData.get("notes") as string | null)?.trim() || null;
+
+  const { url, name } = await saveUploadedFile(file, `viveiro/lotes/${loteId}/certificados`);
+
+  await prisma.mudaLoteCertificado.create({
+    data: {
+      loteId,
+      url,
+      nome: name,
+      emitidoEm: emitidoEmRaw ? new Date(emitidoEmRaw) : null,
+      notes,
+    },
+  });
+
+  revalidatePath(`/viveiro/lotes/${loteId}`);
+}
+
+export async function deleteMudaLoteCertificadoAction(loteId: string, id: string) {
+  const { organizationId } = await requireModule("viveiro");
+  const certificado = await prisma.mudaLoteCertificado.findFirst({
+    where: { id, loteId, lote: { organizationId } },
+  });
+  if (!certificado) return;
+
+  await prisma.mudaLoteCertificado.delete({ where: { id } });
+  await deleteUploadedFile(certificado.url);
+
   revalidatePath(`/viveiro/lotes/${loteId}`);
 }

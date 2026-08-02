@@ -16,17 +16,21 @@ const statusColor: Record<string, string> = {
 export default async function MudaLotesListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ fase?: string; status?: string }>;
+  searchParams: Promise<{ fase?: string; status?: string; disponivel?: string }>;
 }) {
   const { organizationId } = await requireModule("viveiro");
-  const { fase, status } = await searchParams;
+  const { fase, status, disponivel } = await searchParams;
 
+  // "Disponível pra venda" espelha loteDisponivelParaVenda (src/lib/muda-lote.ts): fase
+  // PRONTA_EXPEDICAO e quantidade > 0. Sobrepõe os outros filtros quando ativo.
   const lotes = await prisma.mudaLote.findMany({
-    where: {
-      organizationId,
-      ...(fase ? { faseAtual: fase as FaseMuda } : {}),
-      ...(status ? { status: status as MudaLoteStatus } : {}),
-    },
+    where: disponivel
+      ? { organizationId, faseAtual: "PRONTA_EXPEDICAO", quantidadeAtual: { gt: 0 } }
+      : {
+          organizationId,
+          ...(fase ? { faseAtual: fase as FaseMuda } : {}),
+          ...(status ? { status: status as MudaLoteStatus } : {}),
+        },
     orderBy: { createdAt: "desc" },
     include: { especie: true, viveiro: true },
   });
@@ -38,55 +42,70 @@ export default async function MudaLotesListPage({
           <h1 className="text-xl font-semibold text-neutral-900">Lotes de Produção</h1>
           <p className="mt-1 text-sm text-neutral-500">
             {lotes.length} {lotes.length === 1 ? "lote encontrado" : "lotes encontrados"}
+            {disponivel ? " — disponíveis pra venda" : ""}
           </p>
         </div>
-        <Link
-          href="/viveiro/lotes/novo"
-          className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          <Plus size={16} />
-          Novo Lote
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={disponivel ? "/viveiro/lotes" : "/viveiro/lotes?disponivel=1"}
+            className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
+              disponivel
+                ? "border-brand-700 bg-brand-700 text-white hover:bg-brand-800"
+                : "border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+            }`}
+          >
+            Disponíveis pra Venda
+          </Link>
+          <Link
+            href="/viveiro/lotes/novo"
+            className="flex items-center gap-1.5 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
+          >
+            <Plus size={16} />
+            Novo Lote
+          </Link>
+        </div>
       </div>
 
-      <form method="get" className="mb-6 flex flex-wrap items-end gap-3">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-neutral-700">Fase</label>
-          <select
-            name="fase"
-            defaultValue={fase ?? ""}
-            className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+      {!disponivel && (
+        <form method="get" className="mb-6 flex flex-wrap items-end gap-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-neutral-700">Fase</label>
+            <select
+              name="fase"
+              defaultValue={fase ?? ""}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+            >
+              <option value="">Todas</option>
+              {Object.entries(faseMudaLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-neutral-700">Status</label>
+            <select
+              name="status"
+              defaultValue={status ?? ""}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+            >
+              <option value="">Todos</option>
+              {Object.entries(mudaLoteStatusLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
           >
-            <option value="">Todas</option>
-            {Object.entries(faseMudaLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-neutral-700">Status</label>
-          <select
-            name="status"
-            defaultValue={status ?? ""}
-            className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-          >
-            <option value="">Todos</option>
-            {Object.entries(mudaLoteStatusLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button
-          type="submit"
-          className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-800"
-        >
-          Filtrar
-        </button>
-      </form>
+            Filtrar
+          </button>
+        </form>
+      )}
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         <table className="w-full text-sm">

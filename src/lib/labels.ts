@@ -366,6 +366,13 @@ export const mudaFitossanidadeTipoLabels: Record<string, string> = {
   TRATAMENTO_PREVENTIVO: "Tratamento Preventivo",
 };
 
+export const mudaPedidoVendaStatusLabels: Record<string, string> = {
+  PENDENTE: "Pendente",
+  CONFIRMADO: "Confirmado",
+  ENTREGUE: "Entregue",
+  CANCELADO: "Cancelado",
+};
+
 export const produtorTipoLabels: Record<string, string> = {
   PRODUTOR_RURAL: "Produtor Rural",
   COOPERATIVA: "Cooperativa",

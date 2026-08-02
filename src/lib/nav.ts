@@ -100,6 +100,7 @@ export const navGroups: NavGroup[] = [
       { label: "Espécies e Cultivares", href: "/viveiro/especies" },
       { label: "Estrutura Física", href: "/viveiro/estrutura" },
       { label: "Lotes de Produção", href: "/viveiro/lotes" },
+      { label: "Pedidos de Venda", href: "/viveiro/pedidos" },
     ],
   },
   {
