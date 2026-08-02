@@ -121,6 +121,7 @@ model Organization {
   mudaLoteIrrigacoes     MudaLoteIrrigacao[]
   mudaLoteFitossanidades MudaLoteFitossanidade[]
   mudaLoteMaoDeObra      MudaLoteMaoDeObra[]
+  mudaPedidosVenda       MudaPedidoVenda[]
 
   produtores           Produtor[]
   propriedadesProdutor PropriedadeProdutor[]
@@ -321,6 +322,7 @@ model Client {
   recurringBillings RecurringBilling[]
   contracts         Contract[]
   whatsappMessages  WhatsappMessage[]
+  mudaPedidosVenda  MudaPedidoVenda[]
 
   @@map("clients")
 }
@@ -1957,6 +1959,8 @@ model MudaLote {
   irrigacoes     MudaLoteIrrigacao[]
   fitossanidades MudaLoteFitossanidade[]
   maoDeObra      MudaLoteMaoDeObra[]
+  pedidoItens    MudaPedidoVendaItem[]
+  certificados   MudaLoteCertificado[]
 
   @@unique([organizationId, code])
   @@map("muda_lotes")
@@ -2059,6 +2063,64 @@ model MudaLoteMaoDeObra {
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@map("muda_lote_mao_de_obras")
+}
+
+// ---------- Viveiro de Mudas: fase 3 (pedido de venda, rastreabilidade) ----------
+
+enum MudaPedidoVendaStatus {
+  PENDENTE
+  CONFIRMADO
+  ENTREGUE
+  CANCELADO
+}
+
+model MudaPedidoVenda {
+  id         String                @id @default(cuid())
+  numero     String
+  clienteId  String
+  cliente    Client                @relation(fields: [clienteId], references: [id])
+  dataPedido DateTime              @default(now())
+  status     MudaPedidoVendaStatus @default(PENDENTE)
+  // Soma de quantidade * precoUnitario dos itens — sempre recalculado ao salvar/excluir um
+  // item, nunca digitado direto pelo usuário.
+  valorTotal Decimal?              @db.Decimal(12, 2)
+  notes      String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  itens MudaPedidoVendaItem[]
+
+  @@unique([organizationId, numero])
+  @@map("muda_pedidos_venda")
+}
+
+model MudaPedidoVendaItem {
+  id            String          @id @default(cuid())
+  pedidoId      String
+  pedido        MudaPedidoVenda @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  loteId        String
+  lote          MudaLote        @relation(fields: [loteId], references: [id])
+  quantidade    Int
+  precoUnitario Decimal         @db.Decimal(10, 2)
+
+  @@map("muda_pedido_venda_itens")
+}
+
+model MudaLoteCertificado {
+  id        String    @id @default(cuid())
+  loteId    String
+  lote      MudaLote  @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  url       String
+  nome      String
+  emitidoEm DateTime?
+  notes     String?
+  createdAt DateTime  @default(now())
+
+  @@map("muda_lote_certificados")
 }
 
 // ---------- Laboratório Agrícola ----------

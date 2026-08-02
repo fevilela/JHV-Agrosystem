@@ -6,6 +6,9 @@ import {
   totalLossRate,
   buildAdvancePhasePayload,
   hasSufficientStock,
+  loteDisponivelParaVenda,
+  calcularCustoLote,
+  custoPorMuda,
 } from "./muda-lote";
 
 describe("nextFase", () => {
@@ -85,6 +88,74 @@ describe("hasSufficientStock", () => {
 
   it("blocks consuming more than what's available (would go negative)", () => {
     expect(hasSufficientStock(10, 10.01)).toBe(false);
+  });
+});
+
+describe("loteDisponivelParaVenda", () => {
+  it("is available when at the last phase with quantity left", () => {
+    expect(loteDisponivelParaVenda("PRONTA_EXPEDICAO", 10)).toBe(true);
+  });
+
+  it("is not available when at the last phase but sold/lost out completely", () => {
+    expect(loteDisponivelParaVenda("PRONTA_EXPEDICAO", 0)).toBe(false);
+  });
+
+  it("is not available when not yet at the last phase, even with quantity left", () => {
+    expect(loteDisponivelParaVenda("CRESCIMENTO", 10)).toBe(false);
+  });
+});
+
+describe("calcularCustoLote", () => {
+  it("sums insumo and mão de obra costs when every entry has a cost", () => {
+    const insumos = [{ quantidade: 10, unitCost: 2.5 }, { quantidade: 4, unitCost: 1 }];
+    const maoDeObra = [{ horasTrabalhadas: 8, custoHora: 20 }];
+    expect(calcularCustoLote(insumos, maoDeObra)).toEqual({
+      custoInsumos: 29,
+      custoMaoDeObra: 160,
+      custoTotal: 189,
+      completo: true,
+    });
+  });
+
+  it("flags completo: false and skips entries with a null unitCost/custoHora instead of treating them as 0", () => {
+    const insumos = [{ quantidade: 10, unitCost: 2 }, { quantidade: 5, unitCost: null }];
+    const maoDeObra = [{ horasTrabalhadas: 3, custoHora: null }];
+    expect(calcularCustoLote(insumos, maoDeObra)).toEqual({
+      custoInsumos: 20,
+      custoMaoDeObra: 0,
+      custoTotal: 20,
+      completo: false,
+    });
+  });
+
+  it("returns all zeros and completo: true for a lote with no entries yet", () => {
+    expect(calcularCustoLote([], [])).toEqual({
+      custoInsumos: 0,
+      custoMaoDeObra: 0,
+      custoTotal: 0,
+      completo: true,
+    });
+  });
+
+  it("coerces string values (as Prisma Decimal fields arrive) into numbers", () => {
+    const insumos = [{ quantidade: "10", unitCost: "2.5" }];
+    expect(calcularCustoLote(insumos, [])).toEqual({
+      custoInsumos: 25,
+      custoMaoDeObra: 0,
+      custoTotal: 25,
+      completo: true,
+    });
+  });
+});
+
+describe("custoPorMuda", () => {
+  it("divides total cost by the initial quantity, not the current one", () => {
+    expect(custoPorMuda(200, 100)).toBe(2);
+  });
+
+  it("returns null when the initial quantity is 0 or negative (avoids division by zero)", () => {
+    expect(custoPorMuda(200, 0)).toBeNull();
+    expect(custoPorMuda(200, -5)).toBeNull();
   });
 });
 
