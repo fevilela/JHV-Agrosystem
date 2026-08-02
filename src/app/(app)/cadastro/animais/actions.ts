@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
-import { saveUploadedFile } from "@/lib/upload";
+import { saveUploadedFile, deleteUploadedFile } from "@/lib/upload";
 import { requireOrg } from "@/lib/tenant";
 import { AnimalSexo, AnimalStatus } from "@prisma/client";
 
@@ -130,7 +130,10 @@ export async function deleteAnimalPhotoAction(
 ) {
   const { organizationId } = await requireOrg();
   await requireOwnedAnimal(animalId, organizationId);
-  await prisma.animalPhoto.delete({ where: { id: photoId } });
+
+  const photo = await prisma.animalPhoto.delete({ where: { id: photoId } });
+  await deleteUploadedFile(photo.url);
+
   revalidatePath(`/cadastro/animais/${animalId}`);
 }
 
@@ -163,6 +166,9 @@ export async function deleteAnimalDocumentAction(
 ) {
   const { organizationId } = await requireOrg();
   await requireOwnedAnimal(animalId, organizationId);
-  await prisma.animalDocument.delete({ where: { id: documentId } });
+
+  const document = await prisma.animalDocument.delete({ where: { id: documentId } });
+  await deleteUploadedFile(document.url);
+
   revalidatePath(`/cadastro/animais/${animalId}`);
 }

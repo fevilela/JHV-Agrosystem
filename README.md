@@ -134,4 +134,4 @@ Módulo de contabilidade formal em `/contabilidade`: Plano de Contas (hierárqui
 
 ## Uploads
 
-Fotos e documentos de animais são salvos em `public/uploads/` (fora do controle de versão). Em produção isso deve migrar para um storage externo (ex: S3, Supabase Storage).
+Fotos e documentos de animais são enviados para o Supabase Storage (bucket `uploads`, público) via `src/lib/upload.ts` — ver [DEPLOY.md](./docs/DEPLOY.md#uploads) pro setup.

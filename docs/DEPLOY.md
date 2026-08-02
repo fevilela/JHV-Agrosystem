@@ -35,4 +35,25 @@ Os endpoints validam o header `x-cron-secret` contra `CRON_SECRET` antes de exec
 
 ## Uploads
 
-Fotos/documentos de animais em `public/uploads/` (fora do controle de versão, `.gitignore`). Em Render isso é efêmero entre deploys — migrar para storage externo (S3, Supabase Storage) antes de depender disso em produção de forma séria.
+Fotos/documentos de animais são enviados para o **Supabase Storage** (`src/lib/upload.ts`), não
+mais salvos em disco local — o Render usa disco efêmero, então qualquer coisa em
+`public/uploads/` se perdia a cada novo deploy.
+
+Setup necessário (uma vez por ambiente/projeto Supabase):
+
+1. No painel do Supabase (mesmo projeto do `DATABASE_URL`) → **Storage** → criar um bucket
+   chamado `uploads`, marcado como **público**. Não tem como automatizar isso por código nesse
+   projeto hoje (precisaria de credencial de Management API separada da service role key) — é um
+   passo manual de configuração inicial, feito uma vez.
+2. Configurar `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` (Project Settings → API, no painel do
+   Supabase) nas variáveis de ambiente do Render — ver [SETUP.md](./SETUP.md#variáveis-de-ambiente-env).
+
+Bucket público mantém o mesmo nível de proteção que o disco local já tinha (arquivo só
+"protegido" por ter um nome aleatório na URL, sem autenticação). Se no futuro for preciso
+endurecer isso, trocar para bucket privado + URLs assinadas — ver o comentário em
+`src/lib/upload.ts`.
+
+Registros de `AnimalPhoto`/`AnimalDocument` criados antes dessa mudança apontam para URLs
+`/uploads/...` que não existem mais fisicamente (o disco do Render já não tinha mais nada) — não
+há como recuperar esses arquivos. Limpar ou não esses registros órfãos do banco é uma decisão de
+negócio em aberto, não uma tarefa técnica automática.
