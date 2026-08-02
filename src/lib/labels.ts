@@ -360,6 +360,12 @@ export const faseMudaLabels: Record<string, string> = {
   PRONTA_EXPEDICAO: "Pronta para Expedição",
 };
 
+export const mudaFitossanidadeTipoLabels: Record<string, string> = {
+  PRAGA: "Praga",
+  DOENCA: "Doença",
+  TRATAMENTO_PREVENTIVO: "Tratamento Preventivo",
+};
+
 export const produtorTipoLabels: Record<string, string> = {
   PRODUTOR_RURAL: "Produtor Rural",
   COOPERATIVA: "Cooperativa",

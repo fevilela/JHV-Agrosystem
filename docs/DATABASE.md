@@ -40,7 +40,7 @@ Toda alteração de schema que for para produção deve passar por `prisma migra
 | Recursos Humanos | `Attendance`, `Schedule`, `Training`, `EpiIssuance` (todos ligados a `Employee`) |
 | Oficina | `Mechanic`, `ServiceOrder`/`ServiceOrderPart` |
 | Integrações | `WhatsappConnection`, `WhatsappMessage` |
-| Viveiro de Mudas *(fase 1 de 3 — ver [MODULES.md](./MODULES.md))* | `MudaEspecie`, `Viveiro`, `MudaLote`, `MudaFaseEvento` |
+| Viveiro de Mudas *(fases 1 e 2 de 3 — ver [MODULES.md](./MODULES.md))* | `MudaEspecie`, `Viveiro`, `MudaLote`, `MudaFaseEvento`, `MudaLoteInsumo`, `MudaLoteIrrigacao`, `MudaLoteFitossanidade`, `MudaLoteMaoDeObra` |
 
 ## Relações que cruzam módulos
 

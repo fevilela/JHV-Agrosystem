@@ -114,9 +114,13 @@ model Organization {
   properties        Property[]
   apiKeys           ApiKey[]
 
-  mudaEspecies MudaEspecie[]
-  viveiros     Viveiro[]
-  mudaLotes    MudaLote[]
+  mudaEspecies           MudaEspecie[]
+  viveiros               Viveiro[]
+  mudaLotes              MudaLote[]
+  mudaLoteInsumos        MudaLoteInsumo[]
+  mudaLoteIrrigacoes     MudaLoteIrrigacao[]
+  mudaLoteFitossanidades MudaLoteFitossanidade[]
+  mudaLoteMaoDeObra      MudaLoteMaoDeObra[]
 
   produtores           Produtor[]
   propriedadesProdutor PropriedadeProdutor[]
@@ -205,13 +209,16 @@ model Employee {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  attendances        Attendance[]
-  schedules          Schedule[]
-  trainings          Training[]
-  epiIssuances       EpiIssuance[]
-  mudaLotes          MudaLote[]
-  responsavelTecnico ResponsavelTecnico?
-  resultadosAnalise  Resultado[]
+  attendances            Attendance[]
+  schedules              Schedule[]
+  trainings              Training[]
+  epiIssuances           EpiIssuance[]
+  mudaLotes              MudaLote[]
+  mudaLoteIrrigacoes     MudaLoteIrrigacao[]
+  mudaLoteFitossanidades MudaLoteFitossanidade[]
+  mudaLoteMaoDeObra      MudaLoteMaoDeObra[]
+  responsavelTecnico     ResponsavelTecnico?
+  resultadosAnalise      Resultado[]
 
   @@map("employees")
 }
@@ -1267,6 +1274,7 @@ model StockItem {
   batches           StockBatch[]
   purchaseRequests  PurchaseRequest[]
   serviceOrderParts ServiceOrderPart[]
+  mudaLoteInsumos   MudaLoteInsumo[]
 
   @@map("stock_items")
 }
@@ -1944,7 +1952,11 @@ model MudaLote {
   responsavelId String?
   responsavel   Employee? @relation(fields: [responsavelId], references: [id])
 
-  faseEventos MudaFaseEvento[]
+  faseEventos    MudaFaseEvento[]
+  insumos        MudaLoteInsumo[]
+  irrigacoes     MudaLoteIrrigacao[]
+  fitossanidades MudaLoteFitossanidade[]
+  maoDeObra      MudaLoteMaoDeObra[]
 
   @@unique([organizationId, code])
   @@map("muda_lotes")
@@ -1962,6 +1974,91 @@ model MudaFaseEvento {
   createdAt         DateTime  @default(now())
 
   @@map("muda_fase_eventos")
+}
+
+// ---------- Viveiro de Mudas: fase 2 (insumos, irrigação, fitossanidade, mão de obra) ----------
+
+model MudaLoteInsumo {
+  id          String    @id @default(cuid())
+  loteId      String
+  lote        MudaLote  @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id])
+  quantidade  Decimal   @db.Decimal(10, 2)
+  // Custo unitário no momento do consumo — base do cálculo de custo por lote da fase 3.
+  unitCost    Decimal?  @db.Decimal(10, 2)
+  data        DateTime  @default(now())
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("muda_lote_insumos")
+}
+
+model MudaLoteIrrigacao {
+  id             String    @id @default(cuid())
+  loteId         String
+  lote           MudaLote  @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  data           DateTime  @default(now())
+  // Texto livre (ex.: gotejo/aspersão/manual) — mesmo padrão de Viveiro.sistemaIrrigacao.
+  metodo         String?
+  duracaoMinutos Int?
+  responsavelId  String?
+  responsavel    Employee? @relation(fields: [responsavelId], references: [id])
+  notes          String?
+  createdAt      DateTime  @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("muda_lote_irrigacoes")
+}
+
+enum MudaFitossanidadeTipo {
+  PRAGA
+  DOENCA
+  TRATAMENTO_PREVENTIVO
+}
+
+model MudaLoteFitossanidade {
+  id              String                @id @default(cuid())
+  loteId          String
+  lote            MudaLote              @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  data            DateTime              @default(now())
+  tipo            MudaFitossanidadeTipo
+  produtoAplicado String?
+  dosagem         String?
+  responsavelId   String?
+  responsavel     Employee?             @relation(fields: [responsavelId], references: [id])
+  notes           String?
+  createdAt       DateTime              @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("muda_lote_fitossanidades")
+}
+
+model MudaLoteMaoDeObra {
+  id               String   @id @default(cuid())
+  loteId           String
+  lote             MudaLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  employeeId       String
+  employee         Employee @relation(fields: [employeeId], references: [id])
+  data             DateTime @default(now())
+  atividade        String
+  horasTrabalhadas Decimal  @db.Decimal(5, 2)
+  // Valor/hora no momento do apontamento — base do cálculo de custo por lote da fase 3.
+  custoHora        Decimal? @db.Decimal(10, 2)
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("muda_lote_mao_de_obras")
 }
 
 // ---------- Laboratório Agrícola ----------

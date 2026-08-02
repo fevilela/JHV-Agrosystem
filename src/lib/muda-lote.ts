@@ -38,6 +38,12 @@ export function totalLossRate(eventos: FaseEventoLike[], quantidadeInicial: numb
   return lossRate(quantidadeInicial, totalPerdida);
 }
 
+// Usada ao registrar consumo de insumo (MudaLoteInsumo) — StockItem.currentQuantity nunca
+// pode ficar negativo silenciosamente.
+export function hasSufficientStock(currentQuantity: number, quantidadeSolicitada: number): boolean {
+  return quantidadeSolicitada <= currentQuantity;
+}
+
 // Pure planning function for the "avançar fase" flow: given the currently-open
 // event and how much was lost in it, decides how to close it and what the next
 // event should look like. `now` is passed in (not read internally) so this stays

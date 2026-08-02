@@ -48,9 +48,13 @@ Rotas em `/oficina/*`: Ordens de Serviço (vinculadas a máquina e mecânico, pe
 
 ## Viveiro de Mudas (`viveiro`)
 
-🚧 **Em desenvolvimento (fase 1 de 3, branch `feat/viveiro-cadastros-lotes-fases`, ainda não mesclada na `master`).**
+🚧 **Em desenvolvimento (fases 1 e 2 de 3 implementadas; fase 3 ainda pendente.)**
 
 Rotas em `/viveiro/*`: Espécies e Cultivares (`/viveiro/especies`), Estrutura Física (`/viveiro/estrutura` — viveiros/setores, com campo pronto pro editor de mapa mas ainda sem UI de mapa), Lotes de Produção (`/viveiro/lotes` — com histórico de fases de produção e cálculo de taxa de perda por fase). Reaproveita `Client`/`Supplier`/`Employee` do Cadastro; não duplica nada do Estoque ou Financeiro.
+
+Na página de detalhe de um lote (`/viveiro/lotes/[id]`), abas adicionais registram, por lote: Insumos consumidos (decrementa `StockItem.currentQuantity` do Estoque, mesmo padrão de `ServiceOrderPart`/Oficina — não deixa o estoque ficar negativo), Irrigação, Fitossanidade (praga/doença/tratamento preventivo) e Mão de Obra apontada. `unitCost` (insumo) e `custoHora` (mão de obra) ficam gravados no momento do lançamento — base para o cálculo de custo por lote da fase 3, ainda não implementada.
+
+Fase planejada, ainda não implementada: estoque de mudas prontas, pedido de venda, custo por lote e rastreabilidade/certificação (fase 3).
 
 Fases planejadas, ainda não implementadas: insumos/substrato (via Estoque), irrigação, fitossanidade e mão de obra por lote (fase 2); estoque de mudas prontas, pedido de venda, custos e rastreabilidade/certificação (fase 3). Ver os modelos em [DATABASE.md](./DATABASE.md).
 
