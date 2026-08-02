@@ -5,6 +5,7 @@ import {
   phaseLossRates,
   totalLossRate,
   buildAdvancePhasePayload,
+  hasSufficientStock,
 } from "./muda-lote";
 
 describe("nextFase", () => {
@@ -70,6 +71,20 @@ describe("totalLossRate", () => {
   it("returns 0 for a lote with no recorded losses", () => {
     const eventos = [{ fase: "SEMEADURA_ESTAQUEAMENTO" as const, quantidadePerdida: 0 }];
     expect(totalLossRate(eventos, 100)).toBe(0);
+  });
+});
+
+describe("hasSufficientStock", () => {
+  it("allows consuming exactly the full available quantity", () => {
+    expect(hasSufficientStock(10, 10)).toBe(true);
+  });
+
+  it("allows consuming less than what's available", () => {
+    expect(hasSufficientStock(10, 4)).toBe(true);
+  });
+
+  it("blocks consuming more than what's available (would go negative)", () => {
+    expect(hasSufficientStock(10, 10.01)).toBe(false);
   });
 });
 

@@ -8,6 +8,11 @@ import { faseMudaLabels, mudaLoteStatusLabels, origemPropaguloLabels, formatDate
 import { nextFase, phaseLossRates, totalLossRate } from "@/lib/muda-lote";
 import { requireModule } from "@/lib/tenant";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { Tabs } from "@/components/tabs";
+import { InsumosSection } from "./insumos-section";
+import { IrrigacaoSection } from "./irrigacao-section";
+import { FitossanidadeSection } from "./fitossanidade-section";
+import { MaoDeObraSection } from "./mao-de-obra-section";
 
 export default async function MudaLoteDetailPage({
   params,
@@ -22,13 +27,18 @@ export default async function MudaLoteDetailPage({
     include: {
       especie: true,
       faseEventos: { orderBy: { dataEntrada: "asc" } },
+      insumos: { include: { stockItem: true }, orderBy: { data: "desc" } },
+      irrigacoes: { include: { responsavel: true }, orderBy: { data: "desc" } },
+      fitossanidades: { include: { responsavel: true }, orderBy: { data: "desc" } },
+      maoDeObra: { include: { employee: true }, orderBy: { data: "desc" } },
     },
   });
   if (!lote) notFound();
 
-  const [viveiros, employees] = await Promise.all([
+  const [viveiros, employees, stockItems] = await Promise.all([
     prisma.viveiro.findMany({ where: { organizationId }, orderBy: { code: "asc" } }),
     prisma.employee.findMany({ where: { organizationId, active: true }, orderBy: { name: "asc" } }),
+    prisma.stockItem.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
   ]);
 
   const proximaFase = nextFase(lote.faseAtual);
@@ -171,6 +181,55 @@ export default async function MudaLoteDetailPage({
             )}
           </div>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <Tabs
+          tabs={[
+            {
+              id: "insumos",
+              label: "Insumos",
+              content: (
+                <InsumosSection
+                  loteId={id}
+                  insumos={lote.insumos}
+                  stockItems={stockItems.map((s) => ({
+                    id: s.id,
+                    code: s.code,
+                    name: s.name,
+                    currentQuantity: String(s.currentQuantity),
+                    unit: s.unit,
+                  }))}
+                />
+              ),
+            },
+            {
+              id: "irrigacao",
+              label: "Irrigação",
+              content: (
+                <IrrigacaoSection loteId={id} irrigacoes={lote.irrigacoes} employees={employees} />
+              ),
+            },
+            {
+              id: "fitossanidade",
+              label: "Fitossanidade",
+              content: (
+                <FitossanidadeSection
+                  loteId={id}
+                  eventos={lote.fitossanidades}
+                  employees={employees}
+                />
+              ),
+            },
+            {
+              id: "mao-de-obra",
+              label: "Mão de Obra",
+              content: (
+                <MaoDeObraSection loteId={id} apontamentos={lote.maoDeObra} employees={employees} />
+              ),
+            },
+          ]}
+        />
       </div>
     </div>
   );
